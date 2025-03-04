@@ -140,4 +140,5 @@ return [
     'hardware_cpu' => 'Cores: {value}',
     'hardware_memory' => 'Memory: {value}',
     'hardware_disk' => 'Disk: {value}',
+    'no_physical_servers' => 'No physical servers have been added yet.',
 ]; 

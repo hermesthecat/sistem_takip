@@ -140,4 +140,5 @@ return [
     'hardware_cpu' => 'Çekirdek: {value}',
     'hardware_memory' => 'Bellek: {value}',
     'hardware_disk' => 'Disk: {value}',
+    'no_physical_servers' => 'Henüz fiziksel sunucu eklenmemiş.',
 ]; 

@@ -273,7 +273,7 @@ function kaynak_deger_al($str, $tip) {
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="8" class="text-center">Henüz fiziksel sunucu eklenmemiş.</td>
+                            <td colspan="8" class="text-center"><?php echo $language->get('no_physical_servers'); ?></td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
