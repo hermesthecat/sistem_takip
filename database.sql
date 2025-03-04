@@ -61,6 +61,18 @@ CREATE TABLE IF NOT EXISTS sanal_sunucu_hizmetler (
     FOREIGN KEY (sanal_sunucu_id) REFERENCES sanal_sunucular(id) ON DELETE CASCADE,
     FOREIGN KEY (hizmet_id) REFERENCES hizmetler(id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
+-- Kullanıcılar tablosu
+CREATE TABLE IF NOT EXISTS kullanicilar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kullanici_adi VARCHAR(50) NOT NULL UNIQUE,
+    ad_soyad VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    sifre VARCHAR(255) NOT NULL,
+    rol ENUM('admin', 'kullanici') DEFAULT 'kullanici',
+    durum ENUM('Aktif', 'Pasif') DEFAULT 'Aktif',
+    son_giris DATETIME,
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
 -- Örnek lokasyonlar
 INSERT IGNORE INTO lokasyonlar (lokasyon_adi)
 VALUES ('İstanbul'),
@@ -128,3 +140,6 @@ VALUES ('HTTP Web Sunucu', 'Web sunucu hizmeti', '80'),
         '9200'
     ),
     ('RabbitMQ', 'RabbitMQ mesaj kuyruğu', '5672');
+-- Varsayılan admin kullanıcısı (şifre: admin123)
+INSERT IGNORE INTO kullanicilar (kullanici_adi, ad_soyad, email, sifre, rol) 
+VALUES ('admin', 'Sistem Yöneticisi', 'admin@sistem.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');

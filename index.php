@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 $mesaj = '';
@@ -65,6 +66,7 @@ function kaynak_deger_al($str, $tip) {
     <meta charset="UTF-8">
     <title>Sunucu Takip Sistemi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .kaynak-kullanim {
             font-size: 0.85rem;
@@ -83,7 +85,9 @@ function kaynak_deger_al($str, $tip) {
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
         <?php echo $mesaj; ?>
         
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -120,10 +124,10 @@ function kaynak_deger_al($str, $tip) {
                                     <?php if ($row['cpu'] || $row['ram'] || $row['disk']): ?>
                                         <ul class="list-unstyled mb-0">
                                             <?php if ($row['cpu']): ?>
-                                                <li><strong>CPU:</strong> <?php echo $row['cpu']; ?></li>
+                                                <li><strong>Çekirdek:</strong> <?php echo $row['cpu']; ?></li>
                                             <?php endif; ?>
                                             <?php if ($row['ram']): ?>
-                                                <li><strong>RAM:</strong> <?php echo $row['ram']; ?></li>
+                                                <li><strong>Bellek:</strong> <?php echo $row['ram']; ?></li>
                                             <?php endif; ?>
                                             <?php if ($row['disk']): ?>
                                                 <li><strong>Disk:</strong> <?php echo $row['disk']; ?></li>
@@ -167,12 +171,12 @@ function kaynak_deger_al($str, $tip) {
                             <tr class="table-light">
                                 <td colspan="9">
                                     <div class="small">
-                                        <strong>Sanal Sunucu Kaynakları:</strong>
+                                        <strong>Fiziksel Sunucu Kaynakları:</strong>
                                         <table class="table table-sm table-bordered mt-1 mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 33%">CPU Kullanımı</th>
-                                                    <th style="width: 33%">RAM Kullanımı</th>
+                                                    <th style="width: 33%">Çekirdek Kullanımı</th>
+                                                    <th style="width: 33%">Bellek Kullanımı</th>
                                                     <th style="width: 33%">Disk Kullanımı</th>
                                                 </tr>
                                             </thead>
@@ -235,7 +239,7 @@ function kaynak_deger_al($str, $tip) {
                                                                  aria-valuenow="<?php echo $cpu_yuzde; ?>" 
                                                                  aria-valuemin="0" 
                                                                  aria-valuemax="100">
-                                                                <?php echo $toplam_cpu . "/" . $fiziksel_cpu . " Core"; ?>
+                                                                <?php echo $toplam_cpu . "/" . $fiziksel_cpu . " Çekirdek"; ?>
                                                             </div>
                                                         </div>
                                                     </td>

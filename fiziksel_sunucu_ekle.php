@@ -3,6 +3,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 $mesaj = '';
@@ -43,10 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Yeni Fiziksel Sunucu Ekle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
-    <div class="container mt-5">
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← Fiziksel Sunuculara Dön</a>
         </div>
@@ -99,12 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="cpu" class="form-label">CPU</label>
-                                <input type="text" class="form-control" id="cpu" name="cpu" placeholder="Toplam Core Sayısı" required>
+                                <label for="cpu" class="form-label">Çekirdek</label>
+                                <input type="text" class="form-control" id="cpu" name="cpu" placeholder="Toplam Çekirdek Sayısı" required>
                             </div>
                             <div class="mb-3">
-                                <label for="ram" class="form-label">RAM</label>
-                                <input type="text" class="form-control" id="ram" name="ram" placeholder="64GB" required>
+                                <label for="ram" class="form-label">Bellek</label>
+                                <input type="text" class="form-control" id="ram" name="ram" placeholder="Bellek Kapasitesi" required>
                             </div>
                             <div class="mb-3">
                                 <label for="disk" class="form-label">Disk</label>

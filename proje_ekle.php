@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 $mesaj = '';
@@ -89,15 +90,13 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
     <meta charset="UTF-8">
     <title>Proje Yönetimi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="mb-3">
-            <a href="index.php" class="btn btn-secondary">← Ana Sayfaya Dön</a>
-            <?php if ($duzenle_mod): ?>
-                <a href="proje_ekle.php" class="btn btn-primary">Yeni Proje Ekle</a>
-            <?php endif; ?>
-        </div>
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
+
         <div class="row">
             <div class="col-md-5">
                 <div class="card">

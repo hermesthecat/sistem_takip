@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -116,9 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Sanal Sunucu Düzenle - <?php echo $sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
         <div class="mb-3">
             <a href="sanal_sunucular.php?fiziksel_id=<?php echo $sunucu['fiziksel_sunucu_id']; ?>" class="btn btn-secondary">← Sanal Sunuculara Dön</a>
         </div>

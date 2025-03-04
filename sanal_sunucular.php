@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
@@ -32,9 +33,12 @@ $result = mysqli_query($conn, $sql);
     <meta charset="UTF-8">
     <title>Sanal Sunucular - <?php echo $fiziksel_sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← Fiziksel Sunuculara Dön</a>
         </div>

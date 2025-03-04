@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -68,9 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Fiziksel Sunucu Düzenle - <?php echo $sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <?php require_once 'header.php'; ?>
+    
+    <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← Fiziksel Sunuculara Dön</a>
         </div>
@@ -134,13 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="cpu" class="form-label">CPU</label>
+                                <label for="cpu" class="form-label">Çekirdek</label>
                                 <input type="text" class="form-control" id="cpu" name="cpu" 
                                     value="<?php echo $sunucu['cpu']; ?>"
                                     placeholder="Örn: Intel Xeon E5-2680 v4 2.40GHz" required>
                             </div>
                             <div class="mb-3">
-                                <label for="ram" class="form-label">RAM</label>
+                                <label for="ram" class="form-label">Bellek</label>
                                 <input type="text" class="form-control" id="ram" name="ram" 
                                     value="<?php echo $sunucu['ram']; ?>"
                                     placeholder="Örn: 64GB DDR4" required>
