@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
@@ -19,21 +20,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $current_page == 'index.php' ? 'active' : ''; ?>" 
-                       href="index.php"><?php echo $language->get('physical_servers'); ?></a>
+                    <a class="nav-link <?php echo $current_page == 'index.php' ? 'active' : ''; ?>"
+                        href="index.php"><?php echo $language->get('physical_servers'); ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $current_page == 'proje_ekle.php' ? 'active' : ''; ?>" 
-                       href="proje_ekle.php"><?php echo $language->get('projects'); ?></a>
+                    <a class="nav-link <?php echo $current_page == 'proje_ekle.php' ? 'active' : ''; ?>"
+                        href="proje_ekle.php"><?php echo $language->get('projects'); ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $current_page == 'lokasyon_ekle.php' ? 'active' : ''; ?>" 
-                       href="lokasyon_ekle.php"><?php echo $language->get('locations'); ?></a>
+                    <a class="nav-link <?php echo $current_page == 'lokasyon_ekle.php' ? 'active' : ''; ?>"
+                        href="lokasyon_ekle.php"><?php echo $language->get('locations'); ?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $current_page == 'hizmet_ekle.php' ? 'active' : ''; ?>"
+                        href="hizmet_ekle.php"><?php echo $language->get('services'); ?></a>
                 </li>
                 <?php if ($_SESSION['rol'] == 'admin'): ?>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo $current_page == 'admin.php' ? 'active' : ''; ?>" 
-                           href="admin.php"><?php echo $language->get('users'); ?></a>
+                        <a class="nav-link <?php echo $current_page == 'admin.php' ? 'active' : ''; ?>"
+                            href="admin.php"><?php echo $language->get('users'); ?></a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -57,7 +62,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php endforeach; ?>
                     </ul>
                 </li>
-                
+
                 <!-- Kullanıcı Menüsü -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
@@ -68,12 +73,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item <?php echo $current_page == 'profil.php' ? 'active' : ''; ?>" 
-                               href="profil.php">
+                            <a class="dropdown-item <?php echo $current_page == 'profil.php' ? 'active' : ''; ?>"
+                                href="profil.php">
                                 <i class="bi bi-person"></i> <?php echo $language->get('profile'); ?>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <a class="dropdown-item text-danger" href="logout.php">
                                 <i class="bi bi-box-arrow-right"></i> <?php echo $language->get('logout'); ?>
@@ -84,4 +91,4 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
         </div>
     </div>
-</nav> 
+</nav>
