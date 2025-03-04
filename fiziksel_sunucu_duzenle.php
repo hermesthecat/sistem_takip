@@ -12,7 +12,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id = mysqli_real_escape_string($conn, $_GET['id']);
 
 // Sunucu bilgilerini al
-$sql = "SELECT * FROM fiziksel_sunucular WHERE id = '$id'";
+$sql = "SELECT fs.*, p.proje_adi, p.proje_kodu 
+        FROM fiziksel_sunucular fs
+        LEFT JOIN projeler p ON fs.proje_id = p.id
+        WHERE fs.id = '$id'";
 $result = mysqli_query($conn, $sql);
 $sunucu = mysqli_fetch_assoc($result);
 
@@ -24,6 +27,10 @@ if (!$sunucu) {
 // Lokasyonları getir
 $sql_lokasyonlar = "SELECT * FROM lokasyonlar ORDER BY lokasyon_adi";
 $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
+
+// Projeleri getir
+$sql_projeler = "SELECT * FROM projeler WHERE durum = 'Aktif' ORDER BY proje_adi";
+$result_projeler = mysqli_query($conn, $sql_projeler);
 
 $mesaj = '';
 
@@ -103,9 +110,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="mb-3">
                                 <label for="proje_id" class="form-label">Proje</label>
+                                <?php 
+                                // Debug bilgisi
+                                echo "<!-- Sunucu Proje ID: " . $sunucu['proje_id'] . " -->";
+                                ?>
                                 <select class="form-select" id="proje_id" name="proje_id">
                                     <option value="">Proje Seçin (Opsiyonel)</option>
                                     <?php while ($proje = mysqli_fetch_assoc($result_projeler)): ?>
+                                        <?php 
+                                        // Debug bilgisi
+                                        echo "<!-- Proje ID: " . $proje['id'] . " -->";
+                                        ?>
                                         <option value="<?php echo $proje['id']; ?>" 
                                             <?php echo ($proje['id'] == $sunucu['proje_id']) ? 'selected' : ''; ?>>
                                             <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
