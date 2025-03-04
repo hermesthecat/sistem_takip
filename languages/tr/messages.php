@@ -141,4 +141,29 @@ return [
     'hardware_memory' => 'Bellek: {value}',
     'hardware_disk' => 'Disk: {value}',
     'no_physical_servers' => 'Henüz fiziksel sunucu eklenmemiş.',
+    
+    // Giriş Sayfası
+    'login_page_title' => 'Giriş Yap - Sunucu Takip Sistemi',
+    'error_invalid_credentials' => 'Kullanıcı adı veya şifre hatalı!',
+    'login_form_title' => 'Sunucu Takip Sistemi',
+    'username_placeholder' => 'Kullanıcı Adı',
+    'password_placeholder' => 'Şifre',
+    'login_button' => 'Giriş Yap',
+    
+    // Lokasyon Yönetimi
+    'location_management' => 'Lokasyon Yönetimi',
+    'add_new_location_title' => 'Yeni Lokasyon Ekle',
+    'edit_location_title' => 'Lokasyon Düzenle',
+    'location_name' => 'Lokasyon Adı',
+    'existing_locations' => 'Mevcut Lokasyonlar',
+    'server_count_info' => '{count} sunucu',
+    'no_servers' => 'Sunucu yok',
+    'error_location_exists' => 'Hata: Bu lokasyon adı zaten kullanılıyor!',
+    'success_location_added' => 'Yeni lokasyon başarıyla eklendi.',
+    'success_location_updated' => 'Lokasyon başarıyla güncellendi.',
+    'confirm_delete_location' => 'Bu lokasyonu silmek istediğinize emin misiniz?',
+    
+    // Lokasyon Silme
+    'error_location_has_servers' => 'Bu lokasyona bağlı sunucular olduğu için silinemez.',
+    'success_location_deleted' => 'Lokasyon başarıyla silindi.',
 ]; 

@@ -4,6 +4,7 @@
  */
 require_once 'auth.php';
 require_once 'config/database.php';
+require_once 'config/language.php';
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = mysqli_real_escape_string($conn, $_GET['id']);
@@ -15,14 +16,14 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     
     if ($row['sayi'] > 0) {
         // Eğer bağlı sunucu varsa silme
-        header('Location: lokasyon_ekle.php?hata=Bu lokasyona bağlı sunucular olduğu için silinemez.');
+        header('Location: lokasyon_ekle.php?hata=' . urlencode($language->get('error_location_has_servers')));
     } else {
         // Bağlı sunucu yoksa sil
         $sql = "DELETE FROM lokasyonlar WHERE id = '$id'";
         if (mysqli_query($conn, $sql)) {
-            header('Location: lokasyon_ekle.php?basari=Lokasyon başarıyla silindi.');
+            header('Location: lokasyon_ekle.php?basari=' . urlencode($language->get('success_location_deleted')));
         } else {
-            header('Location: lokasyon_ekle.php?hata=' . urlencode(mysqli_error($conn)));
+            header('Location: lokasyon_ekle.php?hata=' . urlencode($language->get('error') . ": " . mysqli_error($conn)));
         }
     }
 } else {

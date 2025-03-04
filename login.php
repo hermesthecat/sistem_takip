@@ -11,6 +11,7 @@ if (isset($_SESSION['kullanici_id'])) {
 }
 
 require_once 'config/database.php';
+require_once 'config/language.php';
 
 $mesaj = '';
 
@@ -36,19 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: index.php');
             exit;
         } else {
-            $mesaj = "<div class='alert alert-danger'>Kullanıcı adı veya şifre hatalı!</div>";
+            $mesaj = "<div class='alert alert-danger'>" . $language->get('error_invalid_credentials') . "</div>";
         }
     } else {
-        $mesaj = "<div class='alert alert-danger'>Kullanıcı adı veya şifre hatalı!</div>";
+        $mesaj = "<div class='alert alert-danger'>" . $language->get('error_invalid_credentials') . "</div>";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo $language->getCurrentLang(); ?>">
 <head>
     <meta charset="UTF-8">
-    <title>Giriş Yap - Sunucu Takip Sistemi</title>
+    <title><?php echo $language->get('login_page_title'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html, body {
@@ -64,23 +65,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <main class="login-container w-100 m-auto">
         <form method="POST" class="card">
             <div class="card-body">
-                <h1 class="h3 mb-3 fw-normal text-center">Sunucu Takip Sistemi</h1>
+                <h1 class="h3 mb-3 fw-normal text-center"><?php echo $language->get('login_form_title'); ?></h1>
                 
                 <?php echo $mesaj; ?>
                 
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="kullanici_adi" name="kullanici_adi" 
-                           placeholder="Kullanıcı Adı" required>
-                    <label for="kullanici_adi">Kullanıcı Adı</label>
+                           placeholder="<?php echo $language->get('username_placeholder'); ?>" required>
+                    <label for="kullanici_adi"><?php echo $language->get('username_placeholder'); ?></label>
                 </div>
                 
                 <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="sifre" name="sifre" 
-                           placeholder="Şifre" required>
-                    <label for="sifre">Şifre</label>
+                           placeholder="<?php echo $language->get('password_placeholder'); ?>" required>
+                    <label for="sifre"><?php echo $language->get('password_placeholder'); ?></label>
                 </div>
                 
-                <button class="w-100 btn btn-lg btn-primary" type="submit">Giriş Yap</button>
+                <button class="w-100 btn btn-lg btn-primary" type="submit"><?php echo $language->get('login_button'); ?></button>
             </div>
         </form>
     </main>

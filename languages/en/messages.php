@@ -141,4 +141,29 @@ return [
     'hardware_memory' => 'Memory: {value}',
     'hardware_disk' => 'Disk: {value}',
     'no_physical_servers' => 'No physical servers have been added yet.',
+    
+    // Login Page
+    'login_page_title' => 'Login - Server Tracking System',
+    'error_invalid_credentials' => 'Invalid username or password!',
+    'login_form_title' => 'Server Tracking System',
+    'username_placeholder' => 'Username',
+    'password_placeholder' => 'Password',
+    'login_button' => 'Login',
+    
+    // Location Management
+    'location_management' => 'Location Management',
+    'add_new_location_title' => 'Add New Location',
+    'edit_location_title' => 'Edit Location',
+    'location_name' => 'Location Name',
+    'existing_locations' => 'Existing Locations',
+    'server_count_info' => '{count} servers',
+    'no_servers' => 'No servers',
+    'error_location_exists' => 'Error: This location name is already in use!',
+    'success_location_added' => 'New location added successfully.',
+    'success_location_updated' => 'Location updated successfully.',
+    'confirm_delete_location' => 'Are you sure you want to delete this location?',
+    
+    // Location Delete
+    'error_location_has_servers' => 'This location cannot be deleted because it has attached servers.',
+    'success_location_deleted' => 'Location has been successfully deleted.',
 ]; 
