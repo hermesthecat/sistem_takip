@@ -75,7 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Mevcut projeleri listele
-$sql_projeler = "SELECT * FROM projeler ORDER BY proje_adi";
+$sql_projeler = "SELECT p.*, 
+                (SELECT COUNT(*) FROM fiziksel_sunucular WHERE proje_id = p.id) as fiziksel_sayi,
+                (SELECT COUNT(*) FROM sanal_sunucular WHERE proje_id = p.id) as sanal_sayi
+                FROM projeler p 
+                ORDER BY p.proje_adi";
 $result_projeler = mysqli_query($conn, $sql_projeler);
 ?>
 
@@ -184,9 +188,24 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                                     echo $row['durum'] == 'Aktif' ? 'success' : 
                                                         ($row['durum'] == 'Pasif' ? 'warning' : 'secondary'); 
                                                 ?>"><?php echo $row['durum']; ?></span>
+                                                <?php if ($row['fiziksel_sayi'] > 0 || $row['sanal_sayi'] > 0): ?>
+                                                    <div class="mt-1">
+                                                        <?php if ($row['fiziksel_sayi'] > 0): ?>
+                                                            <span class="badge bg-info"><?php echo $row['fiziksel_sayi']; ?> fiziksel</span>
+                                                        <?php endif; ?>
+                                                        <?php if ($row['sanal_sayi'] > 0): ?>
+                                                            <span class="badge bg-info"><?php echo $row['sanal_sayi']; ?> sanal</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
                                             </td>
                                             <td>
                                                 <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning">Düzenle</a>
+                                                <?php if ($row['fiziksel_sayi'] == 0 && $row['sanal_sayi'] == 0): ?>
+                                                    <a href="proje_sil.php?id=<?php echo $row['id']; ?>" 
+                                                       class="btn btn-sm btn-danger"
+                                                       onclick="return confirm('Bu projeyi silmek istediğinize emin misiniz?')">Sil</a>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
