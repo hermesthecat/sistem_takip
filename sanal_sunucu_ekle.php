@@ -5,9 +5,10 @@
  */
 require_once 'auth.php';
 require_once 'config/database.php';
+require_once 'config/language.php';
 
 if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
-    header('Location: index.php?hata=' . urlencode('Fiziksel sunucu ID belirtilmedi.'));
+    header('Location: index.php?hata=' . urlencode($language->get('error_physical_server_id')));
     exit;
 }
 
@@ -23,7 +24,7 @@ $result = mysqli_query($conn, $sql);
 $fiziksel_sunucu = mysqli_fetch_assoc($result);
 
 if (!$fiziksel_sunucu) {
-    header('Location: index.php?hata=' . urlencode('Fiziksel sunucu bulunamadı.'));
+    header('Location: index.php?hata=' . urlencode($language->get('error_physical_server_not_found')));
     exit;
 }
 
@@ -65,16 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ip_row = mysqli_fetch_assoc($ip_result);
 
     if ($ip_row['sayi'] > 0) {
-        $mesaj = "<div class='alert alert-danger'>Bu IP adresi başka bir sunucu tarafından kullanılıyor.</div>";
+        $mesaj = "<div class='alert alert-danger'>" . $language->get('error_ip_in_use') . "</div>";
     } else {
         $sql = "INSERT INTO sanal_sunucular (fiziksel_sunucu_id, sunucu_adi, ip_adresi, ram, cpu, disk, proje_id) 
                 VALUES ('$fiziksel_id', '$sunucu_adi', '$ip_adresi', '$ram', '$cpu', '$disk', $proje_id)";
 
         if (mysqli_query($conn, $sql)) {
-            header('Location: sanal_sunucular.php?fiziksel_id=' . $fiziksel_id . '&basari=' . urlencode('Sanal sunucu başarıyla eklendi.'));
+            header('Location: sanal_sunucular.php?fiziksel_id=' . $fiziksel_id . 
+                   '&basari=' . urlencode($language->get('success_virtual_server_added')));
             exit;
         } else {
-            $mesaj = "<div class='alert alert-danger'>Hata: " . mysqli_error($conn) . "</div>";
+            $mesaj = "<div class='alert alert-danger'>" . $language->get('error_adding_virtual_server', ['error' => mysqli_error($conn)]) . "</div>";
         }
     }
 }
@@ -85,11 +87,11 @@ $projeler = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo $language->getCurrentLang(); ?>">
 
 <head>
     <meta charset="UTF-8">
-    <title>Yeni Sanal Sunucu Ekle</title>
+    <title><?php echo $language->get('add_virtual_server'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -99,7 +101,9 @@ $projeler = mysqli_query($conn, $sql);
 
     <div class="container">
         <div class="mb-3">
-            <a href="sanal_sunucular.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-secondary">← Sanal Sunuculara Dön</a>
+            <a href="sanal_sunucular.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-secondary">
+                ← <?php echo $language->get('back_to_virtual_servers'); ?>
+            </a>
         </div>
 
         <?php echo $mesaj; ?>
@@ -107,13 +111,13 @@ $projeler = mysqli_query($conn, $sql);
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title h5 mb-0">
-                    Yeni Sanal Sunucu Ekle
+                    <?php echo $language->get('add_virtual_server'); ?>
                     <small class="text-muted">(<?php echo $fiziksel_sunucu['sunucu_adi']; ?>)</small>
                 </h2>
             </div>
             <div class="card-body">
                 <div class="alert alert-info">
-                    <h6 class="alert-heading">Kaynak Kullanımı:</h6>
+                    <h6 class="alert-heading"><?php echo $language->get('resource_usage'); ?></h6>
                     <div class="row">
                         <div class="col-md-4">
                             <small>CPU: <?php echo $kaynak_kullanim['toplam_cpu']; ?>/<?php echo $fiziksel_cpu; ?> Core</small>
@@ -148,57 +152,63 @@ $projeler = mysqli_query($conn, $sql);
                 <form method="POST" class="row" id="sanal_sunucu_form">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="sunucu_adi" class="form-label">Sunucu Adı</label>
+                            <label for="sunucu_adi" class="form-label"><?php echo $language->get('server_name'); ?></label>
                             <input type="text" class="form-control" id="sunucu_adi" name="sunucu_adi" required>
                         </div>
                         <div class="mb-3">
-                            <label for="ip_adresi" class="form-label">IP Adresi</label>
+                            <label for="ip_adresi" class="form-label"><?php echo $language->get('ip_address'); ?></label>
                             <input type="text" class="form-control" id="ip_adresi" name="ip_adresi"
                                 pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                                title="Lütfen geçerli bir IPv4 adresi girin" required>
+                                title="<?php echo $language->get('enter_valid_ipv4'); ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label for="proje_id" class="form-label">Proje</label>
+                            <label for="proje_id" class="form-label"><?php echo $language->get('project'); ?></label>
                             <select class="form-select" id="proje_id" name="proje_id">
-                                <option value="">Proje Seçin</option>
+                                <option value=""><?php echo $language->get('select_project'); ?></option>
                                 <?php while ($proje = mysqli_fetch_assoc($projeler)): ?>
                                     <option value="<?php echo $proje['id']; ?>"
                                         <?php echo ($proje['id'] == $fiziksel_sunucu['varsayilan_proje_id']) ? 'selected' : ''; ?>>
-                                        <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
+                                        <?php echo $language->get('project_info', ['project_name' => $proje['proje_adi'], 'project_code' => $proje['proje_kodu']]); ?>
                                     </option>
                                 <?php endwhile; ?>
                             </select>
-                            <div class="form-text">Fiziksel sunucunun projesi varsayılan olarak seçilir. İsterseniz proje seçebilirsiniz.</div>
+                            <div class="form-text"><?php echo $language->get('default_project_info'); ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="cpu" class="form-label">Çekirdek</label>
+                            <label for="cpu" class="form-label"><?php echo $language->get('cpu_cores'); ?></label>
                             <input type="text" class="form-control" id="cpu" name="cpu"
-                                placeholder="Örn: 4 Core" required
+                                placeholder="<?php echo $language->get('cpu_placeholder'); ?>" required
                                 pattern="^\d+\s*(?:core|cores|cpu|işlemci|çekirdek)?$"
-                                title="Lütfen sadece sayı girin (örn: 4 veya 4 Core)">
-                            <div class="form-text">Kalan: <?php echo $fiziksel_cpu - $kaynak_kullanim['toplam_cpu']; ?> Core</div>
+                                title="<?php echo $language->get('enter_valid_number', ['example' => '4 Core']); ?>">
+                            <div class="form-text">
+                                <?php echo $language->get('remaining_resources', ['value' => ($fiziksel_cpu - $kaynak_kullanim['toplam_cpu']) . ' Core']); ?>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="ram" class="form-label">Bellek (GB)</label>
+                            <label for="ram" class="form-label"><?php echo $language->get('memory'); ?></label>
                             <input type="text" class="form-control" id="ram" name="ram"
-                                placeholder="Örn: 8GB" required
+                                placeholder="<?php echo $language->get('ram_placeholder'); ?>" required
                                 pattern="^\d+\s*(?:gb|g|gigabyte)?$"
-                                title="Lütfen sadece sayı girin (örn: 8 veya 8GB)">
-                            <div class="form-text">Kalan: <?php echo $fiziksel_ram - $kaynak_kullanim['toplam_ram']; ?> GB</div>
+                                title="<?php echo $language->get('enter_valid_number', ['example' => '8GB']); ?>">
+                            <div class="form-text">
+                                <?php echo $language->get('remaining_resources', ['value' => ($fiziksel_ram - $kaynak_kullanim['toplam_ram']) . ' GB']); ?>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="disk" class="form-label">Disk (GB)</label>
+                            <label for="disk" class="form-label"><?php echo $language->get('disk'); ?></label>
                             <input type="text" class="form-control" id="disk" name="disk"
-                                placeholder="Örn: 100GB" required
+                                placeholder="<?php echo $language->get('disk_placeholder'); ?>" required
                                 pattern="^\d+\s*(?:gb|g|tb|t)?$"
-                                title="Lütfen sadece sayı girin (örn: 100 veya 100GB)">
-                            <div class="form-text">Kalan: <?php echo $fiziksel_disk - $kaynak_kullanim['toplam_disk']; ?> GB</div>
+                                title="<?php echo $language->get('enter_valid_number', ['example' => '100GB']); ?>">
+                            <div class="form-text">
+                                <?php echo $language->get('remaining_resources', ['value' => ($fiziksel_disk - $kaynak_kullanim['toplam_disk']) . ' GB']); ?>
+                            </div>
                         </div>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Sanal Sunucu Ekle</button>
+                        <button type="submit" class="btn btn-primary"><?php echo $language->get('add_virtual_server_button'); ?></button>
                     </div>
                 </form>
 
@@ -215,20 +225,20 @@ $projeler = mysqli_query($conn, $sql);
                         var hatalar = [];
 
                         if (cpu > kalanCpu) {
-                            hatalar.push('CPU değeri kalan kapasiteden (' + kalanCpu + ' Core) fazla olamaz.');
+                            hatalar.push('<?php echo $language->get('error_cpu_limit', ['value' => "' + kalanCpu + '"]); ?>');
                         }
 
                         if (ram > kalanRam) {
-                            hatalar.push('RAM değeri kalan kapasiteden (' + kalanRam + ' GB) fazla olamaz.');
+                            hatalar.push('<?php echo $language->get('error_ram_limit', ['value' => "' + kalanRam + '"]); ?>');
                         }
 
                         if (disk > kalanDisk) {
-                            hatalar.push('Disk değeri kalan kapasiteden (' + kalanDisk + ' GB) fazla olamaz.');
+                            hatalar.push('<?php echo $language->get('error_disk_limit', ['value' => "' + kalanDisk + '"]); ?>');
                         }
 
                         if (hatalar.length > 0) {
                             e.preventDefault();
-                            alert('Lütfen aşağıdaki hataları düzeltin:\n\n' + hatalar.join('\n'));
+                            alert('<?php echo $language->get('resource_validation_error'); ?>\n\n' + hatalar.join('\n'));
                         }
                     });
                 </script>

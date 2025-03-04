@@ -254,4 +254,18 @@ return [
     'error_disk_capacity' => 'Disk value cannot exceed the remaining capacity of the selected physical server ({value} GB).',
     'enter_valid_ipv4' => 'Please enter a valid IPv4 address',
     'enter_valid_number' => 'Please enter only numbers (ex: {example})',
+    
+    // Virtual Server Add
+    'add_virtual_server' => 'Add New Virtual Server',
+    'error_physical_server_id' => 'Physical server ID not specified.',
+    'error_physical_server_not_found' => 'Physical server not found.',
+    'resource_usage' => 'Resource Usage:',
+    'remaining_resources' => 'Available: {value}',
+    'success_virtual_server_added' => 'Virtual server has been successfully added.',
+    'error_adding_virtual_server' => 'Error: {error}',
+    'default_project_info' => 'The physical server\'s project is selected by default. You can choose a different project if needed.',
+    'error_cpu_limit' => 'CPU value cannot exceed the remaining capacity ({value} Cores).',
+    'error_ram_limit' => 'RAM value cannot exceed the remaining capacity ({value} GB).',
+    'error_disk_limit' => 'Disk value cannot exceed the remaining capacity ({value} GB).',
+    'add_virtual_server_button' => 'Add Virtual Server',
 ]; 

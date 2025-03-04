@@ -251,4 +251,17 @@ return [
     'error_disk_capacity' => 'Disk değeri seçilen fiziksel sunucunun kalan kapasitesinden ({value} GB) fazla olamaz.',
     'enter_valid_ipv4' => 'Lütfen geçerli bir IPv4 adresi girin',
     'enter_valid_number' => 'Lütfen sadece sayı girin (örn: {example})',
+    // Sanal Sunucu Ekleme
+    'add_virtual_server' => 'Yeni Sanal Sunucu Ekle',
+    'error_physical_server_id' => 'Fiziksel sunucu ID belirtilmedi.',
+    'error_physical_server_not_found' => 'Fiziksel sunucu bulunamadı.',
+    'resource_usage' => 'Kaynak Kullanımı:',
+    'remaining_resources' => 'Kalan: {value}',
+    'success_virtual_server_added' => 'Sanal sunucu başarıyla eklendi.',
+    'error_adding_virtual_server' => 'Hata: {error}',
+    'default_project_info' => 'Fiziksel sunucunun projesi varsayılan olarak seçilir. İsterseniz proje seçebilirsiniz.',
+    'error_cpu_limit' => 'CPU değeri kalan kapasiteden ({value} Core) fazla olamaz.',
+    'error_ram_limit' => 'RAM değeri kalan kapasiteden ({value} GB) fazla olamaz.',
+    'error_disk_limit' => 'Disk değeri kalan kapasiteden ({value} GB) fazla olamaz.',
+    'add_virtual_server_button' => 'Sanal Sunucu Ekle',
 ]; 
