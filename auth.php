@@ -4,6 +4,15 @@
  */
 session_start();
 
+// Dil yönetimini başlat
+require_once 'config/Language.php';
+$language = Language::getInstance();
+
+// Session'da kayıtlı dil varsa onu kullan
+if (isset($_SESSION['lang'])) {
+    $language->setLanguage($_SESSION['lang']);
+}
+
 // Giriş yapılmamışsa login sayfasına yönlendir
 if (!isset($_SESSION['kullanici_id'])) {
     // Şu anki sayfanın yolunu al
