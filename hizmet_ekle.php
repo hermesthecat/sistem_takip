@@ -34,18 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 port = '$port',
                 durum = '$durum'
                 WHERE id = '$id'";
-        $basari_mesaj = "Hizmet başarıyla güncellendi.";
+        $basari_mesaj = $language->get('service_updated');
     } else {
         $sql = "INSERT INTO hizmetler (hizmet_adi, aciklama, port, durum) 
                 VALUES ('$hizmet_adi', '$aciklama', '$port', '$durum')";
-        $basari_mesaj = "Yeni hizmet başarıyla eklendi.";
+        $basari_mesaj = $language->get('service_added');
     }
 
     if (mysqli_query($conn, $sql)) {
         header("Location: hizmet_ekle.php?basari=" . urlencode($basari_mesaj));
         exit;
     } else {
-        $mesaj = "<div class='alert alert-danger'>Hata: " . mysqli_error($conn) . "</div>";
+        $mesaj = "<div class='alert alert-danger'>" . $language->get('error') . ": " . mysqli_error($conn) . "</div>";
     }
 }
 
@@ -65,19 +65,17 @@ if (isset($_GET['basari'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo $language->getCurrentLang(); ?>">
 
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $duzenle_mod ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'; ?></title>
+    <title><?php echo $duzenle_mod ? $language->get('edit_service') : $language->get('add_service'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-
     <?php require_once 'header.php'; ?>
     <div class="container">
-
         <?php echo $mesaj; ?>
 
         <div class="row">
@@ -85,37 +83,37 @@ if (isset($_GET['basari'])) {
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title h5 mb-0">
-                            <?php echo $duzenle_mod ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'; ?>
+                            <?php echo $duzenle_mod ? $language->get('edit_service') : $language->get('add_service'); ?>
                         </h2>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-3">
-                                <label for="hizmet_adi" class="form-label">Hizmet Adı</label>
+                                <label for="hizmet_adi" class="form-label"><?php echo $language->get('service_name'); ?></label>
                                 <input type="text" class="form-control" id="hizmet_adi" name="hizmet_adi"
                                     value="<?php echo $duzenle_mod ? $hizmet['hizmet_adi'] : ''; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="aciklama" class="form-label">Açıklama</label>
+                                <label for="aciklama" class="form-label"><?php echo $language->get('description'); ?></label>
                                 <textarea class="form-control" id="aciklama" name="aciklama" rows="3"><?php echo $duzenle_mod ? $hizmet['aciklama'] : ''; ?></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="port" class="form-label">Varsayılan Port</label>
+                                <label for="port" class="form-label"><?php echo $language->get('default_port'); ?></label>
                                 <input type="text" class="form-control" id="port" name="port"
                                     value="<?php echo $duzenle_mod ? $hizmet['port'] : ''; ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="durum" class="form-label">Durum</label>
+                                <label for="durum" class="form-label"><?php echo $language->get('status'); ?></label>
                                 <select class="form-select" id="durum" name="durum">
-                                    <option value="Aktif" <?php echo ($duzenle_mod && $hizmet['durum'] == 'Aktif') ? 'selected' : ''; ?>>Aktif</option>
-                                    <option value="Pasif" <?php echo ($duzenle_mod && $hizmet['durum'] == 'Pasif') ? 'selected' : ''; ?>>Pasif</option>
+                                    <option value="Aktif" <?php echo ($duzenle_mod && $hizmet['durum'] == 'Aktif') ? 'selected' : ''; ?>><?php echo $language->get('active'); ?></option>
+                                    <option value="Pasif" <?php echo ($duzenle_mod && $hizmet['durum'] == 'Pasif') ? 'selected' : ''; ?>><?php echo $language->get('passive'); ?></option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">
-                                <?php echo $duzenle_mod ? 'Güncelle' : 'Kaydet'; ?>
+                                <?php echo $duzenle_mod ? $language->get('update') : $language->get('save'); ?>
                             </button>
                             <?php if ($duzenle_mod): ?>
-                                <a href="hizmet_ekle.php" class="btn btn-secondary">Yeni Hizmet</a>
+                                <a href="hizmet_ekle.php" class="btn btn-secondary"><?php echo $language->get('new_service'); ?></a>
                             <?php endif; ?>
                         </form>
                     </div>
@@ -125,18 +123,18 @@ if (isset($_GET['basari'])) {
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title h5 mb-0">Mevcut Hizmetler</h2>
+                        <h2 class="card-title h5 mb-0"><?php echo $language->get('existing_services'); ?></h2>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Hizmet Adı</th>
-                                        <th>Port</th>
-                                        <th>Durum</th>
-                                        <th>Kullanım</th>
-                                        <th>İşlemler</th>
+                                        <th><?php echo $language->get('service_name'); ?></th>
+                                        <th><?php echo $language->get('port'); ?></th>
+                                        <th><?php echo $language->get('status'); ?></th>
+                                        <th><?php echo $language->get('service_usage'); ?></th>
+                                        <th><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -151,22 +149,24 @@ if (isset($_GET['basari'])) {
                                             <td><?php echo $row['port'] ?: '-'; ?></td>
                                             <td>
                                                 <span class="badge <?php echo $row['durum'] == 'Aktif' ? 'bg-success' : 'bg-secondary'; ?>">
-                                                    <?php echo $row['durum']; ?>
+                                                    <?php echo $language->get($row['durum'] == 'Aktif' ? 'active' : 'passive'); ?>
                                                 </span>
                                             </td>
                                             <td>
                                                 <?php if ($row['kullanim_sayisi'] > 0): ?>
-                                                    <span class="badge bg-info"><?php echo $row['kullanim_sayisi']; ?> sunucu</span>
+                                                    <span class="badge bg-info">
+                                                        <?php echo str_replace('{count}', $row['kullanim_sayisi'], $language->get('server_count')); ?>
+                                                    </span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-secondary">Kullanılmıyor</span>
+                                                    <span class="badge bg-secondary"><?php echo $language->get('not_in_use'); ?></span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Düzenle</a>
+                                                <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
                                                     <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Bu hizmeti silmek istediğinize emin misiniz?')">Sil</a>
+                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_service'); ?>')"><?php echo $language->get('delete'); ?></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

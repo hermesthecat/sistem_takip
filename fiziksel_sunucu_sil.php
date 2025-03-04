@@ -15,14 +15,13 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     
     if ($row['sayi'] > 0) {
         // Eğer bağlı sanal sunucu varsa silme
-        $mesaj = "Bu fiziksel sunucuya bağlı " . $row['sayi'] . " adet sanal sunucu olduğu için silinemez. " .
-                 "Önce bağlı sanal sunucuları silmeniz gerekmektedir.";
+        $mesaj = str_replace('{sayi}', $row['sayi'], $language->get('error_has_virtual_servers'));
         header('Location: index.php?hata=' . urlencode($mesaj));
     } else {
         // Bağlı sanal sunucu yoksa sil
         $sql = "DELETE FROM fiziksel_sunucular WHERE id = '$id'";
         if (mysqli_query($conn, $sql)) {
-            header('Location: index.php?basari=Fiziksel sunucu başarıyla silindi.');
+            header('Location: index.php?basari=' . urlencode($language->get('success_physical_server_deleted')));
         } else {
             header('Location: index.php?hata=' . urlencode(mysqli_error($conn)));
         }

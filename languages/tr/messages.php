@@ -100,4 +100,21 @@ return [
     'total_cores' => 'Toplam Çekirdek Sayısı',
     'memory_capacity' => 'Bellek Kapasitesi',
     'disk_capacity' => 'Toplam Disk Kapasitesi',
+    
+    // Fiziksel Sunucu Silme
+    'error_has_virtual_servers' => 'Bu fiziksel sunucuya bağlı {sayi} adet sanal sunucu olduğu için silinemez. Önce bağlı sanal sunucuları silmeniz gerekmektedir.',
+    'success_server_deleted' => 'Fiziksel sunucu başarıyla silindi.',
+    
+    // Hizmet Yönetimi
+    'add_service' => 'Yeni Hizmet Ekle',
+    'edit_service' => 'Hizmet Düzenle',
+    'default_port' => 'Varsayılan Port',
+    'existing_services' => 'Mevcut Hizmetler',
+    'service_updated' => 'Hizmet başarıyla güncellendi.',
+    'service_added' => 'Yeni hizmet başarıyla eklendi.',
+    'service_usage' => 'Kullanım',
+    'not_in_use' => 'Kullanılmıyor',
+    'server_count' => '{count} sunucu',
+    'confirm_delete_service' => 'Bu hizmeti silmek istediğinize emin misiniz?',
+    'new_service' => 'Yeni Hizmet',
 ]; 

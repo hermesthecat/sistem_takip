@@ -100,4 +100,21 @@ return [
     'total_cores' => 'Total CPU Cores',
     'memory_capacity' => 'Memory Capacity',
     'disk_capacity' => 'Total Disk Capacity',
+    
+    // Physical Server Delete
+    'error_has_virtual_servers' => 'This physical server cannot be deleted because it has {sayi} virtual servers attached. You need to delete the attached virtual servers first.',
+    'success_server_deleted' => 'Physical server has been successfully deleted.',
+    
+    // Service Management
+    'add_service' => 'Add New Service',
+    'edit_service' => 'Edit Service',
+    'default_port' => 'Default Port',
+    'existing_services' => 'Existing Services',
+    'service_updated' => 'Service updated successfully.',
+    'service_added' => 'New service added successfully.',
+    'service_usage' => 'Usage',
+    'not_in_use' => 'Not in use',
+    'server_count' => '{count} servers',
+    'confirm_delete_service' => 'Are you sure you want to delete this service?',
+    'new_service' => 'New Service',
 ]; 
