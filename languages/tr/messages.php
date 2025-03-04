@@ -166,4 +166,38 @@ return [
     // Lokasyon Silme
     'error_location_has_servers' => 'Bu lokasyona bağlı sunucular olduğu için silinemez.',
     'success_location_deleted' => 'Lokasyon başarıyla silindi.',
+    
+    // Profil Sayfası
+    'profile_page_title' => 'Profil - {name}',
+    'profile_information' => 'Profil Bilgileri',
+    'account_information' => 'Hesap Bilgileri',
+    'current_password' => 'Mevcut Şifre',
+    'new_password' => 'Yeni Şifre',
+    'current_password_help' => 'Değişiklikleri onaylamak için mevcut şifrenizi girin.',
+    'registration_date' => 'Kayıt Tarihi',
+    'error_current_password' => 'Mevcut şifreniz hatalı!',
+    'success_profile_updated' => 'Profiliniz başarıyla güncellendi.',
+    'error_updating_profile' => 'Hata: {error}',
+    
+    // Proje Yönetimi
+    'project_management' => 'Proje Yönetimi',
+    'add_new_project' => 'Yeni Proje Ekle',
+    'edit_project' => 'Proje Düzenle',
+    'project_code' => 'Proje Kodu',
+    'project_code_placeholder' => 'Örn: PRJ-2024',
+    'existing_projects' => 'Mevcut Projeler',
+    'error_project_code_exists' => 'Hata: Bu proje kodu zaten kullanılıyor!',
+    'success_project_added' => 'Yeni proje başarıyla eklendi.',
+    'success_project_updated' => 'Proje başarıyla güncellendi.',
+    'error_updating_project' => 'Hata: {error}',
+    'physical_server_count' => '{count} fiziksel',
+    'virtual_server_count' => '{count} sanal',
+    'confirm_delete_project' => 'Bu projeyi silmek istediğinize emin misiniz?',
+    
+    // Proje Silme
+    'error_project_has_servers' => 'Bu projeye bağlı {fiziksel} fiziksel sunucu ve {sanal} sanal sunucu olduğu için silinemez.',
+    'error_project_has_physical_servers' => 'Bu projeye bağlı {count} fiziksel sunucu olduğu için silinemez.',
+    'error_project_has_virtual_servers' => 'Bu projeye bağlı {count} sanal sunucu olduğu için silinemez.',
+    'success_project_deleted' => 'Proje başarıyla silindi.',
+    'error_deleting_project' => 'Proje silinirken bir hata oluştu: {error}',
 ]; 

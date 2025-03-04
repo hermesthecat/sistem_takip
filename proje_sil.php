@@ -4,6 +4,7 @@
  */
 require_once 'auth.php';
 require_once 'config/database.php';
+require_once 'config/language.php';
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = mysqli_real_escape_string($conn, $_GET['id']);
@@ -18,25 +19,27 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     
     if ($row['fiziksel_sayi'] > 0 || $row['sanal_sayi'] > 0) {
         // Eğer bağlı sunucu varsa silme
-        $mesaj = "Bu projeye bağlı ";
-        $bagli_sunucular = array();
-        
-        if ($row['fiziksel_sayi'] > 0) {
-            $bagli_sunucular[] = $row['fiziksel_sayi'] . " fiziksel sunucu";
+        if ($row['fiziksel_sayi'] > 0 && $row['sanal_sayi'] > 0) {
+            $mesaj = str_replace(
+                ['{fiziksel}', '{sanal}'], 
+                [$row['fiziksel_sayi'], $row['sanal_sayi']], 
+                $language->get('error_project_has_servers')
+            );
+        } elseif ($row['fiziksel_sayi'] > 0) {
+            $mesaj = str_replace('{count}', $row['fiziksel_sayi'], $language->get('error_project_has_physical_servers'));
+        } else {
+            $mesaj = str_replace('{count}', $row['sanal_sayi'], $language->get('error_project_has_virtual_servers'));
         }
-        if ($row['sanal_sayi'] > 0) {
-            $bagli_sunucular[] = $row['sanal_sayi'] . " sanal sunucu";
-        }
         
-        $mesaj .= implode(" ve ", $bagli_sunucular) . " olduğu için silinemez.";
         header('Location: proje_ekle.php?hata=' . urlencode($mesaj));
     } else {
         // Bağlı sunucu yoksa sil
         $sql = "DELETE FROM projeler WHERE id = '$id'";
         if (mysqli_query($conn, $sql)) {
-            header('Location: proje_ekle.php?basari=Proje başarıyla silindi.');
+            header('Location: proje_ekle.php?basari=' . urlencode($language->get('success_project_deleted')));
         } else {
-            header('Location: proje_ekle.php?hata=' . urlencode(mysqli_error($conn)));
+            $mesaj = str_replace('{error}', mysqli_error($conn), $language->get('error_deleting_project'));
+            header('Location: proje_ekle.php?hata=' . urlencode($mesaj));
         }
     }
 } else {

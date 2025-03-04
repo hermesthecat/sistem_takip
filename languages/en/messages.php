@@ -166,4 +166,38 @@ return [
     // Location Delete
     'error_location_has_servers' => 'This location cannot be deleted because it has attached servers.',
     'success_location_deleted' => 'Location has been successfully deleted.',
+    
+    // Profile Page
+    'profile_page_title' => 'Profile - {name}',
+    'profile_information' => 'Profile Information',
+    'account_information' => 'Account Information',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'current_password_help' => 'Enter your current password to confirm changes.',
+    'registration_date' => 'Registration Date',
+    'error_current_password' => 'Current password is incorrect!',
+    'success_profile_updated' => 'Your profile has been updated successfully.',
+    'error_updating_profile' => 'Error: {error}',
+    
+    // Project Management
+    'project_management' => 'Project Management',
+    'add_new_project' => 'Add New Project',
+    'edit_project' => 'Edit Project',
+    'project_code' => 'Project Code',
+    'project_code_placeholder' => 'Ex: PRJ-2024',
+    'existing_projects' => 'Existing Projects',
+    'error_project_code_exists' => 'Error: This project code is already in use!',
+    'success_project_added' => 'New project added successfully.',
+    'success_project_updated' => 'Project updated successfully.',
+    'error_updating_project' => 'Error: {error}',
+    'physical_server_count' => '{count} physical',
+    'virtual_server_count' => '{count} virtual',
+    'confirm_delete_project' => 'Are you sure you want to delete this project?',
+    
+    // Project Delete
+    'error_project_has_servers' => 'This project cannot be deleted because it has {fiziksel} physical servers and {sanal} virtual servers.',
+    'error_project_has_physical_servers' => 'This project cannot be deleted because it has {count} physical servers.',
+    'error_project_has_virtual_servers' => 'This project cannot be deleted because it has {count} virtual servers.',
+    'success_project_deleted' => 'Project has been successfully deleted.',
+    'error_deleting_project' => 'An error occurred while deleting the project: {error}',
 ]; 
