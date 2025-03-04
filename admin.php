@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
@@ -35,11 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         $rol = mysqli_real_escape_string($conn, $_POST['rol']);
         $durum = mysqli_real_escape_string($conn, $_POST['durum']);
-        
+
         if (isset($_POST['kullanici_ekle'])) {
             // Yeni kullanıcı ekleme
             $sifre = password_hash($_POST['sifre'], PASSWORD_DEFAULT);
-            
+
             // Kullanıcı adı ve email kontrolü
             $kontrol = mysqli_query($conn, "SELECT id FROM kullanicilar WHERE kullanici_adi = '$kullanici_adi' OR email = '$email'");
             if (mysqli_num_rows($kontrol) > 0) {
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $sql = "INSERT INTO kullanicilar (kullanici_adi, ad_soyad, email, sifre, rol, durum) 
                         VALUES ('$kullanici_adi', '$ad_soyad', '$email', '$sifre', '$rol', '$durum')";
-                
+
                 if (mysqli_query($conn, $sql)) {
                     $mesaj = "<div class='alert alert-success'>Kullanıcı başarıyla eklendi.</div>";
                 } else {
@@ -57,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             // Kullanıcı güncelleme
             $id = mysqli_real_escape_string($conn, $_POST['id']);
-            
+
             // Email kontrolü (kendi emaili hariç)
             $kontrol = mysqli_query($conn, "SELECT id FROM kullanicilar WHERE email = '$email' AND id != '$id'");
             if (mysqli_num_rows($kontrol) > 0) {
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         rol = '$rol',
                         durum = '$durum'
                         WHERE id = '$id'";
-                
+
                 if (!empty($_POST['sifre'])) {
                     $yeni_sifre = password_hash($_POST['sifre'], PASSWORD_DEFAULT);
                     $sql = "UPDATE kullanicilar SET 
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             durum = '$durum'
                             WHERE id = '$id'";
                 }
-                
+
                 if (mysqli_query($conn, $sql)) {
                     $mesaj = "<div class='alert alert-success'>Kullanıcı başarıyla güncellendi.</div>";
                 } else {
@@ -98,20 +99,22 @@ $kullanicilar = mysqli_query($conn, $sql);
 
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <title>Kullanıcı Yönetimi - Sunucu Takip Sistemi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
     <?php require_once 'header.php'; ?>
-    
+
     <div class="container">
         <?php echo $mesaj; ?>
-        
+
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h2 class="card-title h5 mb-0">Kullanıcılar</h2>
@@ -152,7 +155,7 @@ $kullanicilar = mysqli_query($conn, $sql);
                                                 </span>
                                             </td>
                                             <td>
-                                                <?php 
+                                                <?php
                                                 if ($kullanici['son_giris']) {
                                                     echo date('d.m.Y H:i', strtotime($kullanici['son_giris']));
                                                 } else {
@@ -161,14 +164,14 @@ $kullanicilar = mysqli_query($conn, $sql);
                                                 ?>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-warning btn-sm" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#duzenleModal<?php echo $kullanici['id']; ?>">
+                                                <button type="button" class="btn btn-warning btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#duzenleModal<?php echo $kullanici['id']; ?>">
                                                     Düzenle
                                                 </button>
                                             </td>
                                         </tr>
-                                        
+
                                         <!-- Düzenleme Modal -->
                                         <div class="modal fade" id="duzenleModal<?php echo $kullanici['id']; ?>" tabindex="-1">
                                             <div class="modal-dialog">
@@ -187,13 +190,13 @@ $kullanicilar = mysqli_query($conn, $sql);
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label">Ad Soyad</label>
-                                                                <input type="text" class="form-control" name="ad_soyad" 
-                                                                       value="<?php echo $kullanici['ad_soyad']; ?>" required>
+                                                                <input type="text" class="form-control" name="ad_soyad"
+                                                                    value="<?php echo $kullanici['ad_soyad']; ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label">Email</label>
-                                                                <input type="email" class="form-control" name="email" 
-                                                                       value="<?php echo $kullanici['email']; ?>" required>
+                                                                <input type="email" class="form-control" name="email"
+                                                                    value="<?php echo $kullanici['email']; ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label">Yeni Şifre</label>
@@ -240,7 +243,7 @@ $kullanicilar = mysqli_query($conn, $sql);
             </div>
         </div>
     </div>
-    
+
     <!-- Yeni Kullanıcı Modal -->
     <div class="modal fade" id="yeniKullaniciModal" tabindex="-1">
         <div class="modal-dialog">
@@ -290,7 +293,8 @@ $kullanicilar = mysqli_query($conn, $sql);
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>

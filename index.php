@@ -93,9 +93,7 @@ function kaynak_deger_al($str, $tip) {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Fiziksel Sunucular</h1>
             <div>
-                <a href="proje_ekle.php" class="btn btn-outline-success me-2">Yeni Proje Ekle</a>
-                <a href="lokasyon_ekle.php" class="btn btn-outline-primary me-2">Yeni Lokasyon Ekle</a>
-                <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Yeni Fiziksel Sunucu Ekle</a>
+                <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Fiziksel Sunucu Ekle</a>
             </div>
         </div>
         <div class="table-responsive">
@@ -109,8 +107,7 @@ function kaynak_deger_al($str, $tip) {
                         <th>Lokasyon</th>
                         <th>Proje</th>
                         <th>Sanal Sunucular</th>
-                        <th>Oluşturma Tarihi</th>
-                        <th>İşlemler</th>
+                        <th class="text-end">İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,8 +153,7 @@ function kaynak_deger_al($str, $tip) {
                                     }
                                     ?>
                                 </td>
-                                <td><?php echo date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])); ?></td>
-                                <td>
+                                <td class="text-end">
                                     <a href='sanal_sunucular.php?fiziksel_id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'>Sanal Sunucular</a>
                                     <a href='fiziksel_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'>Düzenle</a>
                                     <?php if ($row['sanal_sayi'] == 0): ?>
@@ -277,7 +273,7 @@ function kaynak_deger_al($str, $tip) {
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="9" class="text-center">Henüz fiziksel sunucu eklenmemiş.</td>
+                            <td colspan="8" class="text-center">Henüz fiziksel sunucu eklenmemiş.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

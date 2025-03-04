@@ -42,12 +42,12 @@ $result = mysqli_query($conn, $sql);
     <?php require_once 'header.php'; ?>
 
     <div class="container">
-        <div class="mb-3">
-            <a href="index.php" class="btn btn-secondary">← Fiziksel Sunuculara Dön</a>
-        </div>
-        <h1 class="mb-4">Sanal Sunucular - <?php echo $fiziksel_sunucu['sunucu_adi']; ?></h1>
-        <div class="mb-3">
-            <a href="sanal_sunucu_ekle.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-primary">Yeni Sanal Sunucu Ekle</a>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Sanal Sunucu Listesi <i>(<?php echo $fiziksel_sunucu['sunucu_adi']; ?>)</i></h1>
+            <div>
+            <a href="sanal_sunucu_ekle.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-primary">Sanal Sunucu Ekle</a>            </div>
+                 
         </div>
         <table class="table table-striped">
             <thead>
@@ -58,8 +58,7 @@ $result = mysqli_query($conn, $sql);
                     <th>Bellek</th>
                     <th>Çekirdek</th>
                     <th>Disk</th>
-                    <th>Oluşturma Tarihi</th>
-                    <th>İşlemler</th>
+                    <th class="text-end">İşlemler</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,8 +72,7 @@ $result = mysqli_query($conn, $sql);
                         echo "<td>" . $row['ram'] . "</td>";
                         echo "<td>" . $row['cpu'] . "</td>";
                         echo "<td>" . $row['disk'] . "</td>";
-                        echo "<td>" . $row['olusturma_tarihi'] . "</td>";
-                        echo "<td>
+                        echo "<td class='text-end'>
                                 <a href='sanal_sunucu_detay.php?id=" . $row['id'] . "' class='btn btn-info btn-sm'>Detay</a>
                                 <a href='sanal_sunucu_duzenle.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Düzenle</a>
                                 <a href='sanal_sunucu_sil.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"Emin misiniz?\")'>Sil</a>
@@ -82,7 +80,7 @@ $result = mysqli_query($conn, $sql);
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='8' class='text-center'>Bu fiziksel sunucuya bağlı sanal sunucu bulunmamaktadır.</td></tr>";
+                    echo "<tr><td colspan='7' class='text-center'>Bu fiziksel sunucuya bağlı sanal sunucu bulunmamaktadır.</td></tr>";
                 }
                 ?>
             </tbody>

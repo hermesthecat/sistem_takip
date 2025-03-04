@@ -168,7 +168,7 @@ $projeler = mysqli_query($conn, $sql);
                                     </option>
                                 <?php endwhile; ?>
                             </select>
-                            <div class="form-text">Fiziksel sunucunun projesi varsayılan olarak seçilir.</div>
+                            <div class="form-text">Fiziksel sunucunun projesi varsayılan olarak seçilir. İsterseniz proje seçebilirsiniz.</div>
                         </div>
                     </div>
                     <div class="col-md-6">

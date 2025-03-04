@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
@@ -14,7 +15,7 @@ if (isset($_GET['id'])) {
     $sql = "SELECT * FROM hizmetler WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     $hizmet = mysqli_fetch_assoc($result);
-    
+
     if ($hizmet) {
         $duzenle_mod = true;
     }
@@ -25,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $aciklama = mysqli_real_escape_string($conn, $_POST['aciklama']);
     $port = mysqli_real_escape_string($conn, $_POST['port']);
     $durum = mysqli_real_escape_string($conn, $_POST['durum']);
-    
+
     if ($duzenle_mod) {
         $sql = "UPDATE hizmetler SET 
                 hizmet_adi = '$hizmet_adi',
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 VALUES ('$hizmet_adi', '$aciklama', '$port', '$durum')";
         $basari_mesaj = "Yeni hizmet başarıyla eklendi.";
     }
-    
+
     if (mysqli_query($conn, $sql)) {
         header("Location: hizmet_ekle.php?basari=" . urlencode($basari_mesaj));
         exit;
@@ -65,19 +66,20 @@ if (isset($_GET['basari'])) {
 
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo $duzenle_mod ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <div class="container mt-5">
-        <div class="mb-3">
-            <a href="index.php" class="btn btn-secondary">← Ana Sayfaya Dön</a>
-        </div>
-        
+
+    <?php require_once 'header.php'; ?>
+    <div class="container">
+
         <?php echo $mesaj; ?>
-        
+
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
@@ -90,8 +92,8 @@ if (isset($_GET['basari'])) {
                         <form method="POST">
                             <div class="mb-3">
                                 <label for="hizmet_adi" class="form-label">Hizmet Adı</label>
-                                <input type="text" class="form-control" id="hizmet_adi" name="hizmet_adi" 
-                                       value="<?php echo $duzenle_mod ? $hizmet['hizmet_adi'] : ''; ?>" required>
+                                <input type="text" class="form-control" id="hizmet_adi" name="hizmet_adi"
+                                    value="<?php echo $duzenle_mod ? $hizmet['hizmet_adi'] : ''; ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="aciklama" class="form-label">Açıklama</label>
@@ -99,8 +101,8 @@ if (isset($_GET['basari'])) {
                             </div>
                             <div class="mb-3">
                                 <label for="port" class="form-label">Varsayılan Port</label>
-                                <input type="text" class="form-control" id="port" name="port" 
-                                       value="<?php echo $duzenle_mod ? $hizmet['port'] : ''; ?>">
+                                <input type="text" class="form-control" id="port" name="port"
+                                    value="<?php echo $duzenle_mod ? $hizmet['port'] : ''; ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="durum" class="form-label">Durum</label>
@@ -119,7 +121,7 @@ if (isset($_GET['basari'])) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
@@ -162,9 +164,9 @@ if (isset($_GET['basari'])) {
                                             <td>
                                                 <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Düzenle</a>
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
-                                                    <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>" 
-                                                       class="btn btn-danger btn-sm"
-                                                       onclick="return confirm('Bu hizmeti silmek istediğinize emin misiniz?')">Sil</a>
+                                                    <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
+                                                        class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Bu hizmeti silmek istediğinize emin misiniz?')">Sil</a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -179,4 +181,5 @@ if (isset($_GET['basari'])) {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>
