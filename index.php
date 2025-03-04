@@ -48,6 +48,7 @@ $result = mysqli_query($conn, $sql);
                         <th>ID</th>
                         <th>Sunucu Adı</th>
                         <th>IP Adresi</th>
+                        <th>Donanım</th>
                         <th>Lokasyon</th>
                         <th>Proje</th>
                         <th>Sanal Sunucular</th>
@@ -63,6 +64,15 @@ $result = mysqli_query($conn, $sql);
                             echo "<td>" . $row['id'] . "</td>";
                             echo "<td>" . $row['sunucu_adi'] . "</td>";
                             echo "<td>" . $row['ip_adresi'] . "</td>";
+                            echo "<td>";
+                            if ($row['cpu'] || $row['ram'] || $row['disk']) {
+                                echo "<small class='d-block'><strong>CPU:</strong> " . ($row['cpu'] ?: '-') . "</small>";
+                                echo "<small class='d-block'><strong>RAM:</strong> " . ($row['ram'] ?: '-') . "</small>";
+                                echo "<small class='d-block'><strong>Disk:</strong> " . ($row['disk'] ?: '-') . "</small>";
+                            } else {
+                                echo "<span class='text-muted'>-</span>";
+                            }
+                            echo "</td>";
                             echo "<td>" . $row['lokasyon_adi'] . "</td>";
                             echo "<td>";
                             if ($row['proje_adi']) {
