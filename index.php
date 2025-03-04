@@ -110,105 +110,172 @@ function kaynak_deger_al($str, $tip) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            // Fiziksel sunucu kaynakları
-                            $fiziksel_cpu = kaynak_deger_al($row['cpu'], 'cpu');
-                            $fiziksel_ram = kaynak_deger_al($row['ram'], 'ram');
-                            $fiziksel_disk = kaynak_deger_al($row['disk'], 'disk');
-                            
-                            // Sanal sunucuların toplam kaynak kullanımı
-                            $sanal_cpu = 0;
-                            $sanal_ram = 0;
-                            $sanal_disk = 0;
-                            
-                            if ($row['sanal_kaynaklar']) {
-                                $sanal_sunucular = explode('|', $row['sanal_kaynaklar']);
-                                foreach ($sanal_sunucular as $sanal) {
-                                    list($cpu, $ram, $disk) = explode(':', $sanal);
-                                    $sanal_cpu += kaynak_deger_al($cpu, 'cpu');
-                                    $sanal_ram += kaynak_deger_al($ram, 'ram');
-                                    $sanal_disk += kaynak_deger_al($disk, 'disk');
-                                }
-                            }
-                            
-                            echo "<tr class='align-middle'>";
-                            echo "<td>" . $row['id'] . "</td>";
-                            echo "<td>" . $row['sunucu_adi'] . "</td>";
-                            echo "<td>" . $row['ip_adresi'] . "</td>";
-                            echo "<td>";
-                            if ($row['cpu'] || $row['ram'] || $row['disk']) {
-                                echo "<small class='d-block'><strong>CPU:</strong> " . ($row['cpu'] ?: '-') . "</small>";
-                                echo "<small class='d-block'><strong>RAM:</strong> " . ($row['ram'] ?: '-') . "</small>";
-                                echo "<small class='d-block'><strong>Disk:</strong> " . ($row['disk'] ?: '-') . "</small>";
-                                
-                                // Kaynak kullanım bilgileri
-                                if ($fiziksel_cpu > 0 || $fiziksel_ram > 0 || $fiziksel_disk > 0) {
-                                    echo "<div class='kaynak-kullanim'>";
-                                    if ($fiziksel_cpu > 0) {
-                                        $cpu_yuzde = min(100, ($sanal_cpu / $fiziksel_cpu) * 100);
-                                        echo "<div class='kaynak-baslik'>CPU Kullanımı: {$sanal_cpu}/{$fiziksel_cpu} Core (" . number_format($cpu_yuzde, 1) . "%)</div>";
-                                        echo "<div class='progress mb-2'>";
-                                        echo "<div class='progress-bar" . ($cpu_yuzde > 90 ? " bg-danger" : ($cpu_yuzde > 70 ? " bg-warning" : "")) . "' 
-                                              role='progressbar' style='width: {$cpu_yuzde}%'></div>";
-                                        echo "</div>";
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo $row['sunucu_adi']; ?></td>
+                                <td><?php echo $row['ip_adresi'] ?: '<span class="text-muted">-</span>'; ?></td>
+                                <td>
+                                    <?php if ($row['cpu'] || $row['ram'] || $row['disk']): ?>
+                                        <ul class="list-unstyled mb-0">
+                                            <?php if ($row['cpu']): ?>
+                                                <li><strong>CPU:</strong> <?php echo $row['cpu']; ?></li>
+                                            <?php endif; ?>
+                                            <?php if ($row['ram']): ?>
+                                                <li><strong>RAM:</strong> <?php echo $row['ram']; ?></li>
+                                            <?php endif; ?>
+                                            <?php if ($row['disk']): ?>
+                                                <li><strong>Disk:</strong> <?php echo $row['disk']; ?></li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo $row['lokasyon_adi'] ?: '<span class="text-muted">-</span>'; ?></td>
+                                <td>
+                                    <?php
+                                    if ($row['proje_adi']) {
+                                        echo $row['proje_adi'] . " <small class='text-muted'>(" . $row['proje_kodu'] . ")</small>";
+                                    } else {
+                                        echo "<span class='text-muted'>-</span>";
                                     }
-                                    
-                                    if ($fiziksel_ram > 0) {
-                                        $ram_yuzde = min(100, ($sanal_ram / $fiziksel_ram) * 100);
-                                        echo "<div class='kaynak-baslik'>RAM Kullanımı: {$sanal_ram}/{$fiziksel_ram} GB (" . number_format($ram_yuzde, 1) . "%)</div>";
-                                        echo "<div class='progress mb-2'>";
-                                        echo "<div class='progress-bar" . ($ram_yuzde > 90 ? " bg-danger" : ($ram_yuzde > 70 ? " bg-warning" : "")) . "' 
-                                              role='progressbar' style='width: {$ram_yuzde}%'></div>";
-                                        echo "</div>";
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if ($row['sanal_sayi'] > 0) {
+                                        echo "<span class='badge bg-info'>" . $row['sanal_sayi'] . " sanal sunucu</span>";
+                                    } else {
+                                        echo "<span class='badge bg-secondary'>Yok</span>";
                                     }
-                                    
-                                    if ($fiziksel_disk > 0) {
-                                        $disk_yuzde = min(100, ($sanal_disk / $fiziksel_disk) * 100);
-                                        echo "<div class='kaynak-baslik'>Disk Kullanımı: {$sanal_disk}/{$fiziksel_disk} GB (" . number_format($disk_yuzde, 1) . "%)</div>";
-                                        echo "<div class='progress'>";
-                                        echo "<div class='progress-bar" . ($disk_yuzde > 90 ? " bg-danger" : ($disk_yuzde > 70 ? " bg-warning" : "")) . "' 
-                                              role='progressbar' style='width: {$disk_yuzde}%'></div>";
-                                        echo "</div>";
-                                    }
-                                    echo "</div>";
-                                }
-                            } else {
-                                echo "<span class='text-muted'>-</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>" . $row['lokasyon_adi'] . "</td>";
-                            echo "<td>";
-                            if ($row['proje_adi']) {
-                                echo $row['proje_adi'] . " <small class='text-muted'>(" . $row['proje_kodu'] . ")</small>";
-                            } else {
-                                echo "<span class='text-muted'>-</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>";
-                            if ($row['sanal_sayi'] > 0) {
-                                echo "<span class='badge bg-info'>" . $row['sanal_sayi'] . " sanal sunucu</span>";
-                            } else {
-                                echo "<span class='badge bg-secondary'>Yok</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>" . date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])) . "</td>";
-                            echo "<td>
-                                    <a href='sanal_sunucular.php?fiziksel_id=" . $row['id'] . "' class='btn btn-info btn-sm'>Sanal Sunucular</a>
-                                    <a href='fiziksel_sunucu_duzenle.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Düzenle</a>";
-                            if ($row['sanal_sayi'] == 0) {
-                                echo " <a href='fiziksel_sunucu_sil.php?id=" . $row['id'] . "' 
-                                         class='btn btn-danger btn-sm' 
-                                         onclick='return confirm(\"Bu fiziksel sunucuyu silmek istediğinize emin misiniz?\")'>Sil</a>";
-                            }
-                            echo "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='8' class='text-center'>Henüz fiziksel sunucu eklenmemiş.</td></tr>";
-                    }
-                    ?>
+                                    ?>
+                                </td>
+                                <td><?php echo date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])); ?></td>
+                                <td>
+                                    <a href='sanal_sunucular.php?fiziksel_id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'>Sanal Sunucular</a>
+                                    <a href='fiziksel_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'>Düzenle</a>
+                                    <?php if ($row['sanal_sayi'] == 0): ?>
+                                        <a href='fiziksel_sunucu_sil.php?id=<?php echo $row['id']; ?>' 
+                                           class='btn btn-danger btn-sm' 
+                                           onclick='return confirm("Bu fiziksel sunucuyu silmek istediğinize emin misiniz?")'>Sil</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php if ($row['sanal_sayi'] > 0 && $row['sanal_kaynaklar']): ?>
+                            <tr class="table-light">
+                                <td colspan="9">
+                                    <div class="small">
+                                        <strong>Sanal Sunucu Kaynakları:</strong>
+                                        <table class="table table-sm table-bordered mt-1 mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 33%">CPU Kullanımı</th>
+                                                    <th style="width: 33%">RAM Kullanımı</th>
+                                                    <th style="width: 33%">Disk Kullanımı</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <?php
+                                                    $sanal_kaynaklar = explode('|', $row['sanal_kaynaklar']);
+                                                    
+                                                    // Toplam değerleri tutacak değişkenler
+                                                    $toplam_cpu = 0;
+                                                    $toplam_ram = 0;
+                                                    $toplam_disk = 0;
+                                                    
+                                                    foreach ($sanal_kaynaklar as $kaynak) {
+                                                        if (!empty($kaynak)) {
+                                                            list($cpu, $ram, $disk) = explode(':', $kaynak);
+                                                            // Sayısal değerleri çıkar
+                                                            $cpu_sayi = intval(preg_replace('/[^0-9]/', '', $cpu));
+                                                            $ram_sayi = intval(preg_replace('/[^0-9]/', '', $ram));
+                                                            $disk_sayi = intval(preg_replace('/[^0-9]/', '', $disk));
+                                                            
+                                                            // TB to GB dönüşümü
+                                                            if (stripos($disk, 'TB') !== false) {
+                                                                $disk_sayi *= 1024;
+                                                            }
+                                                            
+                                                            $toplam_cpu += $cpu_sayi;
+                                                            $toplam_ram += $ram_sayi;
+                                                            $toplam_disk += $disk_sayi;
+                                                        }
+                                                    }
+                                                    
+                                                    // Fiziksel sunucunun toplam kaynaklarını al
+                                                    $fiziksel_cpu = intval(preg_replace('/[^0-9]/', '', $row['cpu']));
+                                                    $fiziksel_ram = intval(preg_replace('/[^0-9]/', '', $row['ram']));
+                                                    $fiziksel_disk = $row['disk'];
+                                                    if (stripos($fiziksel_disk, 'TB') !== false) {
+                                                        $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk)) * 1024;
+                                                    } else {
+                                                        $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk));
+                                                    }
+                                                    
+                                                    // Kullanım yüzdelerini hesapla
+                                                    $cpu_yuzde = round(($toplam_cpu / $fiziksel_cpu) * 100);
+                                                    $ram_yuzde = round(($toplam_ram / $fiziksel_ram) * 100);
+                                                    $disk_yuzde = round(($toplam_disk / $fiziksel_disk) * 100);
+                                                    
+                                                    // Progress bar renkleri için class belirle
+                                                    function get_progress_class($yuzde) {
+                                                        if ($yuzde >= 90) return 'bg-danger';
+                                                        if ($yuzde >= 75) return 'bg-warning';
+                                                        return 'bg-success';
+                                                    }
+                                                    ?>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar <?php echo get_progress_class($cpu_yuzde); ?>" 
+                                                                 role="progressbar" 
+                                                                 style="width: <?php echo $cpu_yuzde; ?>%;" 
+                                                                 aria-valuenow="<?php echo $cpu_yuzde; ?>" 
+                                                                 aria-valuemin="0" 
+                                                                 aria-valuemax="100">
+                                                                <?php echo $toplam_cpu . "/" . $fiziksel_cpu . " Core"; ?>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar <?php echo get_progress_class($ram_yuzde); ?>" 
+                                                                 role="progressbar" 
+                                                                 style="width: <?php echo $ram_yuzde; ?>%;" 
+                                                                 aria-valuenow="<?php echo $ram_yuzde; ?>" 
+                                                                 aria-valuemin="0" 
+                                                                 aria-valuemax="100">
+                                                                <?php echo $toplam_ram . "/" . $fiziksel_ram . " GB"; ?>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar <?php echo get_progress_class($disk_yuzde); ?>" 
+                                                                 role="progressbar" 
+                                                                 style="width: <?php echo $disk_yuzde; ?>%;" 
+                                                                 aria-valuenow="<?php echo $disk_yuzde; ?>" 
+                                                                 aria-valuemin="0" 
+                                                                 aria-valuemax="100">
+                                                                <?php echo $toplam_disk . "/" . $fiziksel_disk . " GB"; ?>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="9" class="text-center">Henüz fiziksel sunucu eklenmemiş.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
