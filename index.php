@@ -4,7 +4,10 @@
  */
 require_once 'config/database.php';
 
-$sql = "SELECT * FROM fiziksel_sunucular ORDER BY sunucu_adi";
+$sql = "SELECT fs.*, l.lokasyon_adi 
+        FROM fiziksel_sunucular fs 
+        LEFT JOIN lokasyonlar l ON fs.lokasyon_id = l.id 
+        ORDER BY fs.sunucu_adi";
 $result = mysqli_query($conn, $sql);
 ?>
 
@@ -17,9 +20,12 @@ $result = mysqli_query($conn, $sql);
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Fiziksel Sunucular</h1>
-        <div class="mb-3">
-            <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Yeni Fiziksel Sunucu Ekle</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Fiziksel Sunucular</h1>
+            <div>
+                <a href="lokasyon_ekle.php" class="btn btn-outline-primary me-2">Yeni Lokasyon Ekle</a>
+                <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Yeni Fiziksel Sunucu Ekle</a>
+            </div>
         </div>
         <table class="table table-striped">
             <thead>
@@ -40,7 +46,7 @@ $result = mysqli_query($conn, $sql);
                         echo "<td>" . $row['id'] . "</td>";
                         echo "<td>" . $row['sunucu_adi'] . "</td>";
                         echo "<td>" . $row['ip_adresi'] . "</td>";
-                        echo "<td>" . $row['lokasyon'] . "</td>";
+                        echo "<td>" . $row['lokasyon_adi'] . "</td>";
                         echo "<td>" . $row['olusturma_tarihi'] . "</td>";
                         echo "<td>
                                 <a href='sanal_sunucular.php?fiziksel_id=" . $row['id'] . "' class='btn btn-info btn-sm'>Sanal Sunucular</a>

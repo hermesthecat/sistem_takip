@@ -21,17 +21,21 @@ if (!$sunucu) {
     exit;
 }
 
+// Lokasyonları getir
+$sql_lokasyonlar = "SELECT * FROM lokasyonlar ORDER BY lokasyon_adi";
+$result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
+
 $mesaj = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sunucu_adi = mysqli_real_escape_string($conn, $_POST['sunucu_adi']);
     $ip_adresi = mysqli_real_escape_string($conn, $_POST['ip_adresi']);
-    $lokasyon = mysqli_real_escape_string($conn, $_POST['lokasyon']);
+    $lokasyon_id = mysqli_real_escape_string($conn, $_POST['lokasyon_id']);
 
     $sql = "UPDATE fiziksel_sunucular SET 
             sunucu_adi = '$sunucu_adi',
             ip_adresi = '$ip_adresi',
-            lokasyon = '$lokasyon'
+            lokasyon_id = '$lokasyon_id'
             WHERE id = '$id'";
     
     if (mysqli_query($conn, $sql)) {
@@ -74,8 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="text" class="form-control" id="ip_adresi" name="ip_adresi" value="<?php echo $sunucu['ip_adresi']; ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lokasyon" class="form-label">Lokasyon</label>
-                        <input type="text" class="form-control" id="lokasyon" name="lokasyon" value="<?php echo $sunucu['lokasyon']; ?>" required>
+                        <label for="lokasyon_id" class="form-label">Lokasyon</label>
+                        <select class="form-select" id="lokasyon_id" name="lokasyon_id" required>
+                            <option value="">Lokasyon Seçin</option>
+                            <?php while ($lokasyon = mysqli_fetch_assoc($result_lokasyonlar)): ?>
+                                <option value="<?php echo $lokasyon['id']; ?>" <?php echo ($lokasyon['id'] == $sunucu['lokasyon_id']) ? 'selected' : ''; ?>>
+                                    <?php echo $lokasyon['lokasyon_adi']; ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                        <div class="mt-2">
+                            <a href="lokasyon_ekle.php" class="btn btn-sm btn-outline-primary">Yeni Lokasyon Ekle</a>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Güncelle</button>
                 </form>

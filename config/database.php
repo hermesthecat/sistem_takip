@@ -14,12 +14,5 @@ if (!$conn) {
     die("Bağlantı hatası: " . mysqli_connect_error());
 }
 
-if (!mysqli_select_db($conn, DB_NAME)) {
-    // Veritabanı yoksa oluştur
-    $sql = "CREATE DATABASE IF NOT EXISTS " . DB_NAME;
-    if (mysqli_query($conn, $sql)) {
-        mysqli_select_db($conn, DB_NAME);
-    } else {
-        die("Veritabanı oluşturma hatası: " . mysqli_error($conn));
-    }
-}
+// Veritabanını seç
+mysqli_select_db($conn, DB_NAME);
