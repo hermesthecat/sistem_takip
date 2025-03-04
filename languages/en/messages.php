@@ -117,4 +117,10 @@ return [
     'server_count' => '{count} servers',
     'confirm_delete_service' => 'Are you sure you want to delete this service?',
     'new_service' => 'New Service',
+    
+    // Service Delete
+    'error_service_id_missing' => 'Service ID not specified.',
+    'error_service_in_use' => 'This service is being used by {count} virtual servers. Please remove the service from these servers first.',
+    'success_service_deleted' => 'Service has been successfully deleted.',
+    'error_deleting_service' => 'An error occurred while deleting the service: {error}',
 ]; 

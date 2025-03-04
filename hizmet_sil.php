@@ -6,7 +6,7 @@ require_once 'auth.php';
 require_once 'config/database.php';
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header('Location: hizmet_ekle.php?hata=' . urlencode('Hizmet ID belirtilmedi.'));
+    header('Location: hizmet_ekle.php?hata=' . urlencode($language->get('error_service_id_missing')));
     exit;
 }
 
@@ -18,15 +18,17 @@ $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 
 if ($row['kullanim'] > 0) {
-    header('Location: hizmet_ekle.php?hata=' . urlencode('Bu hizmet ' . $row['kullanim'] . ' sanal sunucu tarafından kullanılıyor. Önce bu sunuculardan hizmeti kaldırın.'));
+    $error_message = str_replace('{count}', $row['kullanim'], $language->get('error_service_in_use'));
+    header('Location: hizmet_ekle.php?hata=' . urlencode($error_message));
     exit;
 }
 
 // Hizmeti sil
 $sql = "DELETE FROM hizmetler WHERE id = '$id'";
 if (mysqli_query($conn, $sql)) {
-    header('Location: hizmet_ekle.php?basari=' . urlencode('Hizmet başarıyla silindi.'));
+    header('Location: hizmet_ekle.php?basari=' . urlencode($language->get('success_service_deleted')));
 } else {
-    header('Location: hizmet_ekle.php?hata=' . urlencode('Hizmet silinirken bir hata oluştu: ' . mysqli_error($conn)));
+    $error_message = str_replace('{error}', mysqli_error($conn), $language->get('error_deleting_service'));
+    header('Location: hizmet_ekle.php?hata=' . urlencode($error_message));
 }
 exit; 

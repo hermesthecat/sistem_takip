@@ -117,4 +117,10 @@ return [
     'server_count' => '{count} sunucu',
     'confirm_delete_service' => 'Bu hizmeti silmek istediğinize emin misiniz?',
     'new_service' => 'Yeni Hizmet',
+    
+    // Hizmet Silme
+    'error_service_id_missing' => 'Hizmet ID belirtilmedi.',
+    'error_service_in_use' => 'Bu hizmet {count} sanal sunucu tarafından kullanılıyor. Önce bu sunuculardan hizmeti kaldırın.',
+    'success_service_deleted' => 'Hizmet başarıyla silindi.',
+    'error_deleting_service' => 'Hizmet silinirken bir hata oluştu: {error}',
 ]; 
