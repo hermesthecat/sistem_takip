@@ -76,5 +76,28 @@ return [
     'error_email_exists' => 'This email is already used by another user!',
     'success_user_added' => 'User added successfully.',
     'success_user_updated' => 'User updated successfully.',
-    'error_no_access' => 'You don\'t have permission to access this page!'
+    'error_no_access' => 'You don\'t have permission to access this page!',
+    
+    // Physical Server Edit
+    'edit_physical_server' => 'Edit Physical Server',
+    'back_to_physical_servers' => 'Back to Physical Servers',
+    'server_details' => 'Server Details',
+    'select_location' => 'Select Location',
+    'add_new_location' => 'Add New Location',
+    'select_project' => 'Select Project (Optional)',
+    'add_new_project' => 'Add New Project',
+    'cpu_cores' => 'CPU Cores',
+    'memory' => 'Memory',
+    'cpu_placeholder' => 'Ex: Intel Xeon E5-2680 v4 2.40GHz',
+    'memory_placeholder' => 'Ex: 64GB DDR4',
+    'disk_placeholder' => 'Ex: 2x 500GB SSD RAID1',
+    'update' => 'Update',
+    'error_updating_server' => 'An error occurred while updating the server',
+    
+    // Physical Server Add
+    'add_physical_server' => 'Add New Physical Server',
+    'error_adding_server' => 'An error occurred while adding the server',
+    'total_cores' => 'Total CPU Cores',
+    'memory_capacity' => 'Memory Capacity',
+    'disk_capacity' => 'Total Disk Capacity',
 ]; 
