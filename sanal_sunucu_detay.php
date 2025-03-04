@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $yeni_hizmet_id = mysqli_insert_id($conn);
             
             // Hizmeti direkt olarak sanal sunucuya ekle
-            $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port, durum) 
-                    VALUES ('$id', '$yeni_hizmet_id', '$yeni_port', 'Çalışıyor')";
+            $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port) 
+                    VALUES ('$id', '$yeni_hizmet_id', '$yeni_port')";
             
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>Yeni hizmet başarıyla eklendi ve sunucuya tanımlandı.</div>";
@@ -56,10 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hizmet_id = mysqli_real_escape_string($conn, $_POST['hizmet_id']);
         $ozel_port = mysqli_real_escape_string($conn, $_POST['ozel_port']);
         $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
-        $durum = mysqli_real_escape_string($conn, $_POST['durum']);
         
-        $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port, notlar, durum) 
-                VALUES ('$id', '$hizmet_id', '$ozel_port', '$notlar', '$durum')";
+        $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port, notlar) 
+                VALUES ('$id', '$hizmet_id', '$ozel_port', '$notlar')";
         
         if (mysqli_query($conn, $sql)) {
             $mesaj = "<div class='alert alert-success'>Hizmet başarıyla eklendi.</div>";
@@ -70,12 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hizmet_id = mysqli_real_escape_string($conn, $_POST['hizmet_id']);
         $ozel_port = mysqli_real_escape_string($conn, $_POST['ozel_port']);
         $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
-        $durum = mysqli_real_escape_string($conn, $_POST['durum']);
         
         $sql = "UPDATE sanal_sunucu_hizmetler 
                 SET ozel_port = '$ozel_port', 
-                    notlar = '$notlar',
-                    durum = '$durum'
+                    notlar = '$notlar'
                 WHERE sanal_sunucu_id = '$id' AND hizmet_id = '$hizmet_id'";
         
         if (mysqli_query($conn, $sql)) {
@@ -177,7 +174,6 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                     <tr>
                                         <th>Hizmet</th>
                                         <th>Port</th>
-                                        <th>Durum</th>
                                         <th>Notlar</th>
                                         <th>İşlemler</th>
                                     </tr>
@@ -198,14 +194,6 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                                         echo $hizmet['varsayilan_port'];
                                                     }
                                                     ?>
-                                                </td>
-                                                <td>
-                                                    <span class="badge <?php 
-                                                        echo $hizmet['durum'] == 'Çalışıyor' ? 'bg-success' : 
-                                                            ($hizmet['durum'] == 'Durdu' ? 'bg-warning' : 'bg-danger'); 
-                                                    ?>">
-                                                        <?php echo $hizmet['durum']; ?>
-                                                    </span>
                                                 </td>
                                                 <td>
                                                     <?php echo $hizmet['notlar'] ? nl2br(htmlspecialchars($hizmet['notlar'])) : '<span class="text-muted">-</span>'; ?>
@@ -240,14 +228,6 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                                                     <div class="form-text">Varsayılan port: <?php echo $hizmet['varsayilan_port']; ?></div>
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <label class="form-label">Durum</label>
-                                                                    <select class="form-select" name="durum">
-                                                                        <option value="Çalışıyor" <?php echo $hizmet['durum'] == 'Çalışıyor' ? 'selected' : ''; ?>>Çalışıyor</option>
-                                                                        <option value="Durdu" <?php echo $hizmet['durum'] == 'Durdu' ? 'selected' : ''; ?>>Durdu</option>
-                                                                        <option value="Hatalı" <?php echo $hizmet['durum'] == 'Hatalı' ? 'selected' : ''; ?>>Hatalı</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="mb-3">
                                                                     <label class="form-label">Notlar</label>
                                                                     <textarea class="form-control" name="notlar" rows="3"><?php echo $hizmet['notlar']; ?></textarea>
                                                                 </div>
@@ -263,7 +243,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                         <?php endwhile; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="5" class="text-center">Henüz hizmet eklenmemiş.</td>
+                                            <td colspan="4" class="text-center">Henüz hizmet eklenmemiş.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -303,14 +283,6 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                     <label for="ozel_port" class="form-label">Özel Port (Opsiyonel)</label>
                                     <input type="text" class="form-control" id="ozel_port" name="ozel_port">
                                     <div class="form-text">Boş bırakılırsa varsayılan port kullanılır.</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="durum" class="form-label">Durum</label>
-                                    <select class="form-select" id="durum" name="durum" required>
-                                        <option value="Çalışıyor">Çalışıyor</option>
-                                        <option value="Durdu">Durdu</option>
-                                        <option value="Hatalı">Hatalı</option>
-                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="notlar" class="form-label">Notlar</label>

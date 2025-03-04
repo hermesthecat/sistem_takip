@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS sanal_sunucu_hizmetler (
     hizmet_id INT,
     ozel_port VARCHAR(10),
     notlar TEXT,
-    durum ENUM('Çalışıyor', 'Durdu', 'Hatalı') DEFAULT 'Çalışıyor',
     olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sanal_sunucu_id) REFERENCES sanal_sunucular(id) ON DELETE CASCADE,
     FOREIGN KEY (hizmet_id) REFERENCES hizmetler(id)
