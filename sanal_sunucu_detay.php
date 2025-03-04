@@ -157,8 +157,8 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>CPU:</strong> <?php echo $sunucu['cpu'] ?: '-'; ?></p>
-                        <p><strong>RAM:</strong> <?php echo $sunucu['ram'] ?: '-'; ?></p>
+                        <p><strong>Çekirdek:</strong> <?php echo $sunucu['cpu'] ?: '-'; ?></p>
+                        <p><strong>Bellek:</strong> <?php echo $sunucu['ram'] ?: '-'; ?></p>
                         <p><strong>Disk:</strong> <?php echo $sunucu['disk'] ?: '-'; ?></p>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
@@ -29,15 +30,17 @@ $result = mysqli_query($conn, $sql);
 
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <title>Sanal Sunucular - <?php echo $fiziksel_sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
     <?php require_once 'header.php'; ?>
-    
+
     <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← Fiziksel Sunuculara Dön</a>
@@ -52,8 +55,8 @@ $result = mysqli_query($conn, $sql);
                     <th>ID</th>
                     <th>Sunucu Adı</th>
                     <th>IP Adresi</th>
-                    <th>RAM</th>
-                    <th>CPU</th>
+                    <th>Bellek</th>
+                    <th>Çekirdek</th>
                     <th>Disk</th>
                     <th>Oluşturma Tarihi</th>
                     <th>İşlemler</th>
@@ -87,4 +90,5 @@ $result = mysqli_query($conn, $sql);
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>
