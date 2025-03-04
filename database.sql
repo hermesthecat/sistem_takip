@@ -49,6 +49,29 @@ CREATE TABLE IF NOT EXISTS sanal_sunucular (
     FOREIGN KEY (proje_id) REFERENCES projeler(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
 
+-- Hizmetler tablosu
+CREATE TABLE IF NOT EXISTS hizmetler (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hizmet_adi VARCHAR(100) NOT NULL,
+    aciklama TEXT,
+    port VARCHAR(10),
+    durum ENUM('Aktif', 'Pasif') DEFAULT 'Aktif',
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
+
+-- Sanal sunucu hizmetleri tablosu
+CREATE TABLE IF NOT EXISTS sanal_sunucu_hizmetler (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sanal_sunucu_id INT,
+    hizmet_id INT,
+    ozel_port VARCHAR(10),
+    notlar TEXT,
+    durum ENUM('Çalışıyor', 'Durdu', 'Hatalı') DEFAULT 'Çalışıyor',
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sanal_sunucu_id) REFERENCES sanal_sunucular(id) ON DELETE CASCADE,
+    FOREIGN KEY (hizmet_id) REFERENCES hizmetler(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci;
+
 -- Örnek lokasyonlar
 INSERT IGNORE INTO lokasyonlar (lokasyon_adi) VALUES 
 ('İstanbul'),
@@ -64,3 +87,16 @@ INSERT IGNORE INTO projeler (proje_adi, proje_kodu, aciklama, durum) VALUES
 ('Test Ortamı', 'TEST-2024', 'Test ve geliştirme ortamı sunucuları', 'Aktif'),
 ('Veritabanı Cluster', 'DB-2024', 'Veritabanı cluster sunucuları', 'Aktif'),
 ('Yedekleme Sistemi', 'BKP-2024', 'Yedekleme ve arşiv sunucuları', 'Aktif');
+
+-- Örnek hizmetler
+INSERT IGNORE INTO hizmetler (hizmet_adi, aciklama, port) VALUES 
+('HTTP Web Sunucu', 'Web sunucu hizmeti', '80'),
+('HTTPS Web Sunucu', 'Güvenli web sunucu hizmeti', '443'),
+('MySQL Database', 'MySQL veritabanı hizmeti', '3306'),
+('PostgreSQL Database', 'PostgreSQL veritabanı hizmeti', '5432'),
+('FTP Sunucu', 'FTP dosya transfer hizmeti', '21'),
+('SSH', 'Güvenli kabuk erişimi', '22'),
+('Redis', 'Redis önbellek sunucusu', '6379'),
+('MongoDB', 'MongoDB NoSQL veritabanı', '27017'),
+('Elasticsearch', 'Elasticsearch arama motoru', '9200'),
+('RabbitMQ', 'RabbitMQ mesaj kuyruğu', '5672');
