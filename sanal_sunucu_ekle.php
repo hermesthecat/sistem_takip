@@ -12,7 +12,10 @@ if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
 $fiziksel_id = mysqli_real_escape_string($conn, $_GET['fiziksel_id']);
 
 // Fiziksel sunucu bilgilerini al
-$sql_fiziksel = "SELECT * FROM fiziksel_sunucular WHERE id = '$fiziksel_id'";
+$sql_fiziksel = "SELECT fs.*, p.proje_id as mevcut_proje_id 
+                 FROM fiziksel_sunucular fs 
+                 LEFT JOIN projeler p ON fs.proje_id = p.id 
+                 WHERE fs.id = '$fiziksel_id'";
 $result_fiziksel = mysqli_query($conn, $sql_fiziksel);
 $fiziksel_sunucu = mysqli_fetch_assoc($result_fiziksel);
 
@@ -20,6 +23,10 @@ if (!$fiziksel_sunucu) {
     header('Location: index.php');
     exit;
 }
+
+// Projeleri getir
+$sql_projeler = "SELECT * FROM projeler WHERE durum = 'Aktif' ORDER BY proje_adi";
+$result_projeler = mysqli_query($conn, $sql_projeler);
 
 $mesaj = '';
 
@@ -29,9 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ram = mysqli_real_escape_string($conn, $_POST['ram']);
     $cpu = mysqli_real_escape_string($conn, $_POST['cpu']);
     $disk = mysqli_real_escape_string($conn, $_POST['disk']);
+    $proje_id = isset($_POST['proje_id']) ? mysqli_real_escape_string($conn, $_POST['proje_id']) : 'NULL';
 
-    $sql = "INSERT INTO sanal_sunucular (fiziksel_sunucu_id, sunucu_adi, ip_adresi, ram, cpu, disk) 
-            VALUES ('$fiziksel_id', '$sunucu_adi', '$ip_adresi', '$ram', '$cpu', '$disk')";
+    $sql = "INSERT INTO sanal_sunucular (fiziksel_sunucu_id, sunucu_adi, ip_adresi, ram, cpu, disk, proje_id) 
+            VALUES ('$fiziksel_id', '$sunucu_adi', '$ip_adresi', '$ram', '$cpu', '$disk', $proje_id)";
     
     if (mysqli_query($conn, $sql)) {
         header("Location: sanal_sunucular.php?fiziksel_id=$fiziksel_id");
@@ -83,6 +91,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-3">
                         <label for="disk" class="form-label">Disk</label>
                         <input type="text" class="form-control" id="disk" name="disk" placeholder="Örn: 500GB" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="proje_id" class="form-label">Proje</label>
+                        <select class="form-select" id="proje_id" name="proje_id">
+                            <option value="">Proje Seçin (Opsiyonel)</option>
+                            <?php 
+                            mysqli_data_seek($result_projeler, 0);
+                            while ($proje = mysqli_fetch_assoc($result_projeler)): 
+                            ?>
+                                <option value="<?php echo $proje['id']; ?>" <?php echo ($proje['id'] == $fiziksel_sunucu['mevcut_proje_id']) ? 'selected' : ''; ?>>
+                                    <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                        <div class="mt-2">
+                            <a href="proje_ekle.php" class="btn btn-sm btn-outline-success">Yeni Proje Ekle</a>
+                        </div>
+                        <?php if ($fiziksel_sunucu['mevcut_proje_id']): ?>
+                            <div class="form-text text-info">
+                                Not: Fiziksel sunucunun projesini varsayılan olarak seçtik.
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <button type="submit" class="btn btn-primary">Kaydet</button>
                 </form>

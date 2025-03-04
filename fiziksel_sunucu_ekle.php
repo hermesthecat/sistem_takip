@@ -10,12 +10,18 @@ $mesaj = '';
 $sql_lokasyonlar = "SELECT * FROM lokasyonlar ORDER BY lokasyon_adi";
 $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
 
+// Projeleri getir
+$sql_projeler = "SELECT * FROM projeler WHERE durum = 'Aktif' ORDER BY proje_adi";
+$result_projeler = mysqli_query($conn, $sql_projeler);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sunucu_adi = mysqli_real_escape_string($conn, $_POST['sunucu_adi']);
     $ip_adresi = mysqli_real_escape_string($conn, $_POST['ip_adresi']);
     $lokasyon_id = mysqli_real_escape_string($conn, $_POST['lokasyon_id']);
+    $proje_id = isset($_POST['proje_id']) ? mysqli_real_escape_string($conn, $_POST['proje_id']) : 'NULL';
 
-    $sql = "INSERT INTO fiziksel_sunucular (sunucu_adi, ip_adresi, lokasyon_id) VALUES ('$sunucu_adi', '$ip_adresi', '$lokasyon_id')";
+    $sql = "INSERT INTO fiziksel_sunucular (sunucu_adi, ip_adresi, lokasyon_id, proje_id) 
+            VALUES ('$sunucu_adi', '$ip_adresi', '$lokasyon_id', $proje_id)";
     
     if (mysqli_query($conn, $sql)) {
         header('Location: index.php');
@@ -66,6 +72,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
                         <div class="mt-2">
                             <a href="lokasyon_ekle.php" class="btn btn-sm btn-outline-primary">Yeni Lokasyon Ekle</a>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="proje_id" class="form-label">Proje</label>
+                        <select class="form-select" id="proje_id" name="proje_id">
+                            <option value="">Proje Seçin (Opsiyonel)</option>
+                            <?php while ($proje = mysqli_fetch_assoc($result_projeler)): ?>
+                                <option value="<?php echo $proje['id']; ?>">
+                                    <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                        <div class="mt-2">
+                            <a href="proje_ekle.php" class="btn btn-sm btn-outline-success">Yeni Proje Ekle</a>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Kaydet</button>

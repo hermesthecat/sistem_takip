@@ -4,9 +4,10 @@
  */
 require_once 'config/database.php';
 
-$sql = "SELECT fs.*, l.lokasyon_adi 
+$sql = "SELECT fs.*, l.lokasyon_adi, p.proje_adi, p.proje_kodu 
         FROM fiziksel_sunucular fs 
         LEFT JOIN lokasyonlar l ON fs.lokasyon_id = l.id 
+        LEFT JOIN projeler p ON fs.proje_id = p.id
         ORDER BY fs.sunucu_adi";
 $result = mysqli_query($conn, $sql);
 ?>
@@ -23,6 +24,7 @@ $result = mysqli_query($conn, $sql);
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Fiziksel Sunucular</h1>
             <div>
+                <a href="proje_ekle.php" class="btn btn-outline-success me-2">Yeni Proje Ekle</a>
                 <a href="lokasyon_ekle.php" class="btn btn-outline-primary me-2">Yeni Lokasyon Ekle</a>
                 <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Yeni Fiziksel Sunucu Ekle</a>
             </div>
@@ -34,6 +36,7 @@ $result = mysqli_query($conn, $sql);
                     <th>Sunucu Adı</th>
                     <th>IP Adresi</th>
                     <th>Lokasyon</th>
+                    <th>Proje</th>
                     <th>Oluşturma Tarihi</th>
                     <th>İşlemler</th>
                 </tr>
@@ -47,6 +50,13 @@ $result = mysqli_query($conn, $sql);
                         echo "<td>" . $row['sunucu_adi'] . "</td>";
                         echo "<td>" . $row['ip_adresi'] . "</td>";
                         echo "<td>" . $row['lokasyon_adi'] . "</td>";
+                        echo "<td>";
+                        if ($row['proje_adi']) {
+                            echo $row['proje_adi'] . " <small class='text-muted'>(" . $row['proje_kodu'] . ")</small>";
+                        } else {
+                            echo "<span class='text-muted'>-</span>";
+                        }
+                        echo "</td>";
                         echo "<td>" . $row['olusturma_tarihi'] . "</td>";
                         echo "<td>
                                 <a href='sanal_sunucular.php?fiziksel_id=" . $row['id'] . "' class='btn btn-info btn-sm'>Sanal Sunucular</a>
@@ -56,7 +66,7 @@ $result = mysqli_query($conn, $sql);
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='6' class='text-center'>Henüz fiziksel sunucu eklenmemiş.</td></tr>";
+                    echo "<tr><td colspan='7' class='text-center'>Henüz fiziksel sunucu eklenmemiş.</td></tr>";
                 }
                 ?>
             </tbody>
