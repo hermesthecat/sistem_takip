@@ -225,4 +225,12 @@ return [
     'no_project_assigned' => '-',
     'cancel' => 'Cancel',
     'update' => 'Update',
+    
+    // Virtual Server Detail - Additional Texts
+    'select_service' => 'Select Service',
+    'service_not_in_list' => 'Can\'t find the service you\'re looking for?',
+    'custom_port_optional' => 'Custom Port (Optional)',
+    'default_port_info' => 'Default port will be used if left empty.',
+    'add_service' => 'Add Service',
+    'no_active_services' => 'No active services available to add.',
 ]; 

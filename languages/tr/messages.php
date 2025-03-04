@@ -224,4 +224,11 @@ return [
     'project_info' => '{project_name} ({project_code})',
     'no_project_assigned' => '-',
     'update' => 'Güncelle',
+    // Sanal Sunucu Detay - Ek Metinler
+    'select_service' => 'Hizmet Seçin',
+    'service_not_in_list' => 'Listede görmek istediğiniz hizmet yok mu?',
+    'custom_port_optional' => 'Özel Port (Opsiyonel)',
+    'default_port_info' => 'Boş bırakılırsa varsayılan port kullanılır.',
+    'add_service' => 'Hizmet Ekle',
+    'no_active_services' => 'Eklenebilecek aktif hizmet bulunmuyor.',
 ]; 

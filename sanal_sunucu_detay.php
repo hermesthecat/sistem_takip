@@ -265,53 +265,53 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title h5 mb-0">Yeni Hizmet Ekle</h2>
+                        <h2 class="card-title h5 mb-0"><?php echo $language->get('add_new_service'); ?></h2>
                     </div>
                     <div class="card-body">
                         <?php if (mysqli_num_rows($eklenebilir_hizmetler) > 0): ?>
                             <form method="POST">
                                 <div class="mb-3">
-                                    <label for="hizmet_id" class="form-label">Hizmet</label>
+                                    <label for="hizmet_id" class="form-label"><?php echo $language->get('service_name'); ?></label>
                                     <select class="form-select" id="hizmet_id" name="hizmet_id" required>
-                                        <option value="">Hizmet Seçin</option>
+                                        <option value=""><?php echo $language->get('select_service'); ?></option>
                                         <?php while ($hizmet = mysqli_fetch_assoc($eklenebilir_hizmetler)): ?>
                                             <option value="<?php echo $hizmet['id']; ?>" data-port="<?php echo $hizmet['port']; ?>">
                                                 <?php echo $hizmet['hizmet_adi']; ?>
-                                                <?php echo $hizmet['port'] ? " (Port: " . $hizmet['port'] . ")" : ""; ?>
+                                                <?php echo $hizmet['port'] ? " (" . $language->get('port') . ": " . $hizmet['port'] . ")" : ""; ?>
                                             </option>
                                         <?php endwhile; ?>
                                     </select>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <div class="form-text">Listede görmek istediğiniz hizmet yok mu?</div>
+                                        <div class="form-text"><?php echo $language->get('service_not_in_list'); ?></div>
                                         <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#yeniHizmetModal">
-                                            Yeni Hizmet Ekle
+                                            <?php echo $language->get('add_new_service'); ?>
                                         </button>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="ozel_port" class="form-label">Özel Port (Opsiyonel)</label>
+                                    <label for="ozel_port" class="form-label"><?php echo $language->get('custom_port_optional'); ?></label>
                                     <input type="text" class="form-control" id="ozel_port" name="ozel_port">
-                                    <div class="form-text">Boş bırakılırsa varsayılan port kullanılır.</div>
+                                    <div class="form-text"><?php echo $language->get('default_port_info'); ?></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="notlar" class="form-label">Notlar</label>
+                                    <label for="notlar" class="form-label"><?php echo $language->get('service_notes'); ?></label>
                                     <textarea class="form-control" id="notlar" name="notlar" rows="3"></textarea>
                                 </div>
-                                <button type="submit" name="hizmet_ekle" class="btn btn-primary">Hizmet Ekle</button>
+                                <button type="submit" name="hizmet_ekle" class="btn btn-primary"><?php echo $language->get('add_service'); ?></button>
                             </form>
                             
                             <script>
                             document.getElementById('hizmet_id').addEventListener('change', function() {
                                 var selectedOption = this.options[this.selectedIndex];
                                 var defaultPort = selectedOption.getAttribute('data-port');
-                                document.getElementById('ozel_port').placeholder = defaultPort ? 'Varsayılan: ' + defaultPort : '';
+                                document.getElementById('ozel_port').placeholder = defaultPort ? '<?php echo $language->get('default_port'); ?>: ' + defaultPort : '';
                             });
                             </script>
                         <?php else: ?>
                             <div class="alert alert-info mb-0">
-                                Eklenebilecek aktif hizmet bulunmuyor.
+                                <?php echo $language->get('no_active_services'); ?>
                                 <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniHizmetModal">
-                                    Yeni Hizmet Ekle
+                                    <?php echo $language->get('add_new_service'); ?>
                                 </button>
                             </div>
                         <?php endif; ?>
@@ -326,27 +326,27 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Yeni Hizmet Ekle</h5>
+                    <h5 class="modal-title"><?php echo $language->get('add_new_service'); ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST" id="yeniHizmetForm">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="yeni_hizmet_adi" class="form-label">Hizmet Adı</label>
+                            <label for="yeni_hizmet_adi" class="form-label"><?php echo $language->get('service_name'); ?></label>
                             <input type="text" class="form-control" id="yeni_hizmet_adi" name="yeni_hizmet_adi" required>
                         </div>
                         <div class="mb-3">
-                            <label for="yeni_aciklama" class="form-label">Açıklama</label>
+                            <label for="yeni_aciklama" class="form-label"><?php echo $language->get('description'); ?></label>
                             <textarea class="form-control" id="yeni_aciklama" name="yeni_aciklama" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="yeni_port" class="form-label">Varsayılan Port</label>
+                            <label for="yeni_port" class="form-label"><?php echo $language->get('default_port'); ?></label>
                             <input type="text" class="form-control" id="yeni_port" name="yeni_port">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                        <button type="submit" name="yeni_hizmet_ekle" class="btn btn-primary">Kaydet</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $language->get('cancel'); ?></button>
+                        <button type="submit" name="yeni_hizmet_ekle" class="btn btn-primary"><?php echo $language->get('save'); ?></button>
                     </div>
                 </form>
             </div>
