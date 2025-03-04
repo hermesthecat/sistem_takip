@@ -123,4 +123,21 @@ return [
     'error_service_in_use' => 'Bu hizmet {count} sanal sunucu tarafından kullanılıyor. Önce bu sunuculardan hizmeti kaldırın.',
     'success_service_deleted' => 'Hizmet başarıyla silindi.',
     'error_deleting_service' => 'Hizmet silinirken bir hata oluştu: {error}',
+    
+    // Ana Sayfa
+    'server_tracking_system' => 'Sunucu Takip Sistemi',
+    'hardware' => 'Donanım',
+    'virtual_servers_count' => '{count} sanal sunucu',
+    'no_virtual_servers' => 'Yok',
+    'virtual_servers_button' => 'Sanal Sunucular',
+    'physical_server_resources' => 'Fiziksel Sunucu Kaynakları:',
+    'core_usage' => 'Çekirdek Kullanımı',
+    'memory_usage' => 'Bellek Kullanımı',
+    'disk_usage' => 'Disk Kullanımı',
+    'cores' => 'Çekirdek',
+    'core_count' => '{used}/{total} Çekirdek',
+    'gb_count' => '{used}/{total} GB',
+    'hardware_cpu' => 'Çekirdek: {value}',
+    'hardware_memory' => 'Bellek: {value}',
+    'hardware_disk' => 'Disk: {value}',
 ]; 

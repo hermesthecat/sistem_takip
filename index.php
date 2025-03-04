@@ -61,10 +61,10 @@ function kaynak_deger_al($str, $tip) {
 ?>
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo $language->getCurrentLang(); ?>">
 <head>
     <meta charset="UTF-8">
-    <title>Sunucu Takip Sistemi</title>
+    <title><?php echo $language->get('server_tracking_system'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -91,9 +91,9 @@ function kaynak_deger_al($str, $tip) {
         <?php echo $mesaj; ?>
         
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Fiziksel Sunucular</h1>
+            <h1><?php echo $language->get('physical_servers'); ?></h1>
             <div>
-                <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary">Fiziksel Sunucu Ekle</a>
+                <a href="fiziksel_sunucu_ekle.php" class="btn btn-primary"><?php echo $language->get('add_physical_server'); ?></a>
             </div>
         </div>
         <div class="table-responsive">
@@ -101,13 +101,13 @@ function kaynak_deger_al($str, $tip) {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Sunucu Adı</th>
-                        <th>IP Adresi</th>
-                        <th>Donanım</th>
-                        <th>Lokasyon</th>
-                        <th>Proje</th>
-                        <th>Sanal Sunucular</th>
-                        <th class="text-end">İşlemler</th>
+                        <th><?php echo $language->get('server_name'); ?></th>
+                        <th><?php echo $language->get('ip_address'); ?></th>
+                        <th><?php echo $language->get('hardware'); ?></th>
+                        <th><?php echo $language->get('location'); ?></th>
+                        <th><?php echo $language->get('project'); ?></th>
+                        <th><?php echo $language->get('virtual_servers'); ?></th>
+                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,13 +121,13 @@ function kaynak_deger_al($str, $tip) {
                                     <?php if ($row['cpu'] || $row['ram'] || $row['disk']): ?>
                                         <ul class="list-unstyled mb-0">
                                             <?php if ($row['cpu']): ?>
-                                                <li><strong>Çekirdek:</strong> <?php echo $row['cpu']; ?></li>
+                                                <li><?php echo str_replace('{value}', $row['cpu'], $language->get('hardware_cpu')); ?></li>
                                             <?php endif; ?>
                                             <?php if ($row['ram']): ?>
-                                                <li><strong>Bellek:</strong> <?php echo $row['ram']; ?></li>
+                                                <li><?php echo str_replace('{value}', $row['ram'], $language->get('hardware_memory')); ?></li>
                                             <?php endif; ?>
                                             <?php if ($row['disk']): ?>
-                                                <li><strong>Disk:</strong> <?php echo $row['disk']; ?></li>
+                                                <li><?php echo str_replace('{value}', $row['disk'], $language->get('hardware_disk')); ?></li>
                                             <?php endif; ?>
                                         </ul>
                                     <?php else: ?>
@@ -147,19 +147,19 @@ function kaynak_deger_al($str, $tip) {
                                 <td>
                                     <?php
                                     if ($row['sanal_sayi'] > 0) {
-                                        echo "<span class='badge bg-info'>" . $row['sanal_sayi'] . " sanal sunucu</span>";
+                                        echo "<span class='badge bg-info'>" . str_replace('{count}', $row['sanal_sayi'], $language->get('virtual_servers_count')) . "</span>";
                                     } else {
-                                        echo "<span class='badge bg-secondary'>Yok</span>";
+                                        echo "<span class='badge bg-secondary'>" . $language->get('no_virtual_servers') . "</span>";
                                     }
                                     ?>
                                 </td>
                                 <td class="text-end">
-                                    <a href='sanal_sunucular.php?fiziksel_id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'>Sanal Sunucular</a>
-                                    <a href='fiziksel_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'>Düzenle</a>
+                                    <a href='sanal_sunucular.php?fiziksel_id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'><?php echo $language->get('virtual_servers_button'); ?></a>
+                                    <a href='fiziksel_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'><?php echo $language->get('edit'); ?></a>
                                     <?php if ($row['sanal_sayi'] == 0): ?>
                                         <a href='fiziksel_sunucu_sil.php?id=<?php echo $row['id']; ?>' 
                                            class='btn btn-danger btn-sm' 
-                                           onclick='return confirm("Bu fiziksel sunucuyu silmek istediğinize emin misiniz?")'>Sil</a>
+                                           onclick='return confirm("<?php echo $language->get('confirm_delete'); ?>")'><?php echo $language->get('delete'); ?></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -167,13 +167,13 @@ function kaynak_deger_al($str, $tip) {
                             <tr class="table-light">
                                 <td colspan="9">
                                     <div class="small">
-                                        <strong>Fiziksel Sunucu Kaynakları:</strong>
+                                        <strong><?php echo $language->get('physical_server_resources'); ?></strong>
                                         <table class="table table-sm table-bordered mt-1 mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 33%">Çekirdek Kullanımı</th>
-                                                    <th style="width: 33%">Bellek Kullanımı</th>
-                                                    <th style="width: 33%">Disk Kullanımı</th>
+                                                    <th style="width: 33%"><?php echo $language->get('core_usage'); ?></th>
+                                                    <th style="width: 33%"><?php echo $language->get('memory_usage'); ?></th>
+                                                    <th style="width: 33%"><?php echo $language->get('disk_usage'); ?></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -235,7 +235,7 @@ function kaynak_deger_al($str, $tip) {
                                                                  aria-valuenow="<?php echo $cpu_yuzde; ?>" 
                                                                  aria-valuemin="0" 
                                                                  aria-valuemax="100">
-                                                                <?php echo $toplam_cpu . "/" . $fiziksel_cpu . " Çekirdek"; ?>
+                                                                <?php echo str_replace(['{used}', '{total}'], [$toplam_cpu, $fiziksel_cpu], $language->get('core_count')); ?>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -247,7 +247,7 @@ function kaynak_deger_al($str, $tip) {
                                                                  aria-valuenow="<?php echo $ram_yuzde; ?>" 
                                                                  aria-valuemin="0" 
                                                                  aria-valuemax="100">
-                                                                <?php echo $toplam_ram . "/" . $fiziksel_ram . " GB"; ?>
+                                                                <?php echo str_replace(['{used}', '{total}'], [$toplam_ram, $fiziksel_ram], $language->get('gb_count')); ?>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -259,7 +259,7 @@ function kaynak_deger_al($str, $tip) {
                                                                  aria-valuenow="<?php echo $disk_yuzde; ?>" 
                                                                  aria-valuemin="0" 
                                                                  aria-valuemax="100">
-                                                                <?php echo $toplam_disk . "/" . $fiziksel_disk . " GB"; ?>
+                                                                <?php echo str_replace(['{used}', '{total}'], [$toplam_disk, $fiziksel_disk], $language->get('gb_count')); ?>
                                                             </div>
                                                         </div>
                                                     </td>

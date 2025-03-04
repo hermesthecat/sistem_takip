@@ -123,4 +123,21 @@ return [
     'error_service_in_use' => 'This service is being used by {count} virtual servers. Please remove the service from these servers first.',
     'success_service_deleted' => 'Service has been successfully deleted.',
     'error_deleting_service' => 'An error occurred while deleting the service: {error}',
+    
+    // Home Page
+    'server_tracking_system' => 'Server Tracking System',
+    'hardware' => 'Hardware',
+    'virtual_servers_count' => '{count} virtual servers',
+    'no_virtual_servers' => 'None',
+    'virtual_servers_button' => 'Virtual Servers',
+    'physical_server_resources' => 'Physical Server Resources:',
+    'core_usage' => 'Core Usage',
+    'memory_usage' => 'Memory Usage',
+    'disk_usage' => 'Disk Usage',
+    'cores' => 'Cores',
+    'core_count' => '{used}/{total} Cores',
+    'gb_count' => '{used}/{total} GB',
+    'hardware_cpu' => 'Cores: {value}',
+    'hardware_memory' => 'Memory: {value}',
+    'hardware_disk' => 'Disk: {value}',
 ]; 
