@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
@@ -25,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $sql = "INSERT INTO fiziksel_sunucular (sunucu_adi, ip_adresi, lokasyon_id, proje_id, ram, cpu, disk) 
             VALUES ('$sunucu_adi', '$ip_adresi', '$lokasyon_id', $proje_id, '$ram', '$cpu', '$disk')";
-    
+
     if (mysqli_query($conn, $sql)) {
         header('Location: index.php');
         exit;
@@ -37,11 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <title>Yeni Fiziksel Sunucu Ekle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="mb-3">
@@ -55,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php if ($mesaj): ?>
                     <div class="alert alert-danger"><?php echo $mesaj; ?></div>
                 <?php endif; ?>
-                
+
                 <form method="POST">
                     <div class="row">
                         <div class="col-md-6">
@@ -97,15 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cpu" class="form-label">CPU</label>
-                                <input type="text" class="form-control" id="cpu" name="cpu" placeholder="Örn: Intel Xeon E5-2680 v4 2.40GHz" required>
+                                <input type="text" class="form-control" id="cpu" name="cpu" placeholder="Toplam Core Sayısı" required>
                             </div>
                             <div class="mb-3">
                                 <label for="ram" class="form-label">RAM</label>
-                                <input type="text" class="form-control" id="ram" name="ram" placeholder="Örn: 64GB DDR4" required>
+                                <input type="text" class="form-control" id="ram" name="ram" placeholder="64GB" required>
                             </div>
                             <div class="mb-3">
                                 <label for="disk" class="form-label">Disk</label>
-                                <input type="text" class="form-control" id="disk" name="disk" placeholder="Örn: 2x 500GB SSD RAID1" required>
+                                <input type="text" class="form-control" id="disk" name="disk" placeholder="Toplam Disk Kapasitesi" required>
                             </div>
                         </div>
                     </div>
@@ -116,4 +119,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>
