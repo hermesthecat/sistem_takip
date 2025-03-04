@@ -264,4 +264,20 @@ return [
     'error_ram_limit' => 'RAM değeri kalan kapasiteden ({value} GB) fazla olamaz.',
     'error_disk_limit' => 'Disk değeri kalan kapasiteden ({value} GB) fazla olamaz.',
     'add_virtual_server_button' => 'Sanal Sunucu Ekle',
+    
+    // Sanal Sunucu Listesi
+    'virtual_server_list' => 'Sanal Sunucu Listesi',
+    'virtual_server_list_for' => 'Sanal Sunucu Listesi ({server_name})',
+    'no_virtual_servers_for_physical' => 'Bu fiziksel sunucuya bağlı sanal sunucu bulunmamaktadır.',
+    'virtual_server_actions' => 'İşlemler',
+    'virtual_server_detail' => 'Detay',
+    'virtual_server_edit' => 'Düzenle',
+    'virtual_server_delete' => 'Sil',
+    'confirm_delete_virtual_server' => 'Bu sanal sunucuyu silmek istediğinize emin misiniz?',
+    'virtual_server_id' => 'ID',
+    'virtual_server_name' => 'Sunucu Adı',
+    'virtual_server_ip' => 'IP Adresi',
+    'virtual_server_memory' => 'Bellek',
+    'virtual_server_cores' => 'Çekirdek',
+    'virtual_server_disk' => 'Disk',
 ]; 

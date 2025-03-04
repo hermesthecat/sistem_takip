@@ -5,6 +5,7 @@
  */
 require_once 'auth.php';
 require_once 'config/database.php';
+require_once 'config/language.php';
 
 if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
     header('Location: index.php');
@@ -29,11 +30,11 @@ $result = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo $language->getCurrentLang(); ?>">
 
 <head>
     <meta charset="UTF-8">
-    <title>Sanal Sunucular - <?php echo $fiziksel_sunucu['sunucu_adi']; ?></title>
+    <title><?php echo $language->get('virtual_server_list_for', ['server_name' => $fiziksel_sunucu['sunucu_adi']]); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -42,23 +43,25 @@ $result = mysqli_query($conn, $sql);
     <?php require_once 'header.php'; ?>
 
     <div class="container">
-
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Sanal Sunucu Listesi <i>(<?php echo $fiziksel_sunucu['sunucu_adi']; ?>)</i></h1>
+            <h1><?php echo $language->get('virtual_server_list'); ?> <i>(<?php echo $fiziksel_sunucu['sunucu_adi']; ?>)</i></h1>
             <div>
-            <a href="sanal_sunucu_ekle.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-primary">Sanal Sunucu Ekle</a>            </div>
-                 
+                <a href="sanal_sunucu_ekle.php?fiziksel_id=<?php echo $fiziksel_id; ?>" class="btn btn-primary">
+                    <?php echo $language->get('add_virtual_server_button'); ?>
+                </a>
+            </div>
         </div>
+
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Sunucu Adı</th>
-                    <th>IP Adresi</th>
-                    <th>Bellek</th>
-                    <th>Çekirdek</th>
-                    <th>Disk</th>
-                    <th class="text-end">İşlemler</th>
+                    <th><?php echo $language->get('virtual_server_id'); ?></th>
+                    <th><?php echo $language->get('virtual_server_name'); ?></th>
+                    <th><?php echo $language->get('virtual_server_ip'); ?></th>
+                    <th><?php echo $language->get('virtual_server_memory'); ?></th>
+                    <th><?php echo $language->get('virtual_server_cores'); ?></th>
+                    <th><?php echo $language->get('virtual_server_disk'); ?></th>
+                    <th class="text-end"><?php echo $language->get('virtual_server_actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -73,14 +76,14 @@ $result = mysqli_query($conn, $sql);
                         echo "<td>" . $row['cpu'] . "</td>";
                         echo "<td>" . $row['disk'] . "</td>";
                         echo "<td class='text-end'>
-                                <a href='sanal_sunucu_detay.php?id=" . $row['id'] . "' class='btn btn-info btn-sm'>Detay</a>
-                                <a href='sanal_sunucu_duzenle.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Düzenle</a>
-                                <a href='sanal_sunucu_sil.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"Emin misiniz?\")'>Sil</a>
+                                <a href='sanal_sunucu_detay.php?id=" . $row['id'] . "' class='btn btn-info btn-sm'>" . $language->get('virtual_server_detail') . "</a>
+                                <a href='sanal_sunucu_duzenle.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>" . $language->get('virtual_server_edit') . "</a>
+                                <a href='sanal_sunucu_sil.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"" . $language->get('confirm_delete_virtual_server') . "\")'>" . $language->get('virtual_server_delete') . "</a>
                             </td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='7' class='text-center'>Bu fiziksel sunucuya bağlı sanal sunucu bulunmamaktadır.</td></tr>";
+                    echo "<tr><td colspan='7' class='text-center'>" . $language->get('no_virtual_servers_for_physical') . "</td></tr>";
                 }
                 ?>
             </tbody>

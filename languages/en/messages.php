@@ -268,4 +268,20 @@ return [
     'error_ram_limit' => 'RAM value cannot exceed the remaining capacity ({value} GB).',
     'error_disk_limit' => 'Disk value cannot exceed the remaining capacity ({value} GB).',
     'add_virtual_server_button' => 'Add Virtual Server',
+    
+    // Virtual Server List
+    'virtual_server_list' => 'Virtual Server List',
+    'virtual_server_list_for' => 'Virtual Server List ({server_name})',
+    'no_virtual_servers_for_physical' => 'No virtual servers are attached to this physical server.',
+    'virtual_server_actions' => 'Actions',
+    'virtual_server_detail' => 'Detail',
+    'virtual_server_edit' => 'Edit',
+    'virtual_server_delete' => 'Delete',
+    'confirm_delete_virtual_server' => 'Are you sure you want to delete this virtual server?',
+    'virtual_server_id' => 'ID',
+    'virtual_server_name' => 'Server Name',
+    'virtual_server_ip' => 'IP Address',
+    'virtual_server_memory' => 'Memory',
+    'virtual_server_cores' => 'Cores',
+    'virtual_server_disk' => 'Disk',
 ]; 
