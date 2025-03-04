@@ -2,6 +2,7 @@
 /**
  * @author A. Kerem Gök
  */
+require_once 'auth.php';
 require_once 'config/database.php';
 
 $mesaj = '';
