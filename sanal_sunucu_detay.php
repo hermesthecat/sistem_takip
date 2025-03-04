@@ -28,7 +28,31 @@ if (!$sunucu) {
 
 // Hizmet ekleme/güncelleme işlemi
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['hizmet_ekle'])) {
+    if (isset($_POST['yeni_hizmet_ekle'])) {
+        $yeni_hizmet_adi = mysqli_real_escape_string($conn, $_POST['yeni_hizmet_adi']);
+        $yeni_aciklama = mysqli_real_escape_string($conn, $_POST['yeni_aciklama']);
+        $yeni_port = mysqli_real_escape_string($conn, $_POST['yeni_port']);
+        
+        // Önce yeni hizmeti ekle
+        $sql = "INSERT INTO hizmetler (hizmet_adi, aciklama, port, durum) 
+                VALUES ('$yeni_hizmet_adi', '$yeni_aciklama', '$yeni_port', 'Aktif')";
+        
+        if (mysqli_query($conn, $sql)) {
+            $yeni_hizmet_id = mysqli_insert_id($conn);
+            
+            // Hizmeti direkt olarak sanal sunucuya ekle
+            $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port, durum) 
+                    VALUES ('$id', '$yeni_hizmet_id', '$yeni_port', 'Çalışıyor')";
+            
+            if (mysqli_query($conn, $sql)) {
+                $mesaj = "<div class='alert alert-success'>Yeni hizmet başarıyla eklendi ve sunucuya tanımlandı.</div>";
+            } else {
+                $mesaj = "<div class='alert alert-danger'>Hizmet eklendi fakat sunucuya tanımlanırken hata: " . mysqli_error($conn) . "</div>";
+            }
+        } else {
+            $mesaj = "<div class='alert alert-danger'>Hizmet eklenirken hata: " . mysqli_error($conn) . "</div>";
+        }
+    } elseif (isset($_POST['hizmet_ekle'])) {
         $hizmet_id = mysqli_real_escape_string($conn, $_POST['hizmet_id']);
         $ozel_port = mysqli_real_escape_string($conn, $_POST['ozel_port']);
         $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
@@ -268,6 +292,12 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                             </option>
                                         <?php endwhile; ?>
                                     </select>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <div class="form-text">Listede görmek istediğiniz hizmet yok mu?</div>
+                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#yeniHizmetModal">
+                                            Yeni Hizmet Ekle
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="ozel_port" class="form-label">Özel Port (Opsiyonel)</label>
@@ -298,8 +328,10 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                             </script>
                         <?php else: ?>
                             <div class="alert alert-info mb-0">
-                                Eklenebilecek aktif hizmet bulunmuyor. 
-                                <a href="hizmet_ekle.php" class="alert-link">Yeni hizmet eklemek için tıklayın</a>.
+                                Eklenebilecek aktif hizmet bulunmuyor.
+                                <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniHizmetModal">
+                                    Yeni Hizmet Ekle
+                                </button>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -307,6 +339,39 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
             </div>
         </div>
     </div>
+
+    <!-- Yeni Hizmet Ekleme Modal -->
+    <div class="modal fade" id="yeniHizmetModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Hizmet Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" id="yeniHizmetForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="yeni_hizmet_adi" class="form-label">Hizmet Adı</label>
+                            <input type="text" class="form-control" id="yeni_hizmet_adi" name="yeni_hizmet_adi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="yeni_aciklama" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="yeni_aciklama" name="yeni_aciklama" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="yeni_port" class="form-label">Varsayılan Port</label>
+                            <input type="text" class="form-control" id="yeni_port" name="yeni_port">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" name="yeni_hizmet_ekle" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
