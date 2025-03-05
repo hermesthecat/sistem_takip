@@ -4,10 +4,10 @@
  * @author A. Kerem Gök
  */
 
- require_once __DIR__ . '/auth.php';
- require_once __DIR__ . '/config/database.php';
- require_once __DIR__ . '/config/language.php';
- $language = Language::getInstance();
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 $mesaj = '';
 
@@ -104,7 +104,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
         <?php echo $mesaj; ?>
 
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
                         <h1 class="card-title h3"><?php echo $duzenle_mod ? $language->get('edit_location_title') : $language->get('add_new_location_title'); ?></h1>
@@ -129,7 +129,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                     </div>
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title h3"><?php echo $language->get('existing_locations'); ?></h2>
@@ -161,7 +161,11 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                             </td>
                                             <td><?php echo date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])); ?></td>
                                             <td>
-                                                <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
+                                                <a href="lokasyon_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
+
+                                                <a href="lokasyon_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-hdd-network"></i> Sunucular
+                                                </a>
                                                 <?php if ($row['sunucu_sayisi'] == 0): ?>
                                                     <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-sm btn-danger"

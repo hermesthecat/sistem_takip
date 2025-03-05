@@ -103,7 +103,7 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
 
     <div class="container">
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
                         <h1 class="card-title h3">
@@ -160,7 +160,7 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                     </div>
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title h3"><?php echo $language->get('existing_projects'); ?></h2>
@@ -205,11 +205,12 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
-                                                <a href="proje_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
+                                                <a href="proje_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
+                                                <a href="lokasyon_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
                                                     <i class="bi bi-hdd-network"></i> Sunucular
                                                 </a>
                                                 <?php if ($row['fiziksel_sayi'] == 0 && $row['sanal_sayi'] == 0): ?>
+
                                                     <a href="proje_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-sm btn-danger"
                                                         onclick="return confirm('<?php echo $language->get('confirm_delete_project'); ?>')"><?php echo $language->get('delete'); ?></a>

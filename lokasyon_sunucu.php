@@ -9,32 +9,36 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
-$proje_id = isset($_GET['id']) ? mysqli_real_escape_string($conn, $_GET['id']) : null;
+$lokasyon_id = isset($_GET['id']) ? mysqli_real_escape_string($conn, $_GET['id']) : null;
 
-if (!$proje_id) {
-    header('Location: proje_ekle.php');
+if (!$lokasyon_id) {
+    header('Location: lokasyon_ekle.php');
     exit;
 }
 
-// Proje bilgilerini al
-$sql_proje = "SELECT * FROM projeler WHERE id = '$proje_id'";
-$result_proje = mysqli_query($conn, $sql_proje);
-$proje = mysqli_fetch_assoc($result_proje);
+// Lokasyon bilgilerini al
+$sql_lokasyon = "SELECT * FROM lokasyonlar WHERE id = '$lokasyon_id'";
+$result_lokasyon = mysqli_query($conn, $sql_lokasyon);
+$lokasyon = mysqli_fetch_assoc($result_lokasyon);
 
-if (!$proje) {
-    header('Location: proje_ekle.php');
+if (!$lokasyon) {
+    header('Location: lokasyon_ekle.php');
     exit;
 }
 
 // Fiziksel sunucuları al
-$sql_fiziksel = "SELECT * FROM fiziksel_sunucular WHERE proje_id = '$proje_id'";
+$sql_fiziksel = "SELECT fs.*, p.proje_adi 
+                 FROM fiziksel_sunucular fs 
+                 LEFT JOIN projeler p ON fs.proje_id = p.id 
+                 WHERE fs.lokasyon_id = '$lokasyon_id'";
 $result_fiziksel = mysqli_query($conn, $sql_fiziksel);
 
 // Sanal sunucuları al
-$sql_sanal = "SELECT ss.*, fs.sunucu_adi as fiziksel_sunucu_adi 
+$sql_sanal = "SELECT ss.*, fs.sunucu_adi as fiziksel_sunucu_adi, p.proje_adi 
               FROM sanal_sunucular ss 
               LEFT JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id 
-              WHERE ss.proje_id = '$proje_id'";
+              LEFT JOIN projeler p ON ss.proje_id = p.id 
+              WHERE fs.lokasyon_id = '$lokasyon_id' OR ss.lokasyon_id = '$lokasyon_id'";
 $result_sanal = mysqli_query($conn, $sql_sanal);
 ?>
 
@@ -43,7 +47,7 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
 
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $proje['proje_adi'] . ' - Sunucular'; ?></title>
+    <title><?php echo $lokasyon['lokasyon_adi'] . ' - Sunucular'; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -84,7 +88,7 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
     <div class="container mt-4">
         <div class="row">
             <div class="col">
-                <h2><?php echo $proje['proje_adi']; ?> - Sunucular</h2>
+                <h2><?php echo $lokasyon['lokasyon_adi']; ?> - Sunucular</h2>
                 <hr>
 
                 <div class="table-responsive">
@@ -93,6 +97,7 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                             <tr>
                                 <th style="width: 30%">Sunucu Adı</th>
                                 <th>IP Adresi</th>
+                                <th>Proje</th>
                                 <th>Özellikler</th>
                             </tr>
                         </thead>
@@ -107,6 +112,15 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                             </div>
                                         </td>
                                         <td><?php echo htmlspecialchars($fiziksel['ip_adresi']); ?></td>
+                                        <td>
+                                            <?php if ($fiziksel['proje_adi']): ?>
+                                                <a href="proje_sunucu.php?id=<?php echo $fiziksel['proje_id']; ?>">
+                                                    <?php echo htmlspecialchars($fiziksel['proje_adi']); ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <span class="badge bg-primary">Fiziksel Sunucu</span>
                                         </td>
@@ -128,6 +142,15 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                                 </td>
                                                 <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
                                                 <td>
+                                                    <?php if ($sanal['proje_adi']): ?>
+                                                        <a href="proje_sunucu.php?id=<?php echo $sanal['proje_id']; ?>">
+                                                            <?php echo htmlspecialchars($sanal['proje_adi']); ?>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
                                                     <span class="badge bg-info">Sanal Sunucu</span>
                                                 </td>
                                             </tr>
@@ -148,7 +171,7 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                         $standalone_shown = true;
                             ?>
                                         <tr>
-                                            <td colspan="3" class="table-secondary">
+                                            <td colspan="4" class="table-secondary">
                                                 <strong>Bağımsız Sanal Sunucular</strong>
                                             </td>
                                         </tr>
@@ -162,6 +185,15 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                         </td>
                                         <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
                                         <td>
+                                            <?php if ($sanal['proje_adi']): ?>
+                                                <a href="proje_sunucu.php?id=<?php echo $sanal['proje_id']; ?>">
+                                                    <?php echo htmlspecialchars($sanal['proje_adi']); ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
                                             <span class="badge bg-info">Sanal Sunucu</span>
                                         </td>
                                     </tr>
@@ -170,8 +202,8 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
 
                             <?php if (mysqli_num_rows($result_fiziksel) == 0 && mysqli_num_rows($result_sanal) == 0): ?>
                                 <tr>
-                                    <td colspan="3" class="text-center">
-                                        Bu projeye ait sunucu bulunmamaktadır.
+                                    <td colspan="4" class="text-center">
+                                        Bu lokasyona ait sunucu bulunmamaktadır.
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -180,8 +212,8 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                 </div>
 
                 <div class="mt-4">
-                    <a href="proje_ekle.php?id=<?php echo $proje_id; ?>" class="btn btn-primary">
-                        <i class="bi bi-arrow-left"></i> Projeye Dön
+                    <a href="lokasyonlar.php" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Lokasyonlara Dön
                     </a>
                 </div>
             </div>
