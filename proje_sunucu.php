@@ -215,7 +215,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                     mysqli_data_seek($result_sanal, 0);
                                     ?>
                                     <tr>
-                                        <td colspan="3" class="table-secondary">
+                                        <td colspan="4" class="table-secondary">
                                             <strong>Bağımsız Sanal Sunucular</strong>
                                         </td>
                                     </tr>

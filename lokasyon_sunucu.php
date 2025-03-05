@@ -119,6 +119,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                             <tr>
                                 <th style="width: 30%">Sunucu Adı</th>
                                 <th>IP Adresi</th>
+                                <th>Proje</th>
                                 <th>Özellikler</th>
                             </tr>
                         </thead>
