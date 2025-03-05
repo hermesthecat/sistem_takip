@@ -81,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Mevcut lokasyonları listele
 $sql_lokasyonlar = "SELECT l.*, 
+                    (SELECT COUNT(*) FROM fiziksel_sunucular WHERE lokasyon_id = l.id) as fiziksel_sayi,
+                    (SELECT COUNT(*) FROM sanal_sunucular ss 
+                     INNER JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id 
+                     WHERE fs.lokasyon_id = l.id) as sanal_sayi,
                     (SELECT COUNT(*) FROM fiziksel_sunucular WHERE lokasyon_id = l.id) as sunucu_sayisi 
                     FROM lokasyonlar l 
                     ORDER BY l.lokasyon_adi";
@@ -152,11 +156,17 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                     ?>
                                         <tr>
                                             <td><?php echo $row['lokasyon_adi']; ?></td>
+
                                             <td>
-                                                <?php if ($row['sunucu_sayisi'] > 0): ?>
-                                                    <span class="badge bg-info"><?php echo str_replace('{count}', $row['sunucu_sayisi'], $language->get('server_count_info')); ?></span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-secondary"><?php echo $language->get('no_servers'); ?></span>
+                                                <?php if ($row['fiziksel_sayi'] > 0 || $row['sanal_sayi'] > 0): ?>
+                                                    <div class="mt-1">
+                                                        <?php if ($row['fiziksel_sayi'] > 0): ?>
+                                                            <span class="badge bg-info"><?php echo str_replace('{count}', $row['fiziksel_sayi'], $language->get('physical_server_count')); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if ($row['sanal_sayi'] > 0): ?>
+                                                            <span class="badge bg-info"><?php echo str_replace('{count}', $row['sanal_sayi'], $language->get('virtual_server_count')); ?></span>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 <?php endif; ?>
                                             </td>
                                             <td><?php echo date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])); ?></td>
