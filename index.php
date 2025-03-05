@@ -173,70 +173,70 @@ function kaynak_deger_al($str, $tip)
                                 </td>
                             </tr>
                             <?php if ($row['sanal_sayi'] > 0 && $row['sanal_kaynaklar']): ?>
+                                <?php
+                                $sanal_kaynaklar = explode('|', $row['sanal_kaynaklar']);
+
+                                // Toplam değerleri tutacak değişkenler
+                                $toplam_cpu = 0;
+                                $toplam_ram = 0;
+                                $toplam_disk = 0;
+
+                                foreach ($sanal_kaynaklar as $kaynak) {
+                                    if (!empty($kaynak)) {
+                                        list($cpu, $ram, $disk) = explode(':', $kaynak);
+                                        // Sayısal değerleri çıkar
+                                        $cpu_sayi = intval(preg_replace('/[^0-9]/', '', $cpu));
+                                        $ram_sayi = intval(preg_replace('/[^0-9]/', '', $ram));
+                                        $disk_sayi = intval(preg_replace('/[^0-9]/', '', $disk));
+
+                                        // TB to GB dönüşümü
+                                        if (stripos($disk, 'TB') !== false) {
+                                            $disk_sayi *= 1024;
+                                        }
+
+                                        $toplam_cpu += $cpu_sayi;
+                                        $toplam_ram += $ram_sayi;
+                                        $toplam_disk += $disk_sayi;
+                                    }
+                                }
+
+                                // Fiziksel sunucunun toplam kaynaklarını al
+                                $fiziksel_cpu = intval(preg_replace('/[^0-9]/', '', $row['cpu']));
+                                $fiziksel_ram = intval(preg_replace('/[^0-9]/', '', $row['ram']));
+                                $fiziksel_disk = $row['disk'];
+                                if (stripos($fiziksel_disk, 'TB') !== false) {
+                                    $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk)) * 1024;
+                                } else {
+                                    $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk));
+                                }
+
+                                // Kullanım yüzdelerini hesapla
+                                $cpu_yuzde = round(($toplam_cpu / $fiziksel_cpu) * 100);
+                                $ram_yuzde = round(($toplam_ram / $fiziksel_ram) * 100);
+                                $disk_yuzde = round(($toplam_disk / $fiziksel_disk) * 100);
+
+                                // Progress bar renkleri için class belirle
+                                function get_progress_class($yuzde)
+                                {
+                                    if ($yuzde >= 90) return 'bg-danger';
+                                    if ($yuzde >= 75) return 'bg-warning';
+                                    return 'bg-success';
+                                }
+                                ?>
                                 <tr class="table-light">
                                     <td colspan="9">
                                         <div class="small">
-                                            <strong><?php echo $language->get('physical_server_resources'); ?></strong>
+                                            <center><strong><?php echo $language->get('physical_server_resources'); ?></strong></center>
                                             <table class="table table-sm table-bordered mt-1 mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th style="width: 33%"><?php echo $language->get('core_usage'); ?></th>
-                                                        <th style="width: 33%"><?php echo $language->get('memory_usage'); ?></th>
-                                                        <th style="width: 33%"><?php echo $language->get('disk_usage'); ?></th>
+                                                        <th style="width: 33%; text-align: center;"><?php echo $language->get('core_usage'); ?>: <?php echo str_replace(['{used}', '{total}'], [$toplam_cpu, $fiziksel_cpu], $language->get('core_count')); ?></th>
+                                                        <th style="width: 33%; text-align: center;"><?php echo $language->get('memory_usage'); ?>: <?php echo str_replace(['{used}', '{total}'], [$toplam_ram, $fiziksel_ram], $language->get('gb_count')); ?></th>
+                                                        <th style="width: 33%; text-align: center;"><?php echo $language->get('disk_usage'); ?>: <?php echo str_replace(['{used}', '{total}'], [$toplam_disk, $fiziksel_disk], $language->get('gb_count')); ?></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <?php
-                                                        $sanal_kaynaklar = explode('|', $row['sanal_kaynaklar']);
-
-                                                        // Toplam değerleri tutacak değişkenler
-                                                        $toplam_cpu = 0;
-                                                        $toplam_ram = 0;
-                                                        $toplam_disk = 0;
-
-                                                        foreach ($sanal_kaynaklar as $kaynak) {
-                                                            if (!empty($kaynak)) {
-                                                                list($cpu, $ram, $disk) = explode(':', $kaynak);
-                                                                // Sayısal değerleri çıkar
-                                                                $cpu_sayi = intval(preg_replace('/[^0-9]/', '', $cpu));
-                                                                $ram_sayi = intval(preg_replace('/[^0-9]/', '', $ram));
-                                                                $disk_sayi = intval(preg_replace('/[^0-9]/', '', $disk));
-
-                                                                // TB to GB dönüşümü
-                                                                if (stripos($disk, 'TB') !== false) {
-                                                                    $disk_sayi *= 1024;
-                                                                }
-
-                                                                $toplam_cpu += $cpu_sayi;
-                                                                $toplam_ram += $ram_sayi;
-                                                                $toplam_disk += $disk_sayi;
-                                                            }
-                                                        }
-
-                                                        // Fiziksel sunucunun toplam kaynaklarını al
-                                                        $fiziksel_cpu = intval(preg_replace('/[^0-9]/', '', $row['cpu']));
-                                                        $fiziksel_ram = intval(preg_replace('/[^0-9]/', '', $row['ram']));
-                                                        $fiziksel_disk = $row['disk'];
-                                                        if (stripos($fiziksel_disk, 'TB') !== false) {
-                                                            $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk)) * 1024;
-                                                        } else {
-                                                            $fiziksel_disk = intval(preg_replace('/[^0-9]/', '', $fiziksel_disk));
-                                                        }
-
-                                                        // Kullanım yüzdelerini hesapla
-                                                        $cpu_yuzde = round(($toplam_cpu / $fiziksel_cpu) * 100);
-                                                        $ram_yuzde = round(($toplam_ram / $fiziksel_ram) * 100);
-                                                        $disk_yuzde = round(($toplam_disk / $fiziksel_disk) * 100);
-
-                                                        // Progress bar renkleri için class belirle
-                                                        function get_progress_class($yuzde)
-                                                        {
-                                                            if ($yuzde >= 90) return 'bg-danger';
-                                                            if ($yuzde >= 75) return 'bg-warning';
-                                                            return 'bg-success';
-                                                        }
-                                                        ?>
                                                         <td>
                                                             <div class="progress" style="height: 20px;">
                                                                 <div class="progress-bar <?php echo get_progress_class($cpu_yuzde); ?>"
@@ -245,7 +245,6 @@ function kaynak_deger_al($str, $tip)
                                                                     aria-valuenow="<?php echo $cpu_yuzde; ?>"
                                                                     aria-valuemin="0"
                                                                     aria-valuemax="100">
-                                                                    <?php echo str_replace(['{used}', '{total}'], [$toplam_cpu, $fiziksel_cpu], $language->get('core_count')); ?>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -257,7 +256,6 @@ function kaynak_deger_al($str, $tip)
                                                                     aria-valuenow="<?php echo $ram_yuzde; ?>"
                                                                     aria-valuemin="0"
                                                                     aria-valuemax="100">
-                                                                    <?php echo str_replace(['{used}', '{total}'], [$toplam_ram, $fiziksel_ram], $language->get('gb_count')); ?>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -269,7 +267,6 @@ function kaynak_deger_al($str, $tip)
                                                                     aria-valuenow="<?php echo $disk_yuzde; ?>"
                                                                     aria-valuemin="0"
                                                                     aria-valuemax="100">
-                                                                    <?php echo str_replace(['{used}', '{total}'], [$toplam_disk, $fiziksel_disk], $language->get('gb_count')); ?>
                                                                 </div>
                                                             </div>
                                                         </td>
