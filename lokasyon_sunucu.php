@@ -33,13 +33,35 @@ $sql_fiziksel = "SELECT fs.*, p.proje_adi
                  WHERE fs.lokasyon_id = '$lokasyon_id'";
 $result_fiziksel = mysqli_query($conn, $sql_fiziksel);
 
+if (!$result_fiziksel) {
+    die("Fiziksel sunucu sorgusu hatası: " . mysqli_error($conn));
+}
+
 // Sanal sunucuları al
-$sql_sanal = "SELECT ss.*, fs.sunucu_adi as fiziksel_sunucu_adi, p.proje_adi 
+$sql_sanal = "SELECT ss.*, p.proje_adi, fs.lokasyon_id 
               FROM sanal_sunucular ss 
-              LEFT JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id 
-              LEFT JOIN projeler p ON ss.proje_id = p.id 
-              WHERE fs.lokasyon_id = '$lokasyon_id' OR ss.lokasyon_id = '$lokasyon_id'";
+              LEFT JOIN projeler p ON ss.proje_id = p.id
+              LEFT JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id
+              WHERE fs.lokasyon_id = '$lokasyon_id' OR ss.fiziksel_sunucu_id IS NULL";
 $result_sanal = mysqli_query($conn, $sql_sanal);
+
+if (!$result_sanal) {
+    die("Sanal sunucu sorgusu hatası: " . mysqli_error($conn));
+}
+
+// Fiziksel sunucu bilgilerini ayrıca al (tüm fiziksel sunucular)
+$sql_fiziksel_bilgi = "SELECT id, sunucu_adi, lokasyon_id FROM fiziksel_sunucular";
+$result_fiziksel_bilgi = mysqli_query($conn, $sql_fiziksel_bilgi);
+$fiziksel_sunucular = [];
+if ($result_fiziksel_bilgi) {
+    while ($row = mysqli_fetch_assoc($result_fiziksel_bilgi)) {
+        $fiziksel_sunucular[$row['id']] = $row;
+    }
+}
+
+// Sunucu sayılarını kontrol et
+$sanal_count = mysqli_num_rows($result_sanal);
+$fiziksel_count = mysqli_num_rows($result_fiziksel);
 ?>
 
 <!DOCTYPE html>
@@ -88,7 +110,7 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
     <div class="container mt-4">
         <div class="row">
             <div class="col">
-                <h2><?php echo $lokasyon['lokasyon_adi']; ?> - Sunucular</h2>
+                <h2>Lokasyon: <b><?php echo $lokasyon['lokasyon_adi']; ?></b> için Sunucu Listesi</h2>
                 <hr>
 
                 <div class="table-responsive">
@@ -97,13 +119,18 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                             <tr>
                                 <th style="width: 30%">Sunucu Adı</th>
                                 <th>IP Adresi</th>
-                                <th>Proje</th>
                                 <th>Özellikler</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (mysqli_num_rows($result_fiziksel) > 0): ?>
-                                <?php while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)): ?>
+                            <?php
+                            $has_servers = false;
+
+                            // Önce fiziksel sunucuları ve bağlı sanal sunucuları göster
+                            if ($fiziksel_count > 0):
+                                $has_servers = true;
+                                while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)):
+                            ?>
                                     <tr class="table-primary bg-opacity-10">
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -126,18 +153,84 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                         </td>
                                     </tr>
                                     <?php
-                                    // Her fiziksel sunucuya bağlı sanal sunucuları göster
-                                    mysqli_data_seek($result_sanal, 0);
-                                    while ($sanal = mysqli_fetch_assoc($result_sanal)):
-                                        if ($sanal['fiziksel_sunucu_id'] == $fiziksel['id']):
+                                    // Her fiziksel sunucuya bağlı sanal sunucuları göster (aynı lokasyonda olanlar)
+                                    if ($sanal_count > 0) {
+                                        mysqli_data_seek($result_sanal, 0);
+                                        while ($sanal = mysqli_fetch_assoc($result_sanal)):
+                                            if ($sanal['fiziksel_sunucu_id'] == $fiziksel['id']):
                                     ?>
-                                            <tr class="table-light">
-                                                <td>
-                                                    <div class="tree-indent">
-                                                        <div class="d-flex align-items-center tree-line">
-                                                            <i class="bi bi-pc text-info me-2"></i>
-                                                            <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
+                                                <tr class="table-light">
+                                                    <td>
+                                                        <div class="tree-indent">
+                                                            <div class="d-flex align-items-center tree-line">
+                                                                <i class="bi bi-pc text-info me-2"></i>
+                                                                <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
+                                                            </div>
                                                         </div>
+                                                    </td>
+                                                    <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
+                                                    <td>
+                                                        <?php if ($sanal['proje_adi']): ?>
+                                                            <a href="proje_sunucu.php?id=<?php echo $sanal['proje_id']; ?>">
+                                                                <?php echo htmlspecialchars($sanal['proje_adi']); ?>
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">-</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-info">Sanal Sunucu</span>
+                                                        <span class="badge bg-secondary ms-1">
+                                                            <?php echo htmlspecialchars($fiziksel['sunucu_adi']); ?> üzerinde
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                    <?php
+                                            endif;
+                                        endwhile;
+                                    }
+                                endwhile;
+                            endif;
+
+                            // Bağımsız sanal sunucuları göster (farklı lokasyondaki fiziksel sunucuya bağlı olanlar)
+                            if ($sanal_count > 0) {
+                                mysqli_data_seek($result_sanal, 0);
+                                $standalone_exists = false;
+
+                                // Önce bağımsız sanal sunucu var mı kontrol et
+                                while ($sanal = mysqli_fetch_assoc($result_sanal)) {
+                                    if (
+                                        !$sanal['fiziksel_sunucu_id'] ||
+                                        (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) &&
+                                            $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['lokasyon_id'] != $lokasyon_id)
+                                    ) {
+                                        $standalone_exists = true;
+                                        $has_servers = true;
+                                        break;
+                                    }
+                                }
+
+                                if ($standalone_exists) {
+                                    mysqli_data_seek($result_sanal, 0);
+                                    ?>
+                                    <tr>
+                                        <td colspan="4" class="table-secondary">
+                                            <strong>Bağımsız Sanal Sunucular</strong>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                    while ($sanal = mysqli_fetch_assoc($result_sanal)):
+                                        if (
+                                            !$sanal['fiziksel_sunucu_id'] ||
+                                            (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) &&
+                                                $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['lokasyon_id'] != $lokasyon_id)
+                                        ):
+                                    ?>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-pc text-info me-2"></i>
+                                                        <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
                                                     </div>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
@@ -152,55 +245,20 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-info">Sanal Sunucu</span>
+                                                    <?php if (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']])): ?>
+                                                        <span class="badge bg-secondary ms-1">
+                                                            <?php echo htmlspecialchars($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['sunucu_adi']); ?> üzerinde
+                                                        </span>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
-                                    <?php
+                                <?php
                                         endif;
                                     endwhile;
-                                    ?>
-                                <?php endwhile; ?>
-                            <?php endif; ?>
+                                }
+                            }
 
-                            <?php
-                            // Bağımsız sanal sunucuları göster
-                            mysqli_data_seek($result_sanal, 0);
-                            $standalone_shown = false;
-                            while ($sanal = mysqli_fetch_assoc($result_sanal)):
-                                if (!$sanal['fiziksel_sunucu_id']):
-                                    if (!$standalone_shown):
-                                        $standalone_shown = true;
-                            ?>
-                                        <tr>
-                                            <td colspan="4" class="table-secondary">
-                                                <strong>Bağımsız Sanal Sunucular</strong>
-                                            </td>
-                                        </tr>
-                                    <?php endif; ?>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-pc text-info me-2"></i>
-                                                <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
-                                            </div>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
-                                        <td>
-                                            <?php if ($sanal['proje_adi']): ?>
-                                                <a href="proje_sunucu.php?id=<?php echo $sanal['proje_id']; ?>">
-                                                    <?php echo htmlspecialchars($sanal['proje_adi']); ?>
-                                                </a>
-                                            <?php else: ?>
-                                                <span class="text-muted">-</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">Sanal Sunucu</span>
-                                        </td>
-                                    </tr>
-                            <?php endif;
-                            endwhile; ?>
-
-                            <?php if (mysqli_num_rows($result_fiziksel) == 0 && mysqli_num_rows($result_sanal) == 0): ?>
+                            if (!$has_servers): ?>
                                 <tr>
                                     <td colspan="4" class="text-center">
                                         Bu lokasyona ait sunucu bulunmamaktadır.

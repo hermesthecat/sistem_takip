@@ -103,7 +103,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
     <div class="container mt-4">
         <div class="row">
             <div class="col">
-                <h2><?php echo $proje['proje_adi']; ?> - Sunucular</h2>
+                <h2>Proje: <b><?php echo $proje['proje_adi']; ?></b> için Sunucu Listesi</h2>
                 <hr>
 
                 <div class="table-responsive">
@@ -112,17 +112,18 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                             <tr>
                                 <th style="width: 30%">Sunucu Adı</th>
                                 <th>IP Adresi</th>
+                                <th>Lokasyon</th>
                                 <th>Özellikler</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $has_servers = false;
 
                             // Önce fiziksel sunucuları ve bağlı sanal sunucuları göster
-                            if ($fiziksel_count > 0): 
+                            if ($fiziksel_count > 0):
                                 $has_servers = true;
-                                while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)): 
+                                while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)):
                             ?>
                                     <tr class="table-primary bg-opacity-10">
                                         <td>
@@ -132,6 +133,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                             </div>
                                         </td>
                                         <td><?php echo htmlspecialchars($fiziksel['ip_adresi']); ?></td>
+                                        <td><?php echo htmlspecialchars($fiziksel['lokasyon_adi']); ?></td>
                                         <td>
                                             <span class="badge bg-primary">Fiziksel Sunucu</span>
                                         </td>
@@ -171,21 +173,23 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                             if ($sanal_count > 0) {
                                 mysqli_data_seek($result_sanal, 0);
                                 $standalone_exists = false;
-                                
+
                                 // Önce bağımsız sanal sunucu var mı kontrol et
                                 while ($sanal = mysqli_fetch_assoc($result_sanal)) {
-                                    if (!$sanal['fiziksel_sunucu_id'] || 
-                                        (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) && 
-                                         $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['proje_id'] != $proje_id)) {
+                                    if (
+                                        !$sanal['fiziksel_sunucu_id'] ||
+                                        (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) &&
+                                            $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['proje_id'] != $proje_id)
+                                    ) {
                                         $standalone_exists = true;
                                         $has_servers = true;
                                         break;
                                     }
                                 }
-                                
+
                                 if ($standalone_exists) {
                                     mysqli_data_seek($result_sanal, 0);
-                            ?>
+                                    ?>
                                     <tr>
                                         <td colspan="3" class="table-secondary">
                                             <strong>Bağımsız Sanal Sunucular</strong>
@@ -193,9 +197,11 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                     </tr>
                                     <?php
                                     while ($sanal = mysqli_fetch_assoc($result_sanal)):
-                                        if (!$sanal['fiziksel_sunucu_id'] || 
-                                            (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) && 
-                                             $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['proje_id'] != $proje_id)):
+                                        if (
+                                            !$sanal['fiziksel_sunucu_id'] ||
+                                            (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]) &&
+                                                $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['proje_id'] != $proje_id)
+                                        ):
                                     ?>
                                             <tr>
                                                 <td>
@@ -214,7 +220,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
-                                    <?php
+                                <?php
                                         endif;
                                     endwhile;
                                 }
