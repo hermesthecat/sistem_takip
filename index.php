@@ -63,6 +63,14 @@ function kaynak_deger_al($str, $tip)
     }
 }
 
+// Progress bar renkleri için class belirle
+function get_progress_class($yuzde)
+{
+    if ($yuzde >= 90) return 'bg-danger';
+    if ($yuzde >= 75) return 'bg-warning';
+    return 'bg-success';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -214,14 +222,6 @@ function kaynak_deger_al($str, $tip)
                                 $cpu_yuzde = round(($toplam_cpu / $fiziksel_cpu) * 100);
                                 $ram_yuzde = round(($toplam_ram / $fiziksel_ram) * 100);
                                 $disk_yuzde = round(($toplam_disk / $fiziksel_disk) * 100);
-
-                                // Progress bar renkleri için class belirle
-                                function get_progress_class($yuzde)
-                                {
-                                    if ($yuzde >= 90) return 'bg-danger';
-                                    if ($yuzde >= 75) return 'bg-warning';
-                                    return 'bg-success';
-                                }
                                 ?>
                                 <tr class="table-light">
                                     <td colspan="9">
