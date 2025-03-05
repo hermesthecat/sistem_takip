@@ -27,7 +27,10 @@ if (!$proje) {
 }
 
 // Fiziksel sunucuları al
-$sql_fiziksel = "SELECT * FROM fiziksel_sunucular WHERE proje_id = '$proje_id'";
+$sql_fiziksel = "SELECT fs.*, l.lokasyon_adi 
+                 FROM fiziksel_sunucular fs 
+                 LEFT JOIN lokasyonlar l ON fs.lokasyon_id = l.id
+                 WHERE fs.proje_id = '$proje_id'";
 $result_fiziksel = mysqli_query($conn, $sql_fiziksel);
 
 if (!$result_fiziksel) {
@@ -35,7 +38,11 @@ if (!$result_fiziksel) {
 }
 
 // Sanal sunucuları al (projeye ait olanlar)
-$sql_sanal = "SELECT ss.* FROM sanal_sunucular ss WHERE ss.proje_id = '$proje_id'";
+$sql_sanal = "SELECT ss.*, l.lokasyon_adi, l.id as lokasyon_id
+              FROM sanal_sunucular ss 
+              LEFT JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id
+              LEFT JOIN lokasyonlar l ON fs.lokasyon_id = l.id
+              WHERE ss.proje_id = '$proje_id'";
 $result_sanal = mysqli_query($conn, $sql_sanal);
 
 if (!$result_sanal) {
@@ -43,7 +50,7 @@ if (!$result_sanal) {
 }
 
 // Fiziksel sunucu bilgilerini ayrıca al (tüm fiziksel sunucular)
-$sql_fiziksel_bilgi = "SELECT id, sunucu_adi, proje_id FROM fiziksel_sunucular";
+$sql_fiziksel_bilgi = "SELECT id, sunucu_adi, proje_id, lokasyon_id FROM fiziksel_sunucular";
 $result_fiziksel_bilgi = mysqli_query($conn, $sql_fiziksel_bilgi);
 $fiziksel_sunucular = [];
 if ($result_fiziksel_bilgi) {
@@ -133,7 +140,15 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                             </div>
                                         </td>
                                         <td><?php echo htmlspecialchars($fiziksel['ip_adresi']); ?></td>
-                                        <td><?php echo htmlspecialchars($fiziksel['lokasyon_adi']); ?></td>
+                                        <td>
+                                            <?php if ($fiziksel['lokasyon_adi']): ?>
+                                                <a href="lokasyon_sunucu.php?id=<?php echo $fiziksel['lokasyon_id']; ?>">
+                                                    <?php echo htmlspecialchars($fiziksel['lokasyon_adi']); ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <span class="badge bg-primary">Fiziksel Sunucu</span>
                                         </td>
@@ -155,6 +170,15 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                                         </div>
                                                     </td>
                                                     <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
+                                                    <td>
+                                                        <?php if ($sanal['lokasyon_adi']): ?>
+                                                            <a href="lokasyon_sunucu.php?id=<?php echo $sanal['lokasyon_id']; ?>">
+                                                                <?php echo htmlspecialchars($sanal['lokasyon_adi']); ?>
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">-</span>
+                                                        <?php endif; ?>
+                                                    </td>
                                                     <td>
                                                         <span class="badge bg-info">Sanal Sunucu</span>
                                                         <span class="badge bg-secondary ms-1">
@@ -211,6 +235,15 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                                     </div>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
+                                                <td>
+                                                    <?php if ($sanal['lokasyon_adi']): ?>
+                                                        <a href="lokasyon_sunucu.php?id=<?php echo $sanal['lokasyon_id']; ?>">
+                                                            <?php echo htmlspecialchars($sanal['lokasyon_adi']); ?>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td>
                                                     <span class="badge bg-info">Sanal Sunucu</span>
                                                     <?php if (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']])): ?>
