@@ -36,10 +36,10 @@ $result = mysqli_query($conn, $sql);
 
 <head>
     <meta charset="UTF-8">
-    <title><?php 
-    $title = str_replace('{server_name}', $fiziksel_sunucu['sunucu_adi'], $language->get('virtual_server_list_for'));
-    echo $title;
-    ?></title>
+    <title><?php
+            $title = str_replace('{server_name}', $fiziksel_sunucu['sunucu_adi'], $language->get('virtual_server_list_for'));
+            echo $title;
+            ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -73,22 +73,28 @@ $result = mysqli_query($conn, $sql);
                 <?php
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<tr>";
-                        echo "<td>" . $row['id'] . "</td>";
-                        echo "<td>" . $row['sunucu_adi'] . "</td>";
-                        echo "<td>" . $row['ip_adresi'] . "</td>";
-                        echo "<td>" . $row['ram'] . "</td>";
-                        echo "<td>" . $row['cpu'] . "</td>";
-                        echo "<td>" . $row['disk'] . "</td>";
-                        echo "<td class='text-end'>
-                                <a href='sanal_sunucu_detay.php?id=" . $row['id'] . "' class='btn btn-info btn-sm'>" . $language->get('virtual_server_detail') . "</a>
-                                <a href='sanal_sunucu_duzenle.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>" . $language->get('virtual_server_edit') . "</a>
-                                <a href='sanal_sunucu_sil.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"" . $language->get('confirm_delete_virtual_server') . "\")'>" . $language->get('virtual_server_delete') . "</a>
-                            </td>";
-                        echo "</tr>";
+                ?>
+                        <tr>
+                            <td><?php echo $row['id']; ?></td>
+                            <td><?php echo $row['sunucu_adi']; ?></td>
+                            <td><?php echo $row['ip_adresi']; ?></td>
+                            <td><?php echo $row['ram']; ?></td>
+                            <td><?php echo $row['cpu']; ?></td>
+                            <td><?php echo $row['disk']; ?></td>
+                            <td class="text-end">
+                                <a href='sanal_sunucu_detay.php?id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'><?php echo $language->get('virtual_server_detail'); ?></a>
+                                <a href='sanal_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'><?php echo $language->get('virtual_server_edit'); ?></a>
+                                <a href='sanal_sunucu_sil.php?id=<?php echo $row['id']; ?>' class='btn btn-danger btn-sm' onclick='return confirm(\"" . $language->get(' confirm_delete_virtual_server') . "\" )'><?php echo $language->get('virtual_server_delete'); ?></a>
+                            </td>
+                        </tr>
+                    <?php
                     }
                 } else {
-                    echo "<tr><td colspan='7' class='text-center'>" . $language->get('no_virtual_servers_for_physical') . "</td></tr>";
+                    ?>
+                    <tr>
+                        <td colspan="7" class="text-center"><?php echo $language->get('no_virtual_servers_for_physical'); ?></td>
+                    </tr>
+                <?php
                 }
                 ?>
             </tbody>

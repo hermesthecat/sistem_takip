@@ -34,7 +34,7 @@ $sql_fiziksel = "SELECT fs.*, l.lokasyon_adi
 $result_fiziksel = mysqli_query($conn, $sql_fiziksel);
 
 if (!$result_fiziksel) {
-    die("Fiziksel sunucu sorgusu hatası: " . mysqli_error($conn));
+    die($language->get('physical_server_query_error', ['error' => mysqli_error($conn)]));
 }
 
 // Sanal sunucuları al (projeye ait olanlar)
@@ -46,7 +46,7 @@ $sql_sanal = "SELECT ss.*, l.lokasyon_adi, l.id as lokasyon_id
 $result_sanal = mysqli_query($conn, $sql_sanal);
 
 if (!$result_sanal) {
-    die("Sanal sunucu sorgusu hatası: " . mysqli_error($conn));
+    die($language->get('virtual_server_query_error', ['error' => mysqli_error($conn)]));
 }
 
 // Fiziksel sunucu bilgilerini ayrıca al (tüm fiziksel sunucular)
@@ -69,7 +69,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
 
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $proje['proje_adi'] . ' - Sunucular'; ?></title>
+    <title><?php echo $proje['proje_adi'] . ' - ' . $language->get('servers'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -110,17 +110,17 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
     <div class="container mt-4">
         <div class="row">
             <div class="col">
-                <h2>Proje: <b><?php echo $proje['proje_adi']; ?></b> için Sunucu Listesi</h2>
+                <h2><?php echo $language->get('project'); ?>: <b><?php echo $proje['proje_adi']; ?></b> <?php echo $language->get('server_list_for'); ?></h2>
                 <hr>
 
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 30%">Sunucu Adı</th>
-                                <th>IP Adresi</th>
-                                <th>Lokasyon</th>
-                                <th>Özellikler</th>
+                                <th style="width: 30%"><?php echo $language->get('server_name'); ?></th>
+                                <th><?php echo $language->get('ip_address'); ?></th>
+                                <th><?php echo $language->get('location'); ?></th>
+                                <th><?php echo $language->get('properties'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -150,7 +150,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <span class="badge bg-primary">Fiziksel Sunucu</span>
+                                            <span class="badge bg-primary"><?php echo $language->get('physical_server'); ?></span>
                                         </td>
                                     </tr>
                                     <?php
@@ -180,9 +180,13 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
-                                                        <span class="badge bg-info">Sanal Sunucu</span>
+                                                        <span class="badge bg-info"><?php echo $language->get('virtual_server'); ?></span>
                                                         <span class="badge bg-secondary ms-1">
-                                                            <?php echo htmlspecialchars($fiziksel['sunucu_adi']); ?> üzerinde
+                                                            <?php
+                                                            $fiziksel_sunucu = $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['sunucu_adi'];
+                                                            $fiziksel_sunucu_adi = str_replace('{server_name}', $fiziksel_sunucu, $language->get('on_server'));
+                                                            echo htmlspecialchars($fiziksel_sunucu_adi);
+                                                            ?>
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -216,7 +220,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                     ?>
                                     <tr>
                                         <td colspan="4" class="table-secondary">
-                                            <strong>Bağımsız Sanal Sunucular</strong>
+                                            <strong><?php echo $language->get('standalone_virtual_servers'); ?></strong>
                                         </td>
                                     </tr>
                                     <?php
@@ -245,10 +249,13 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-info">Sanal Sunucu</span>
+                                                    <span class="badge bg-info"><?php echo $language->get('virtual_server'); ?></span>
                                                     <?php if (isset($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']])): ?>
                                                         <span class="badge bg-secondary ms-1">
-                                                            <?php echo htmlspecialchars($fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['sunucu_adi']); ?> üzerinde
+                                                            <?php
+                                                            $fiziksel_sunucu = $fiziksel_sunucular[$sanal['fiziksel_sunucu_id']]['sunucu_adi'];
+                                                            $fiziksel_sunucu_adi = str_replace('{server_name}', $fiziksel_sunucu, $language->get('on_server'));
+                                                            echo htmlspecialchars($fiziksel_sunucu_adi); ?>
                                                         </span>
                                                     <?php endif; ?>
                                                 </td>
@@ -262,7 +269,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                             if (!$has_servers): ?>
                                 <tr>
                                     <td colspan="3" class="text-center">
-                                        Bu projeye ait sunucu bulunmamaktadır.
+                                        <?php echo $language->get('no_servers_for_project'); ?>
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -272,7 +279,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
 
                 <div class="mt-4">
                     <a href="proje_ekle.php?id=<?php echo $proje_id; ?>" class="btn btn-primary">
-                        <i class="bi bi-arrow-left"></i> Projeye Dön
+                        <i class="bi bi-arrow-left"></i> <?php echo $language->get('back_to_project'); ?>
                     </a>
                 </div>
             </div>
