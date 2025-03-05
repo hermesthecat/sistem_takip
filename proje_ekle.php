@@ -206,6 +206,9 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                             </td>
                                             <td>
                                                 <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
+                                                <a href="proje_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-hdd-network"></i> Sunucular
+                                                </a>
                                                 <?php if ($row['fiziksel_sayi'] == 0 && $row['sanal_sayi'] == 0): ?>
                                                     <a href="proje_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-sm btn-danger"
