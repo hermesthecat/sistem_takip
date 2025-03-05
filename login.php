@@ -3,7 +3,10 @@
 /**
  * @author A. Kerem Gök
  */
+
 session_start();
+
+date_default_timezone_set('Europe/Istanbul');
 
 // Zaten giriş yapmışsa ana sayfaya yönlendir
 if (isset($_SESSION['kullanici_id'])) {

@@ -140,7 +140,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                 <thead>
                                     <tr>
                                         <th><?php echo $language->get('location_name'); ?></th>
-                                        <th><?php echo $language->get('server_count'); ?></th>
+                                        <th><?php echo $language->get('server_info'); ?></th>
                                         <th><?php echo $language->get('created_at'); ?></th>
                                         <th><?php echo $language->get('actions'); ?></th>
                                     </tr>

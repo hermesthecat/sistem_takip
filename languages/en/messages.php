@@ -60,7 +60,7 @@ return [
     // Admin Page
     'user_management' => 'User Management',
     'users_list' => 'Users',
-    'add_new_user' => 'Add New User',
+    'add_new_user' => 'Add User',
     'edit_user' => 'Edit User',
     'user_id' => 'ID',
     'last_login' => 'Last Login',
@@ -83,9 +83,9 @@ return [
     'back_to_physical_servers' => 'Back to Physical Servers',
     'server_details' => 'Server Details',
     'select_location' => 'Select Location',
-    'add_new_location' => 'Add New Location',
+    'add_new_location' => 'Add Location',
     'select_project' => 'Select Project (Optional)',
-    'add_new_project' => 'Add New Project',
+    'add_new_project' => 'Add Project',
     'cpu_cores' => 'CPU Cores',
     'memory' => 'Memory',
     'cpu_placeholder' => 'Ex: Intel Xeon E5-2680 v4 2.40GHz',
@@ -95,7 +95,7 @@ return [
     'error_updating_server' => 'An error occurred while updating the server',
     
     // Physical Server Add
-    'add_physical_server' => 'Add New Physical Server',
+    'add_physical_server' => 'Add Physical Server',
     'error_adding_server' => 'An error occurred while adding the server',
     'total_cores' => 'Total CPU Cores',
     'memory_capacity' => 'Memory Capacity',
@@ -106,7 +106,7 @@ return [
     'success_server_deleted' => 'Physical server has been successfully deleted.',
     
     // Service Management
-    'add_service' => 'Add New Service',
+    'add_service' => 'Add Service',
     'edit_service' => 'Edit Service',
     'default_port' => 'Default Port',
     'existing_services' => 'Existing Services',
@@ -152,11 +152,12 @@ return [
     
     // Location Management
     'location_management' => 'Location Management',
-    'add_new_location_title' => 'Add New Location',
+    'add_new_location_title' => 'Add Location',
     'edit_location_title' => 'Edit Location',
     'location_name' => 'Location Name',
     'existing_locations' => 'Existing Locations',
     'server_count_info' => '{count} servers',
+    'server_info' => 'Server',
     'no_servers' => 'No servers',
     'error_location_exists' => 'Error: This location name is already in use!',
     'success_location_added' => 'New location added successfully.',
@@ -181,7 +182,7 @@ return [
     
     // Project Management
     'project_management' => 'Project Management',
-    'add_new_project' => 'Add New Project',
+    'add_new_project' => 'Add Project',
     'edit_project' => 'Edit Project',
     'project_code' => 'Project Code',
     'project_code_placeholder' => 'Ex: PRJ-2024',
@@ -206,7 +207,7 @@ return [
     'back_to_virtual_servers' => 'Back to Virtual Servers',
     'running_services' => 'Running Services',
     'add_existing_service' => 'Add Existing Service',
-    'add_new_service' => 'Add New Service',
+    'add_new_service' => 'Add Service',
     'service_port' => 'Port',
     'service_notes' => 'Notes',
     'default_port' => 'Default port',
@@ -256,7 +257,7 @@ return [
     'enter_valid_number' => 'Please enter only numbers (ex: {example})',
     
     // Virtual Server Add
-    'add_virtual_server' => 'Add New Virtual Server',
+    'add_virtual_server' => 'Add Virtual Server',
     'error_physical_server_id' => 'Physical server ID not specified.',
     'error_physical_server_not_found' => 'Physical server not found.',
     'resource_usage' => 'Resource Usage:',

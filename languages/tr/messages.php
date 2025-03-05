@@ -60,7 +60,7 @@ return [
     // Admin Sayfası
     'user_management' => 'Kullanıcı Yönetimi',
     'users_list' => 'Kullanıcılar',
-    'add_new_user' => 'Yeni Kullanıcı Ekle',
+    'add_new_user' => 'Kullanıcı Ekle',
     'edit_user' => 'Kullanıcı Düzenle',
     'user_id' => 'ID',
     'last_login' => 'Son Giriş',
@@ -83,9 +83,9 @@ return [
     'back_to_physical_servers' => 'Fiziksel Sunuculara Dön',
     'server_details' => 'Sunucu Detayları',
     'select_location' => 'Lokasyon Seçin',
-    'add_new_location' => 'Yeni Lokasyon Ekle',
+    'add_new_location' => 'Lokasyon Ekle',
     'select_project' => 'Proje Seçin (Opsiyonel)',
-    'add_new_project' => 'Yeni Proje Ekle',
+    'add_new_project' => 'Proje Ekle',
     'cpu_cores' => 'Çekirdek',
     'memory' => 'Bellek',
     'cpu_placeholder' => 'Örn: Intel Xeon E5-2680 v4 2.40GHz',
@@ -95,7 +95,7 @@ return [
     'error_updating_server' => 'Sunucu güncellenirken bir hata oluştu',
     
     // Fiziksel Sunucu Ekleme
-    'add_physical_server' => 'Yeni Fiziksel Sunucu Ekle',
+    'add_physical_server' => 'Fiziksel Sunucu Ekle',
     'error_adding_server' => 'Sunucu eklenirken bir hata oluştu',
     'total_cores' => 'Toplam Çekirdek Sayısı',
     'memory_capacity' => 'Bellek Kapasitesi',
@@ -106,7 +106,7 @@ return [
     'success_server_deleted' => 'Fiziksel sunucu başarıyla silindi.',
     
     // Hizmet Yönetimi
-    'add_service' => 'Yeni Hizmet Ekle',
+    'add_service' => 'Hizmet Ekle',
     'edit_service' => 'Hizmet Düzenle',
     'default_port' => 'Varsayılan Port',
     'existing_services' => 'Mevcut Hizmetler',
@@ -152,11 +152,12 @@ return [
     
     // Lokasyon Yönetimi
     'location_management' => 'Lokasyon Yönetimi',
-    'add_new_location_title' => 'Yeni Lokasyon Ekle',
+    'add_new_location_title' => 'Lokasyon Ekle',
     'edit_location_title' => 'Lokasyon Düzenle',
     'location_name' => 'Lokasyon Adı',
     'existing_locations' => 'Mevcut Lokasyonlar',
     'server_count_info' => '{count} sunucu',
+    'server_info' => 'Sunucu',
     'no_servers' => 'Sunucu yok',
     'error_location_exists' => 'Hata: Bu lokasyon adı zaten kullanılıyor!',
     'success_location_added' => 'Yeni lokasyon başarıyla eklendi.',
@@ -181,7 +182,7 @@ return [
     
     // Proje Yönetimi
     'project_management' => 'Proje Yönetimi',
-    'add_new_project' => 'Yeni Proje Ekle',
+    'add_new_project' => 'Proje Ekle',
     'edit_project' => 'Proje Düzenle',
     'project_code' => 'Proje Kodu',
     'project_code_placeholder' => 'Örn: PRJ-2024',
@@ -206,7 +207,7 @@ return [
     'back_to_virtual_servers' => 'Sanal Sunuculara Dön',
     'running_services' => 'Çalışan Hizmetler',
     'add_existing_service' => 'Mevcut Hizmet Ekle',
-    'add_new_service' => 'Yeni Hizmet Ekle',
+    'add_new_service' => 'Hizmet Ekle',
     'service_port' => 'Port',
     'service_notes' => 'Notlar',
     'default_port' => 'Varsayılan port',
@@ -224,6 +225,7 @@ return [
     'project_info' => '{project_name} ({project_code})',
     'no_project_assigned' => '-',
     'update' => 'Güncelle',
+
     // Sanal Sunucu Detay - Ek Metinler
     'select_service' => 'Hizmet Seçin',
     'service_not_in_list' => 'Listede görmek istediğiniz hizmet yok mu?',
@@ -231,6 +233,7 @@ return [
     'default_port_info' => 'Boş bırakılırsa varsayılan port kullanılır.',
     'add_service' => 'Hizmet Ekle',
     'no_active_services' => 'Eklenebilecek aktif hizmet bulunmuyor.',
+
     // Sanal Sunucu Düzenleme
     'edit_virtual_server' => 'Sanal Sunucu Düzenle',
     'back_to_virtual_servers' => 'Sanal Sunuculara Dön',
@@ -251,8 +254,9 @@ return [
     'error_disk_capacity' => 'Disk değeri seçilen fiziksel sunucunun kalan kapasitesinden ({value} GB) fazla olamaz.',
     'enter_valid_ipv4' => 'Lütfen geçerli bir IPv4 adresi girin',
     'enter_valid_number' => 'Lütfen sadece sayı girin (örn: {example})',
+    
     // Sanal Sunucu Ekleme
-    'add_virtual_server' => 'Yeni Sanal Sunucu Ekle',
+    'add_virtual_server' => 'Sanal Sunucu Ekle',
     'error_physical_server_id' => 'Fiziksel sunucu ID belirtilmedi.',
     'error_physical_server_not_found' => 'Fiziksel sunucu bulunamadı.',
     'resource_usage' => 'Kaynak Kullanımı:',

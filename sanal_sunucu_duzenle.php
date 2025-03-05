@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <?php while ($proje = mysqli_fetch_assoc($projeler)): ?>
                                     <option value="<?php echo $proje['id']; ?>"
                                         <?php echo ($proje['id'] == $sunucu['proje_id']) ? 'selected' : ''; ?>>
-                                        <?php echo $language->get('project_info', ['project_name' => $proje['proje_adi'], 'project_code' => $proje['proje_kodu']]); ?>
+                                        <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
                                     </option>
                                 <?php endwhile; ?>
                             </select>
@@ -180,12 +180,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         data-cpu="<?php echo $fs['toplam_cpu'] - $fs['kullanilan_cpu']; ?>"
                                         data-ram="<?php echo $fs['toplam_ram'] - $fs['kullanilan_ram']; ?>"
                                         data-disk="<?php echo $fs['toplam_disk'] - $fs['kullanilan_disk']; ?>">
-                                        <?php echo $fs['sunucu_adi']; ?>
-                                        (<?php echo $language->get('available_resources', [
-                                                'cpu' => $fs['toplam_cpu'] - $fs['kullanilan_cpu'],
-                                                'ram' => $fs['toplam_ram'] - $fs['kullanilan_ram'],
-                                                'disk' => $fs['toplam_disk'] - $fs['kullanilan_disk']
-                                            ]); ?>)
+                                        <?php echo $fs['sunucu_adi'];
+                                        ?>
+                                        (<?php
+                                            $kaynak_mesaji = $language->get('available_resources');
+                                            $kaynak_mesaji = str_replace('{cpu}', $fs['toplam_cpu'] - $fs['kullanilan_cpu'], $kaynak_mesaji);
+                                            $kaynak_mesaji = str_replace('{ram}', $fs['toplam_ram'] - $fs['kullanilan_ram'], $kaynak_mesaji);
+                                            $kaynak_mesaji = str_replace('{disk}', $fs['toplam_disk'] - $fs['kullanilan_disk'], $kaynak_mesaji);
+                                            echo $kaynak_mesaji;
+                                            ?>)
                                     </option>
                                 <?php endwhile; ?>
                             </select>

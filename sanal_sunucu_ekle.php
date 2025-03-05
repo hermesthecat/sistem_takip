@@ -170,7 +170,7 @@ $projeler = mysqli_query($conn, $sql);
                                 <?php while ($proje = mysqli_fetch_assoc($projeler)): ?>
                                     <option value="<?php echo $proje['id']; ?>"
                                         <?php echo ($proje['id'] == $fiziksel_sunucu['varsayilan_proje_id']) ? 'selected' : ''; ?>>
-                                        <?php echo $language->get('project_info', ['project_name' => $proje['proje_adi'], 'project_code' => $proje['proje_kodu']]); ?>
+                                        <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
                                     </option>
                                 <?php endwhile; ?>
                             </select>
