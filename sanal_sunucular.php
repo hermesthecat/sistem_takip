@@ -57,7 +57,7 @@ $result = mysqli_query($conn, $sql);
             </div>
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-hover table-striped table-responsive">
             <thead>
                 <tr>
                     <th><?php echo $language->get('virtual_server_id'); ?></th>

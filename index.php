@@ -114,7 +114,7 @@ function get_progress_class($yuzde)
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-hover table-striped table-responsive">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -151,11 +151,11 @@ function get_progress_class($yuzde)
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo $row['lokasyon_adi'] ?: '<span class="text-muted">-</span>'; ?></td>
+                                <td><?php echo '<a href="lokasyon_sunucu.php?id=' . $row['lokasyon_id'] . '">' . $row['lokasyon_adi'] . '</a>' ?: '<span class="text-muted">-</span>'; ?></td>
                                 <td>
                                     <?php
                                     if ($row['proje_adi']) {
-                                        echo $row['proje_adi'] . " <small class='text-muted'>(" . $row['proje_kodu'] . ")</small>";
+                                        echo '<a href="proje_sunucu.php?id=' . $row['proje_id'] . '">' . $row['proje_adi'] . '</a> <small class="text-muted">(' . $row['proje_kodu'] . ')</small>';
                                     } else {
                                         echo "<span class='text-muted'>-</span>";
                                     }

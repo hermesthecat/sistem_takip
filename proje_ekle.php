@@ -167,7 +167,7 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-striped table-responsive">
                                 <thead>
                                     <tr>
                                         <th><?php echo $language->get('project_name'); ?></th>

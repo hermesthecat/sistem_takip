@@ -140,7 +140,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-striped table-responsive">
                                 <thead>
                                     <tr>
                                         <th><?php echo $language->get('location_name'); ?></th>

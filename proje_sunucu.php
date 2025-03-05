@@ -114,7 +114,7 @@ $fiziksel_count = mysqli_num_rows($result_fiziksel);
                 <hr>
 
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-striped table-responsive">
                         <thead>
                             <tr>
                                 <th style="width: 30%"><?php echo $language->get('server_name'); ?></th>
