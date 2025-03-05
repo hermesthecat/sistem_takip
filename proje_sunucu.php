@@ -47,16 +47,30 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .tree-container {
-            margin-left: 20px;
+        .tree-line {
+            position: relative;
         }
-
-        .tree-item {
-            margin: 10px 0;
+        .tree-line::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: -14px;
+            border-left: 2px solid #dee2e6;
+            height: 100%;
+            width: 1px;
         }
-
-        .virtual-server {
-            margin-left: 40px;
+        .tree-line::after {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            width: 15px;
+            height: 2px;
+            background-color: #dee2e6;
+        }
+        .tree-indent {
+            position: relative;
+            margin-left: 30px;
         }
     </style>
 </head>
@@ -70,67 +84,96 @@ $result_sanal = mysqli_query($conn, $sql_sanal);
                 <h2><?php echo $proje['proje_adi']; ?> - Sunucular</h2>
                 <hr>
 
-                <div class="tree-container">
-                    <?php if (mysqli_num_rows($result_fiziksel) > 0): ?>
-                        <?php while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)): ?>
-                            <div class="tree-item">
-                                <i class="bi bi-hdd-fill"></i>
-                                <strong><?php echo htmlspecialchars($fiziksel['sunucu_adi']); ?></strong>
-                                (<?php echo htmlspecialchars($fiziksel['ip_adresi']); ?>)
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%">Sunucu Adı</th>
+                                <th>IP Adresi</th>
+                                <th>Özellikler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (mysqli_num_rows($result_fiziksel) > 0): ?>
+                                <?php while ($fiziksel = mysqli_fetch_assoc($result_fiziksel)): ?>
+                                    <tr class="table-primary bg-opacity-10">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-hdd-fill text-primary me-2"></i>
+                                                <strong><?php echo htmlspecialchars($fiziksel['sunucu_adi']); ?></strong>
+                                            </div>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($fiziksel['ip_adresi']); ?></td>
+                                        <td>
+                                            <span class="badge bg-primary">Fiziksel Sunucu</span>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                    // Her fiziksel sunucuya bağlı sanal sunucuları göster
+                                    mysqli_data_seek($result_sanal, 0);
+                                    while ($sanal = mysqli_fetch_assoc($result_sanal)):
+                                        if ($sanal['fiziksel_sunucu_id'] == $fiziksel['id']):
+                                    ?>
+                                        <tr class="table-light">
+                                            <td>
+                                                <div class="tree-indent">
+                                                    <div class="d-flex align-items-center tree-line">
+                                                        <i class="bi bi-pc text-info me-2"></i>
+                                                        <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
+                                            <td>
+                                                <span class="badge bg-info">Sanal Sunucu</span>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                        endif;
+                                    endwhile;
+                                    ?>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
 
-                                <?php
-                                // Her fiziksel sunucuya bağlı sanal sunucuları göster
-                                mysqli_data_seek($result_sanal, 0);
-                                $has_virtual = false;
-                                while ($sanal = mysqli_fetch_assoc($result_sanal)) {
-                                    if ($sanal['fiziksel_sunucu_id'] == $fiziksel['id']) {
-                                        if (!$has_virtual) {
-                                            echo '<div class="virtual-server">';
-                                            $has_virtual = true;
-                                        }
-                                        echo '<div>';
-                                        echo '<i class="bi bi-pc"></i> ';
-                                        echo htmlspecialchars($sanal['sunucu_adi']);
-                                        if ($sanal['ip_adresi']) {
-                                            echo ' (' . htmlspecialchars($sanal['ip_adresi']) . ')';
-                                        }
-                                        echo '</div>';
-                                    }
-                                }
-                                if ($has_virtual) {
-                                    echo '</div>';
-                                }
-                                ?>
-                            </div>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <p>Bu projeye ait fiziksel sunucu bulunmamaktadır.</p>
-                    <?php endif; ?>
+                            <?php
+                            // Bağımsız sanal sunucuları göster
+                            mysqli_data_seek($result_sanal, 0);
+                            $standalone_shown = false;
+                            while ($sanal = mysqli_fetch_assoc($result_sanal)):
+                                if (!$sanal['fiziksel_sunucu_id']):
+                                    if (!$standalone_shown):
+                                        $standalone_shown = true;
+                            ?>
+                                        <tr>
+                                            <td colspan="3" class="table-secondary">
+                                                <strong>Bağımsız Sanal Sunucular</strong>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-pc text-info me-2"></i>
+                                                <?php echo htmlspecialchars($sanal['sunucu_adi']); ?>
+                                            </div>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($sanal['ip_adresi']); ?></td>
+                                        <td>
+                                            <span class="badge bg-info">Sanal Sunucu</span>
+                                        </td>
+                                    </tr>
+                                <?php endif;
+                            endwhile; ?>
 
-                    <?php
-                    // Herhangi bir fiziksel sunucuya bağlı olmayan sanal sunucuları göster
-                    mysqli_data_seek($result_sanal, 0);
-                    $standalone_virtual = false;
-                    while ($sanal = mysqli_fetch_assoc($result_sanal)) {
-                        if (!$sanal['fiziksel_sunucu_id']) {
-                            if (!$standalone_virtual) {
-                                echo '<div class="tree-item">';
-                                echo '<h5>Bağımsız Sanal Sunucular</h5>';
-                                $standalone_virtual = true;
-                            }
-                            echo '<div class="virtual-server">';
-                            echo '<i class="bi bi-pc"></i> ';
-                            echo htmlspecialchars($sanal['sunucu_adi']);
-                            if ($sanal['ip_adresi']) {
-                                echo ' (' . htmlspecialchars($sanal['ip_adresi']) . ')';
-                            }
-                            echo '</div>';
-                        }
-                    }
-                    if ($standalone_virtual) {
-                        echo '</div>';
-                    }
-                    ?>
+                            <?php if (mysqli_num_rows($result_fiziksel) == 0 && mysqli_num_rows($result_sanal) == 0): ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        Bu projeye ait sunucu bulunmamaktadır.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="mt-4">
