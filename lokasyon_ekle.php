@@ -174,7 +174,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                                 <a href="lokasyon_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
 
                                                 <a href="lokasyon_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
-                                                    <i class="bi bi-hdd-network"></i> Sunucular
+                                                    <i class="bi bi-hdd-network"></i> <?php echo $language->get('servers'); ?>
                                                 </a>
                                                 <?php if ($row['sunucu_sayisi'] == 0): ?>
                                                     <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>"
