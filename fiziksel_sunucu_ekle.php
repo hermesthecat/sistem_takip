@@ -3,8 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 $mesaj = '';
 
@@ -48,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
-    
+    <?php require_once __DIR__ . '/header.php'; ?>
+
     <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← <?php echo $language->get('back_to_physical_servers'); ?></a>
@@ -104,17 +107,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cpu" class="form-label"><?php echo $language->get('cpu_cores'); ?></label>
-                                <input type="text" class="form-control" id="cpu" name="cpu" 
+                                <input type="text" class="form-control" id="cpu" name="cpu"
                                     placeholder="<?php echo $language->get('total_cores'); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="ram" class="form-label"><?php echo $language->get('memory'); ?></label>
-                                <input type="text" class="form-control" id="ram" name="ram" 
+                                <input type="text" class="form-control" id="ram" name="ram"
                                     placeholder="<?php echo $language->get('memory_capacity'); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="disk" class="form-label"><?php echo $language->get('disk'); ?></label>
-                                <input type="text" class="form-control" id="disk" name="disk" 
+                                <input type="text" class="form-control" id="disk" name="disk"
                                     placeholder="<?php echo $language->get('disk_capacity'); ?>" required>
                             </div>
                         </div>

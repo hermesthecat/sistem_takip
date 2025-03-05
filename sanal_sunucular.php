@@ -3,9 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
     header('Location: index.php');
@@ -40,7 +42,7 @@ $result = mysqli_query($conn, $sql);
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">

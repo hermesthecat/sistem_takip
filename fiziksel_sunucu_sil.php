@@ -1,18 +1,22 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = mysqli_real_escape_string($conn, $_GET['id']);
-    
+
     // Önce bu fiziksel sunucuya bağlı sanal sunucu var mı kontrol et
     $sql_kontrol = "SELECT COUNT(*) as sayi FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$id'";
     $result_kontrol = mysqli_query($conn, $sql_kontrol);
     $row = mysqli_fetch_assoc($result_kontrol);
-    
+
     if ($row['sayi'] > 0) {
         // Eğer bağlı sanal sunucu varsa silme
         $mesaj = str_replace('{sayi}', $row['sayi'], $language->get('error_has_virtual_servers'));
@@ -29,4 +33,4 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 } else {
     header('Location: index.php');
 }
-exit; 
+exit;

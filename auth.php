@@ -3,10 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
+
 session_start();
 
 // Dil yönetimini başlat
-require_once 'config/Language.php';
+require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
 // Session'da kayıtlı dil varsa onu kullan

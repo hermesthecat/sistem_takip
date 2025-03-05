@@ -1,10 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: index.php');
@@ -34,18 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $yeni_hizmet_adi = mysqli_real_escape_string($conn, $_POST['yeni_hizmet_adi']);
         $yeni_aciklama = mysqli_real_escape_string($conn, $_POST['yeni_aciklama']);
         $yeni_port = mysqli_real_escape_string($conn, $_POST['yeni_port']);
-        
+
         // Önce yeni hizmeti ekle
         $sql = "INSERT INTO hizmetler (hizmet_adi, aciklama, port, durum) 
                 VALUES ('$yeni_hizmet_adi', '$yeni_aciklama', '$yeni_port', 'Aktif')";
-        
+
         if (mysqli_query($conn, $sql)) {
             $yeni_hizmet_id = mysqli_insert_id($conn);
-            
+
             // Hizmeti direkt olarak sanal sunucuya ekle
             $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port) 
                     VALUES ('$id', '$yeni_hizmet_id', '$yeni_port')";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('service_added_success') . "</div>";
             } else {
@@ -58,10 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hizmet_id = mysqli_real_escape_string($conn, $_POST['hizmet_id']);
         $ozel_port = mysqli_real_escape_string($conn, $_POST['ozel_port']);
         $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
-        
+
         $sql = "INSERT INTO sanal_sunucu_hizmetler (sanal_sunucu_id, hizmet_id, ozel_port, notlar) 
                 VALUES ('$id', '$hizmet_id', '$ozel_port', '$notlar')";
-        
+
         if (mysqli_query($conn, $sql)) {
             $mesaj = "<div class='alert alert-success'>" . $language->get('service_added_success') . "</div>";
         } else {
@@ -71,12 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hizmet_id = mysqli_real_escape_string($conn, $_POST['hizmet_id']);
         $ozel_port = mysqli_real_escape_string($conn, $_POST['ozel_port']);
         $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
-        
+
         $sql = "UPDATE sanal_sunucu_hizmetler 
                 SET ozel_port = '$ozel_port', 
                     notlar = '$notlar'
                 WHERE sanal_sunucu_id = '$id' AND hizmet_id = '$hizmet_id'";
-        
+
         if (mysqli_query($conn, $sql)) {
             $mesaj = "<div class='alert alert-success'>" . $language->get('service_updated_success') . "</div>";
         } else {
@@ -118,22 +121,24 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
 
 <!DOCTYPE html>
 <html lang="<?php echo $language->getCurrentLang(); ?>">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo $language->get('virtual_server_detail') . ' - ' . $sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
-    <?php require_once 'header.php'; ?>
-    
+    <?php require_once __DIR__ . '/header.php'; ?>
+
     <div class="container">
         <div class="mb-3">
             <a href="sanal_sunucular.php?fiziksel_id=<?php echo $sunucu['fiziksel_sunucu_id']; ?>" class="btn btn-secondary">← <?php echo $language->get('back_to_virtual_servers'); ?></a>
         </div>
-        
+
         <?php echo $mesaj; ?>
-        
+
         <div class="card mb-4">
             <div class="card-header">
                 <h1 class="card-title h4 mb-0">
@@ -147,8 +152,8 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                         <p><strong><?php echo $language->get('physical_server'); ?>:</strong> <?php echo $sunucu['fiziksel_sunucu_adi']; ?></p>
                         <p><strong><?php echo $language->get('ip_address'); ?>:</strong> <?php echo $sunucu['ip_adresi']; ?></p>
                         <p>
-                            <strong><?php echo $language->get('project'); ?>:</strong> 
-                            <?php 
+                            <strong><?php echo $language->get('project'); ?>:</strong>
+                            <?php
                             if ($sunucu['proje_adi']) {
                                 echo str_replace(
                                     ['{project_name}', '{project_code}'],
@@ -169,7 +174,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
@@ -193,7 +198,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                             <tr>
                                                 <td><?php echo htmlspecialchars($hizmet['hizmet_adi']); ?></td>
                                                 <td>
-                                                    <?php 
+                                                    <?php
                                                     if ($hizmet['ozel_port']) {
                                                         echo $hizmet['ozel_port'];
                                                         if ($hizmet['ozel_port'] != $hizmet['varsayilan_port']) {
@@ -208,17 +213,17 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                                     <?php echo $hizmet['notlar'] ? nl2br(htmlspecialchars($hizmet['notlar'])) : '<span class="text-muted">' . $language->get('no_project_assigned') . '</span>'; ?>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning btn-sm" 
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#duzenleModal<?php echo $hizmet['hizmet_id']; ?>">
+                                                    <button type="button" class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#duzenleModal<?php echo $hizmet['hizmet_id']; ?>">
                                                         <?php echo $language->get('edit_service'); ?>
                                                     </button>
-                                                    <a href="?id=<?php echo $id; ?>&sil_hizmet=<?php echo $hizmet['hizmet_id']; ?>" 
-                                                       class="btn btn-danger btn-sm"
-                                                       onclick="return confirm('<?php echo $language->get('confirm_remove_service'); ?>')"><?php echo $language->get('remove_service'); ?></a>
+                                                    <a href="?id=<?php echo $id; ?>&sil_hizmet=<?php echo $hizmet['hizmet_id']; ?>"
+                                                        class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('<?php echo $language->get('confirm_remove_service'); ?>')"><?php echo $language->get('remove_service'); ?></a>
                                                 </td>
                                             </tr>
-                                            
+
                                             <!-- Düzenleme Modal -->
                                             <div class="modal fade" id="duzenleModal<?php echo $hizmet['hizmet_id']; ?>" tabindex="-1">
                                                 <div class="modal-dialog">
@@ -232,8 +237,8 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                                                 <input type="hidden" name="hizmet_id" value="<?php echo $hizmet['hizmet_id']; ?>">
                                                                 <div class="mb-3">
                                                                     <label class="form-label"><?php echo $language->get('service_port'); ?></label>
-                                                                    <input type="text" class="form-control" name="ozel_port" 
-                                                                           value="<?php echo $hizmet['ozel_port'] ?: $hizmet['varsayilan_port']; ?>">
+                                                                    <input type="text" class="form-control" name="ozel_port"
+                                                                        value="<?php echo $hizmet['ozel_port'] ?: $hizmet['varsayilan_port']; ?>">
                                                                     <div class="form-text"><?php echo $language->get('default_port') . ': ' . $hizmet['varsayilan_port']; ?></div>
                                                                 </div>
                                                                 <div class="mb-3">
@@ -261,7 +266,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
@@ -299,13 +304,13 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                 </div>
                                 <button type="submit" name="hizmet_ekle" class="btn btn-primary"><?php echo $language->get('add_service'); ?></button>
                             </form>
-                            
+
                             <script>
-                            document.getElementById('hizmet_id').addEventListener('change', function() {
-                                var selectedOption = this.options[this.selectedIndex];
-                                var defaultPort = selectedOption.getAttribute('data-port');
-                                document.getElementById('ozel_port').placeholder = defaultPort ? '<?php echo $language->get('default_port'); ?>: ' + defaultPort : '';
-                            });
+                                document.getElementById('hizmet_id').addEventListener('change', function() {
+                                    var selectedOption = this.options[this.selectedIndex];
+                                    var defaultPort = selectedOption.getAttribute('data-port');
+                                    document.getElementById('ozel_port').placeholder = defaultPort ? '<?php echo $language->get('default_port'); ?>: ' + defaultPort : '';
+                                });
                             </script>
                         <?php else: ?>
                             <div class="alert alert-info mb-0">
@@ -352,7 +357,8 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

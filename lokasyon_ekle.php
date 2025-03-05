@@ -1,10 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 $mesaj = '';
 
@@ -24,7 +27,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $sql = "SELECT * FROM lokasyonlar WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     $lokasyon = mysqli_fetch_assoc($result);
-    
+
     if ($lokasyon) {
         $duzenle_mod = true;
     }
@@ -36,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($duzenle_mod) {
         // Güncelleme işlemi
         $id = mysqli_real_escape_string($conn, $_GET['id']);
-        
+
         // Aynı isimde lokasyon var mı kontrolü (kendi adı hariç)
         $sql_kontrol = "SELECT id FROM lokasyonlar WHERE lokasyon_adi = '$lokasyon_adi' AND id != '$id'";
         $result_kontrol = mysqli_query($conn, $sql_kontrol);
@@ -45,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mesaj = "<div class='alert alert-danger'>" . $language->get('error_location_exists') . "</div>";
         } else {
             $sql = "UPDATE lokasyonlar SET lokasyon_adi = '$lokasyon_adi' WHERE id = '$id'";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('success_location_updated') . "</div>";
                 // Güncel veriyi al
@@ -65,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mesaj = "<div class='alert alert-danger'>" . $language->get('error_location_exists') . "</div>";
         } else {
             $sql = "INSERT INTO lokasyonlar (lokasyon_adi) VALUES ('$lokasyon_adi')";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('success_location_added') . "</div>";
                 $_POST = array(); // Formu temizle
@@ -86,18 +89,20 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
 
 <!DOCTYPE html>
 <html lang="<?php echo $language->getCurrentLang(); ?>">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo $language->get('location_management'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
-    <?php require_once 'header.php'; ?>
-    
+    <?php require_once __DIR__ . '/header.php'; ?>
+
     <div class="container">
         <?php echo $mesaj; ?>
-        
+
         <div class="row">
             <div class="col-md-5">
                 <div class="card">
@@ -106,12 +111,12 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                     </div>
                     <div class="card-body">
                         <?php echo $mesaj; ?>
-                        
+
                         <form method="POST">
                             <div class="mb-3">
                                 <label for="lokasyon_adi" class="form-label"><?php echo $language->get('location_name'); ?></label>
-                                <input type="text" class="form-control" id="lokasyon_adi" name="lokasyon_adi" 
-                                    value="<?php echo $duzenle_mod ? $lokasyon['lokasyon_adi'] : (isset($_POST['lokasyon_adi']) ? $_POST['lokasyon_adi'] : ''); ?>" 
+                                <input type="text" class="form-control" id="lokasyon_adi" name="lokasyon_adi"
+                                    value="<?php echo $duzenle_mod ? $lokasyon['lokasyon_adi'] : (isset($_POST['lokasyon_adi']) ? $_POST['lokasyon_adi'] : ''); ?>"
                                     required>
                             </div>
                             <button type="submit" class="btn btn-primary">
@@ -141,9 +146,9 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     mysqli_data_seek($result_lokasyonlar, 0);
-                                    while ($row = mysqli_fetch_assoc($result_lokasyonlar)): 
+                                    while ($row = mysqli_fetch_assoc($result_lokasyonlar)):
                                     ?>
                                         <tr>
                                             <td><?php echo $row['lokasyon_adi']; ?></td>
@@ -158,9 +163,9 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                             <td>
                                                 <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['sunucu_sayisi'] == 0): ?>
-                                                    <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>" 
-                                                       class="btn btn-sm btn-danger"
-                                                       onclick="return confirm('<?php echo $language->get('confirm_delete_location'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_location'); ?>')"><?php echo $language->get('delete'); ?></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -175,4 +180,5 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>

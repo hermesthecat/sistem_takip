@@ -3,9 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: index.php?hata=' . urlencode($language->get('error_virtual_server_id')));
@@ -124,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
     <div class="container">
         <div class="mb-3">
@@ -180,10 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         data-disk="<?php echo $fs['toplam_disk'] - $fs['kullanilan_disk']; ?>">
                                         <?php echo $fs['sunucu_adi']; ?>
                                         (<?php echo $language->get('available_resources', [
-                                            'cpu' => $fs['toplam_cpu'] - $fs['kullanilan_cpu'],
-                                            'ram' => $fs['toplam_ram'] - $fs['kullanilan_ram'],
-                                            'disk' => $fs['toplam_disk'] - $fs['kullanilan_disk']
-                                        ]); ?>)
+                                                'cpu' => $fs['toplam_cpu'] - $fs['kullanilan_cpu'],
+                                                'ram' => $fs['toplam_ram'] - $fs['kullanilan_ram'],
+                                                'disk' => $fs['toplam_disk'] - $fs['kullanilan_disk']
+                                            ]); ?>)
                                     </option>
                                 <?php endwhile; ?>
                             </select>

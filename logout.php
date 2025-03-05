@@ -1,7 +1,9 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
+
 session_start();
 
 // Tüm session değişkenlerini temizle
@@ -12,4 +14,4 @@ session_destroy();
 
 // Login sayfasına yönlendir
 header('Location: login.php');
-exit; 
+exit;

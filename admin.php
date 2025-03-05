@@ -3,10 +3,13 @@
 /**
  * @author A. Kerem Gök
  */
+
 session_start();
 
+require_once __DIR__ . '/config/database.php';
+
 // Dil yönetimini başlat
-require_once 'config/Language.php';
+require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
 // Session'da kayıtlı dil varsa onu kullan
@@ -25,8 +28,6 @@ if ($_SESSION['rol'] !== 'admin') {
     header('Location: index.php?hata=' . urlencode($language->get('error_no_access')));
     exit;
 }
-
-require_once 'config/database.php';
 
 $mesaj = '';
 
@@ -117,7 +118,7 @@ $kullanicilar = mysqli_query($conn, $sql);
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
     <div class="container">
         <?php echo $mesaj; ?>

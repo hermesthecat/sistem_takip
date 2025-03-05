@@ -1,10 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 $mesaj = '';
 
@@ -19,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $yeni_sifre = $_POST['yeni_sifre'];
     $mevcut_sifre = $_POST['mevcut_sifre'];
-    
+
     // Email kontrolü (kendi emaili hariç)
     $email_kontrol = mysqli_query($conn, "SELECT id FROM kullanicilar WHERE email = '$email' AND id != '$id'");
     if (mysqli_num_rows($email_kontrol) > 0) {
@@ -30,15 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "UPDATE kullanicilar SET 
                     ad_soyad = '$ad_soyad',
                     email = '$email'";
-            
+
             // Yeni şifre girilmişse güncelle
             if (!empty($yeni_sifre)) {
                 $hash = password_hash($yeni_sifre, PASSWORD_DEFAULT);
                 $sql .= ", sifre = '$hash'";
             }
-            
+
             $sql .= " WHERE id = '$id'";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('success_profile_updated') . "</div>";
                 // Güncel kullanıcı bilgilerini al
@@ -58,18 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="<?php echo $language->getCurrentLang(); ?>">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo str_replace('{name}', $kullanici['ad_soyad'], $language->get('profile_page_title')); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
     <?php require_once 'header.php'; ?>
-    
+
     <div class="container">
         <?php echo $mesaj; ?>
-        
+
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
@@ -78,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <div class="card-body">
                         <?php echo $mesaj; ?>
-                        
+
                         <form method="POST">
                             <div class="mb-3">
                                 <label class="form-label"><?php echo $language->get('username'); ?></label>
@@ -87,13 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?php echo $language->get('full_name'); ?></label>
-                                <input type="text" class="form-control" name="ad_soyad" 
-                                       value="<?php echo $kullanici['ad_soyad']; ?>" required>
+                                <input type="text" class="form-control" name="ad_soyad"
+                                    value="<?php echo $kullanici['ad_soyad']; ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?php echo $language->get('email'); ?></label>
-                                <input type="email" class="form-control" name="email" 
-                                       value="<?php echo $kullanici['email']; ?>" required>
+                                <input type="email" class="form-control" name="email"
+                                    value="<?php echo $kullanici['email']; ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?php echo $language->get('new_password'); ?></label>
@@ -109,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </form>
                     </div>
                 </div>
-                
+
                 <div class="card mt-4">
                     <div class="card-header">
                         <h2 class="card-title h5 mb-0"><?php echo $language->get('account_information'); ?></h2>
@@ -122,17 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <?php echo $language->get('user_role_' . $kullanici['rol']); ?>
                                 </span>
                             </dd>
-                            
+
                             <dt class="col-sm-4"><?php echo $language->get('status'); ?></dt>
                             <dd class="col-sm-8">
                                 <span class="badge <?php echo $kullanici['durum'] == 'Aktif' ? 'bg-success' : 'bg-secondary'; ?>">
                                     <?php echo $language->get($kullanici['durum'] == 'Aktif' ? 'active' : 'passive'); ?>
                                 </span>
                             </dd>
-                            
+
                             <dt class="col-sm-4"><?php echo $language->get('last_login'); ?></dt>
                             <dd class="col-sm-8">
-                                <?php 
+                                <?php
                                 if ($kullanici['son_giris']) {
                                     echo date('d.m.Y H:i', strtotime($kullanici['son_giris']));
                                 } else {
@@ -140,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 }
                                 ?>
                             </dd>
-                            
+
                             <dt class="col-sm-4"><?php echo $language->get('registration_date'); ?></dt>
                             <dd class="col-sm-8">
                                 <?php echo date('d.m.Y H:i', strtotime($kullanici['olusturma_tarihi'])); ?>
@@ -153,4 +158,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>

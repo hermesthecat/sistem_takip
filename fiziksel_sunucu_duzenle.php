@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: index.php');
@@ -53,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             cpu = '$cpu',
             disk = '$disk'
             WHERE id = '$id'";
-    
+
     if (mysqli_query($conn, $sql)) {
         header('Location: index.php');
         exit;
@@ -65,15 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="<?php echo $language->getCurrentLang(); ?>">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo $language->get('edit_physical_server'); ?> - <?php echo $sunucu['sunucu_adi']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
     <?php require_once 'header.php'; ?>
-    
+
     <div class="container">
         <div class="mb-3">
             <a href="index.php" class="btn btn-secondary">← <?php echo $language->get('back_to_physical_servers'); ?></a>
@@ -86,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php if ($mesaj): ?>
                     <div class="alert alert-danger"><?php echo $mesaj; ?></div>
                 <?php endif; ?>
-                
+
                 <form method="POST">
                     <div class="row">
                         <div class="col-md-6">
@@ -117,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <select class="form-select" id="proje_id" name="proje_id">
                                     <option value=""><?php echo $language->get('select_project'); ?></option>
                                     <?php while ($proje = mysqli_fetch_assoc($result_projeler)): ?>
-                                        <option value="<?php echo $proje['id']; ?>" 
+                                        <option value="<?php echo $proje['id']; ?>"
                                             <?php echo ($proje['id'] == $sunucu['proje_id']) ? 'selected' : ''; ?>>
                                             <?php echo $proje['proje_adi']; ?> (<?php echo $proje['proje_kodu']; ?>)
                                         </option>
@@ -131,19 +137,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cpu" class="form-label"><?php echo $language->get('cpu_cores'); ?></label>
-                                <input type="text" class="form-control" id="cpu" name="cpu" 
+                                <input type="text" class="form-control" id="cpu" name="cpu"
                                     value="<?php echo $sunucu['cpu']; ?>"
                                     placeholder="<?php echo $language->get('cpu_placeholder'); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="ram" class="form-label"><?php echo $language->get('memory'); ?></label>
-                                <input type="text" class="form-control" id="ram" name="ram" 
+                                <input type="text" class="form-control" id="ram" name="ram"
                                     value="<?php echo $sunucu['ram']; ?>"
                                     placeholder="<?php echo $language->get('memory_placeholder'); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="disk" class="form-label"><?php echo $language->get('disk'); ?></label>
-                                <input type="text" class="form-control" id="disk" name="disk" 
+                                <input type="text" class="form-control" id="disk" name="disk"
                                     value="<?php echo $sunucu['disk']; ?>"
                                     placeholder="<?php echo $language->get('disk_placeholder'); ?>" required>
                             </div>
@@ -156,4 +162,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>

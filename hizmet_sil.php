@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: hizmet_ekle.php?hata=' . urlencode($language->get('error_service_id_missing')));
@@ -31,4 +35,4 @@ if (mysqli_query($conn, $sql)) {
     $error_message = str_replace('{error}', mysqli_error($conn), $language->get('error_deleting_service'));
     header('Location: hizmet_ekle.php?hata=' . urlencode($error_message));
 }
-exit; 
+exit;

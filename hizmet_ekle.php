@@ -3,8 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
+
+ require_once __DIR__ . '/auth.php';
+ require_once __DIR__ . '/config/database.php';
+ require_once __DIR__ . '/config/language.php';
+ $language = Language::getInstance();
 
 $mesaj = '';
 $duzenle_mod = false;
@@ -74,7 +77,7 @@ if (isset($_GET['basari'])) {
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
     <div class="container">
         <?php echo $mesaj; ?>
 

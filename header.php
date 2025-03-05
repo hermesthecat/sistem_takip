@@ -4,7 +4,7 @@
  * @author A. Kerem Gök
  */
 
-require_once 'config/Language.php';
+require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
 // Aktif sayfayı belirle

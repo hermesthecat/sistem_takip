@@ -3,9 +3,11 @@
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 if (!isset($_GET['fiziksel_id']) || empty($_GET['fiziksel_id'])) {
     header('Location: index.php?hata=' . urlencode($language->get('error_physical_server_id')));
@@ -72,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 VALUES ('$fiziksel_id', '$sunucu_adi', '$ip_adresi', '$ram', '$cpu', '$disk', $proje_id)";
 
         if (mysqli_query($conn, $sql)) {
-            header('Location: sanal_sunucular.php?fiziksel_id=' . $fiziksel_id . 
-                   '&basari=' . urlencode($language->get('success_virtual_server_added')));
+            header('Location: sanal_sunucular.php?fiziksel_id=' . $fiziksel_id .
+                '&basari=' . urlencode($language->get('success_virtual_server_added')));
             exit;
         } else {
             $mesaj = "<div class='alert alert-danger'>" . $language->get('error_adding_virtual_server', ['error' => mysqli_error($conn)]) . "</div>";
@@ -97,7 +99,7 @@ $projeler = mysqli_query($conn, $sql);
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
     <div class="container">
         <div class="mb-3">

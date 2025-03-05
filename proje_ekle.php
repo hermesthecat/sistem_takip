@@ -1,10 +1,13 @@
 <?php
+
 /**
  * @author A. Kerem Gök
  */
-require_once 'auth.php';
-require_once 'config/database.php';
-require_once 'config/language.php';
+
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 $mesaj = '';
 $duzenle_mod = false;
@@ -16,7 +19,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $sql = "SELECT * FROM projeler WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     $proje = mysqli_fetch_assoc($result);
-    
+
     if ($proje) {
         $duzenle_mod = true;
     }
@@ -31,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($duzenle_mod) {
         // Güncelleme işlemi
         $id = mysqli_real_escape_string($conn, $_GET['id']);
-        
+
         // Proje kodu kontrolü (kendi kodu hariç)
         $sql_kontrol = "SELECT id FROM projeler WHERE proje_kodu = '$proje_kodu' AND id != '$id'";
         $result_kontrol = mysqli_query($conn, $sql_kontrol);
@@ -45,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     aciklama = '$aciklama',
                     durum = '$durum'
                     WHERE id = '$id'";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('success_project_updated') . "</div>";
                 // Güncel veriyi al
@@ -65,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mesaj = "<div class='alert alert-danger'>" . $language->get('error_project_code_exists') . "</div>";
         } else {
             $sql = "INSERT INTO projeler (proje_adi, proje_kodu, aciklama, durum) VALUES ('$proje_adi', '$proje_kodu', '$aciklama', '$durum')";
-            
+
             if (mysqli_query($conn, $sql)) {
                 $mesaj = "<div class='alert alert-success'>" . $language->get('success_project_added') . "</div>";
                 $_POST = array(); // Formu temizle
@@ -87,15 +90,17 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
 
 <!DOCTYPE html>
 <html lang="<?php echo $language->getCurrentLang(); ?>">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo $language->get('project_management'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
-    <?php require_once 'header.php'; ?>
-    
+    <?php require_once __DIR__ . '/header.php'; ?>
+
     <div class="container">
         <div class="row">
             <div class="col-md-5">
@@ -107,29 +112,29 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                     </div>
                     <div class="card-body">
                         <?php echo $mesaj; ?>
-                        
+
                         <form method="POST">
                             <div class="mb-3">
                                 <label for="proje_adi" class="form-label"><?php echo $language->get('project_name'); ?></label>
-                                <input type="text" class="form-control" id="proje_adi" name="proje_adi" 
+                                <input type="text" class="form-control" id="proje_adi" name="proje_adi"
                                     value="<?php echo $duzenle_mod ? $proje['proje_adi'] : (isset($_POST['proje_adi']) ? $_POST['proje_adi'] : ''); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="proje_kodu" class="form-label"><?php echo $language->get('project_code'); ?></label>
-                                <input type="text" class="form-control" id="proje_kodu" name="proje_kodu" 
+                                <input type="text" class="form-control" id="proje_kodu" name="proje_kodu"
                                     value="<?php echo $duzenle_mod ? $proje['proje_kodu'] : (isset($_POST['proje_kodu']) ? $_POST['proje_kodu'] : ''); ?>"
                                     placeholder="<?php echo $language->get('project_code_placeholder'); ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="aciklama" class="form-label"><?php echo $language->get('description'); ?></label>
-                                <textarea class="form-control" id="aciklama" name="aciklama" rows="3"><?php 
-                                    echo $duzenle_mod ? $proje['aciklama'] : (isset($_POST['aciklama']) ? $_POST['aciklama'] : ''); 
-                                ?></textarea>
+                                <textarea class="form-control" id="aciklama" name="aciklama" rows="3"><?php
+                                                                                                        echo $duzenle_mod ? $proje['aciklama'] : (isset($_POST['aciklama']) ? $_POST['aciklama'] : '');
+                                                                                                        ?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="durum" class="form-label"><?php echo $language->get('status'); ?></label>
                                 <select class="form-select" id="durum" name="durum" required>
-                                    <?php 
+                                    <?php
                                     $durumlar = array('Aktif' => 'active', 'Pasif' => 'passive', 'Tamamlandı' => 'completed');
                                     foreach ($durumlar as $tr => $en) {
                                         $selected = '';
@@ -172,9 +177,9 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     mysqli_data_seek($result_projeler, 0);
-                                    while ($row = mysqli_fetch_assoc($result_projeler)): 
+                                    while ($row = mysqli_fetch_assoc($result_projeler)):
                                     ?>
                                         <tr>
                                             <td>
@@ -185,10 +190,9 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                             </td>
                                             <td><code><?php echo $row['proje_kodu']; ?></code></td>
                                             <td>
-                                                <span class="badge bg-<?php 
-                                                    echo $row['durum'] == 'Aktif' ? 'success' : 
-                                                        ($row['durum'] == 'Pasif' ? 'warning' : 'secondary'); 
-                                                ?>"><?php echo $language->get($row['durum'] == 'Aktif' ? 'active' : ($row['durum'] == 'Pasif' ? 'passive' : 'completed')); ?></span>
+                                                <span class="badge bg-<?php
+                                                                        echo $row['durum'] == 'Aktif' ? 'success' : ($row['durum'] == 'Pasif' ? 'warning' : 'secondary');
+                                                                        ?>"><?php echo $language->get($row['durum'] == 'Aktif' ? 'active' : ($row['durum'] == 'Pasif' ? 'passive' : 'completed')); ?></span>
                                                 <?php if ($row['fiziksel_sayi'] > 0 || $row['sanal_sayi'] > 0): ?>
                                                     <div class="mt-1">
                                                         <?php if ($row['fiziksel_sayi'] > 0): ?>
@@ -203,9 +207,9 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                             <td>
                                                 <a href="?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['fiziksel_sayi'] == 0 && $row['sanal_sayi'] == 0): ?>
-                                                    <a href="proje_sil.php?id=<?php echo $row['id']; ?>" 
-                                                       class="btn btn-sm btn-danger"
-                                                       onclick="return confirm('<?php echo $language->get('confirm_delete_project'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <a href="proje_sil.php?id=<?php echo $row['id']; ?>"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_project'); ?>')"><?php echo $language->get('delete'); ?></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -220,4 +224,5 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>
