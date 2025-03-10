@@ -173,7 +173,7 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                         <th><?php echo $language->get('project_name'); ?></th>
                                         <th><?php echo $language->get('project_code'); ?></th>
                                         <th><?php echo $language->get('status'); ?></th>
-                                        <th><?php echo $language->get('actions'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -204,7 +204,7 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                                     </div>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td class="text-end">
                                                 <a href="proje_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
                                                 <a href="proje_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
                                                     <i class="bi bi-hdd-network"></i> <?php echo $language->get('servers'); ?>

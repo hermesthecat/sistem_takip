@@ -127,6 +127,7 @@ if (isset($_GET['basari'])) {
                                 <thead>
                                     <tr>
                                         <th><?php echo $language->get('web_site_name'); ?></th>
+                                        <th><?php echo $language->get('virtual_server'); ?></th>
                                         <th><?php echo $language->get('status'); ?></th>
                                         <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
@@ -139,6 +140,23 @@ if (isset($_GET['basari'])) {
                                                 <?php if ($row['aciklama']): ?>
                                                     <small class="d-block text-muted"><?php echo htmlspecialchars($row['aciklama']); ?></small>
                                                 <?php endif; ?>
+                                            </td>
+                                            <td>
+                                               <?php
+                                                    // web sitesinin ekli olduğu sanal sunucunun adını getir
+                                                    $sql = "SELECT * FROM sanal_sunucu_web_siteler WHERE website_id = '$row[id]'";
+                                                    $result_sanal = mysqli_query($conn, $sql);
+                                                    $row_sanal = mysqli_fetch_assoc($result_sanal);
+                                                    if ($row_sanal):
+                                                        $get_sanal_sunucu = $row_sanal['sanal_sunucu_id'];
+                                                        $sql_sanal_sunucu = "SELECT * FROM sanal_sunucular WHERE id = '$get_sanal_sunucu'";
+                                                        $result_sanal_sunucu = mysqli_query($conn, $sql_sanal_sunucu);
+                                                        $row_sanal_sunucu = mysqli_fetch_assoc($result_sanal_sunucu);
+                                                        echo $row_sanal_sunucu['sunucu_adi'];
+                                                    else:
+                                                        echo $language->get('not_in_use');
+                                                    endif;
+                                               ?>
                                             </td>
                                             <td>
                                                 <span class="badge <?php echo $row['durum'] == 'Aktif' ? 'bg-success' : 'bg-secondary'; ?>">

@@ -146,7 +146,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                         <th><?php echo $language->get('location_name'); ?></th>
                                         <th><?php echo $language->get('server_info'); ?></th>
                                         <th><?php echo $language->get('created_at'); ?></th>
-                                        <th><?php echo $language->get('actions'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -170,7 +170,7 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                                 <?php endif; ?>
                                             </td>
                                             <td><?php echo date('d.m.Y H:i', strtotime($row['olusturma_tarihi'])); ?></td>
-                                            <td>
+                                            <td class="text-end">
                                                 <a href="lokasyon_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><?php echo $language->get('edit'); ?></a>
 
                                                 <a href="lokasyon_sunucu.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
