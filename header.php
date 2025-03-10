@@ -35,6 +35,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <a class="nav-link <?php echo $current_page == 'hizmet_ekle.php' ? 'active' : ''; ?>"
                         href="hizmet_ekle.php"><?php echo $language->get('services'); ?></a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $current_page == 'site_ekle.php' ? 'active' : ''; ?>"
+                        href="site_ekle.php"><?php echo $language->get('web_sites'); ?></a>
+                </li>
                 <?php if ($_SESSION['rol'] == 'admin'): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo $current_page == 'admin.php' ? 'active' : ''; ?>"

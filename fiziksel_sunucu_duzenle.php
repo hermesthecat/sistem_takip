@@ -4,10 +4,10 @@
  * @author A. Kerem Gök
  */
 
- require_once __DIR__ . '/auth.php';
- require_once __DIR__ . '/config/database.php';
- require_once __DIR__ . '/config/language.php';
- $language = Language::getInstance();
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/language.php';
+$language = Language::getInstance();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: index.php');

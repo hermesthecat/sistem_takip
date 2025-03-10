@@ -15,7 +15,7 @@ $hizmet = null;
 
 if (isset($_GET['id'])) {
     $id = mysqli_real_escape_string($conn, $_GET['id']);
-    $sql = "SELECT * FROM hizmetler WHERE id = '$id'";
+    $sql = "SELECT * FROM websiteler WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     $hizmet = mysqli_fetch_assoc($result);
 
@@ -25,38 +25,36 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $hizmet_adi = mysqli_real_escape_string($conn, $_POST['hizmet_adi']);
+    $alan_adi = mysqli_real_escape_string($conn, $_POST['alan_adi']);
     $aciklama = mysqli_real_escape_string($conn, $_POST['aciklama']);
-    $port = mysqli_real_escape_string($conn, $_POST['port']);
     $durum = mysqli_real_escape_string($conn, $_POST['durum']);
 
     if ($duzenle_mod) {
-        $sql = "UPDATE hizmetler SET 
-                hizmet_adi = '$hizmet_adi',
+        $sql = "UPDATE websiteler SET 
+                alan_adi = '$alan_adi',
                 aciklama = '$aciklama',
-                port = '$port',
                 durum = '$durum'
                 WHERE id = '$id'";
-        $basari_mesaj = $language->get('service_updated');
+        $basari_mesaj = $language->get('web_site_updated');
     } else {
-        $sql = "INSERT INTO hizmetler (hizmet_adi, aciklama, port, durum) 
-                VALUES ('$hizmet_adi', '$aciklama', '$port', '$durum')";
-        $basari_mesaj = $language->get('service_added');
+        $sql = "INSERT INTO websiteler (alan_adi, aciklama, durum) 
+                VALUES ('$alan_adi', '$aciklama', '$durum')";
+        $basari_mesaj = $language->get('web_site_added');
     }
 
     if (mysqli_query($conn, $sql)) {
-        header("Location: hizmet_ekle.php?basari=" . urlencode($basari_mesaj));
+        header("Location: site_ekle.php?basari=" . urlencode($basari_mesaj));
         exit;
     } else {
-        $mesaj = "<div class='alert alert-danger'>" . $language->get('error') . ": " . mysqli_error($conn) . "</div>";
+        $mesaj = "<div class='alert alert-danger'>" . $language->get('error_deleting_web_site') . ": " . mysqli_error($conn) . "</div>";
     }
 }
 
-// Mevcut hizmetleri getir
+// Mevcut web siteleri getir
 $sql = "SELECT h.*, 
-        (SELECT COUNT(*) FROM sanal_sunucu_hizmetler WHERE hizmet_id = h.id) as kullanim_sayisi 
-        FROM hizmetler h 
-        ORDER BY h.hizmet_adi";
+        (SELECT COUNT(*) FROM sanal_sunucu_web_siteler WHERE website_id = h.id) as kullanim_sayisi 
+        FROM websiteler h 
+        ORDER BY h.alan_adi";
 $result = mysqli_query($conn, $sql);
 
 // URL'den gelen mesajları kontrol et
@@ -72,7 +70,7 @@ if (isset($_GET['basari'])) {
 
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $duzenle_mod ? $language->get('edit_service') : $language->get('add_service'); ?></title>
+    <title><?php echo $duzenle_mod ? $language->get('edit_web_site') : $language->get('add_web_site'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -86,24 +84,19 @@ if (isset($_GET['basari'])) {
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title h5 mb-0">
-                            <?php echo $duzenle_mod ? $language->get('edit_service') : $language->get('add_service'); ?>
+                            <?php echo $duzenle_mod ? $language->get('edit_web_site') : $language->get('add_web_site'); ?>
                         </h2>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-3">
-                                <label for="hizmet_adi" class="form-label"><?php echo $language->get('service_name'); ?></label>
-                                <input type="text" class="form-control" id="hizmet_adi" name="hizmet_adi"
-                                    value="<?php echo $duzenle_mod ? $hizmet['hizmet_adi'] : ''; ?>" required>
+                                <label for="alan_adi" class="form-label"><?php echo $language->get('web_site_name'); ?></label>
+                                <input type="text" class="form-control" id="alan_adi" name="alan_adi"
+                                    value="<?php echo $duzenle_mod ? $hizmet['alan_adi'] : ''; ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label for="aciklama" class="form-label"><?php echo $language->get('description'); ?></label>
                                 <textarea class="form-control" id="aciklama" name="aciklama" rows="3"><?php echo $duzenle_mod ? $hizmet['aciklama'] : ''; ?></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="port" class="form-label"><?php echo $language->get('default_port'); ?></label>
-                                <input type="text" class="form-control" id="port" name="port"
-                                    value="<?php echo $duzenle_mod ? $hizmet['port'] : ''; ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="durum" class="form-label"><?php echo $language->get('status'); ?></label>
@@ -116,7 +109,7 @@ if (isset($_GET['basari'])) {
                                 <?php echo $duzenle_mod ? $language->get('update') : $language->get('save'); ?>
                             </button>
                             <?php if ($duzenle_mod): ?>
-                                <a href="hizmet_ekle.php" class="btn btn-secondary"><?php echo $language->get('new_service'); ?></a>
+                                <a href="hizmet_ekle.php" class="btn btn-secondary"><?php echo $language->get('new_web_site'); ?></a>
                             <?php endif; ?>
                         </form>
                     </div>
@@ -126,17 +119,16 @@ if (isset($_GET['basari'])) {
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title h5 mb-0"><?php echo $language->get('existing_services'); ?></h2>
+                        <h2 class="card-title h5 mb-0"><?php echo $language->get('existing_web_sites'); ?></h2>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover table-striped table-responsive">
                                 <thead>
                                     <tr>
-                                        <th><?php echo $language->get('service_name'); ?></th>
-                                        <th><?php echo $language->get('port'); ?></th>
+                                        <th><?php echo $language->get('web_site_name'); ?></th>
                                         <th><?php echo $language->get('status'); ?></th>
-                                        <th><?php echo $language->get('service_usage'); ?></th>
+                                        <th><?php echo $language->get('web_site_usage'); ?></th> <!-- Updated to match context -->
                                         <th><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
@@ -144,12 +136,11 @@ if (isset($_GET['basari'])) {
                                     <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                         <tr>
                                             <td>
-                                                <?php echo htmlspecialchars($row['hizmet_adi']); ?>
+                                                <?php echo htmlspecialchars($row['alan_adi']); ?>
                                                 <?php if ($row['aciklama']): ?>
                                                     <small class="d-block text-muted"><?php echo htmlspecialchars($row['aciklama']); ?></small>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><?php echo $row['port'] ?: '-'; ?></td>
                                             <td>
                                                 <span class="badge <?php echo $row['durum'] == 'Aktif' ? 'bg-success' : 'bg-secondary'; ?>">
                                                     <?php echo $language->get($row['durum'] == 'Aktif' ? 'active' : 'passive'); ?>
@@ -158,7 +149,7 @@ if (isset($_GET['basari'])) {
                                             <td>
                                                 <?php if ($row['kullanim_sayisi'] > 0): ?>
                                                     <span class="badge bg-info">
-                                                        <?php echo str_replace('{count}', $row['kullanim_sayisi'], $language->get('server_count')); ?>
+                                                        <?php echo str_replace('{count}', $row['kullanim_sayisi'], $language->get('web_site_count')); ?>
                                                     </span>
                                                 <?php else: ?>
                                                     <span class="badge bg-secondary"><?php echo $language->get('not_in_use'); ?></span>
@@ -169,7 +160,7 @@ if (isset($_GET['basari'])) {
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
                                                     <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_service'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_web_site'); ?>')"><?php echo $language->get('delete'); ?></a> <!-- Updated confirmation message -->
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

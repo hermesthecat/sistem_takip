@@ -10,7 +10,7 @@ return [
     'delete' => 'Delete',
     'edit' => 'Edit',
     'add' => 'Add',
-    
+
     // Menu
     'dashboard' => 'Dashboard',
     'physical_servers' => 'Physical Servers',
@@ -19,7 +19,7 @@ return [
     'projects' => 'Projects',
     'locations' => 'Locations',
     'users' => 'Users',
-    
+
     // Server Management
     'server_name' => 'Server Name',
     'ip_address' => 'IP Address',
@@ -30,33 +30,33 @@ return [
     'project' => 'Project',
     'status' => 'Status',
     'created_at' => 'Created At',
-    
+
     // Services
     'service_name' => 'Service Name',
     'port' => 'Port',
     'description' => 'Description',
-    
+
     // Projects
     'project_name' => 'Project Name',
     'project_code' => 'Project Code',
-    
+
     // Users
     'username' => 'Username',
     'full_name' => 'Full Name',
     'email' => 'Email',
     'password' => 'Password',
     'role' => 'Role',
-    
+
     // Messages
     'success' => 'Operation completed successfully.',
     'error' => 'An error occurred.',
     'confirm_delete' => 'Are you sure you want to delete?',
-    
+
     // Statuses
     'active' => 'Active',
     'passive' => 'Passive',
     'completed' => 'Completed',
-    
+
     // Admin Page
     'user_management' => 'User Management',
     'users_list' => 'Users',
@@ -70,14 +70,14 @@ return [
     'username_help' => 'Username cannot be changed.',
     'user_role_admin' => 'Admin',
     'user_role_user' => 'User',
-    
+
     // Error and Success Messages
     'error_username_email_exists' => 'This username or email is already in use!',
     'error_email_exists' => 'This email is already used by another user!',
     'success_user_added' => 'User added successfully.',
     'success_user_updated' => 'User updated successfully.',
     'error_no_access' => 'You don\'t have permission to access this page!',
-    
+
     // Physical Server Edit
     'edit_physical_server' => 'Edit Physical Server',
     'back_to_physical_servers' => 'Back to Physical Servers',
@@ -93,18 +93,18 @@ return [
     'disk_placeholder' => 'Ex: 2x 500GB SSD RAID1',
     'update' => 'Update',
     'error_updating_server' => 'An error occurred while updating the server',
-    
+
     // Physical Server Add
     'add_physical_server' => 'Add Physical Server',
     'error_adding_server' => 'An error occurred while adding the server',
     'total_cores' => 'Total CPU Cores',
     'memory_capacity' => 'Memory Capacity',
     'disk_capacity' => 'Total Disk Capacity',
-    
+
     // Physical Server Delete
     'error_has_virtual_servers' => 'This physical server cannot be deleted because it has {sayi} virtual servers attached. You need to delete the attached virtual servers first.',
     'success_server_deleted' => 'Physical server has been successfully deleted.',
-    
+
     // Service Management
     'add_service' => 'Add Service',
     'edit_service' => 'Edit Service',
@@ -117,13 +117,13 @@ return [
     'server_count' => '{count} servers',
     'confirm_delete_service' => 'Are you sure you want to delete this service?',
     'new_service' => 'New Service',
-    
+
     // Service Delete
     'error_service_id_missing' => 'Service ID not specified.',
     'error_service_in_use' => 'This service is being used by {count} virtual servers. Please remove the service from these servers first.',
     'success_service_deleted' => 'Service has been successfully deleted.',
     'error_deleting_service' => 'An error occurred while deleting the service: {error}',
-    
+
     // Home Page
     'server_tracking_system' => 'Server Tracking System',
     'hardware' => 'Hardware',
@@ -141,7 +141,7 @@ return [
     'hardware_memory' => 'Memory: {value}',
     'hardware_disk' => 'Disk: {value}',
     'no_physical_servers' => 'No physical servers have been added yet.',
-    
+
     // Login Page
     'login_page_title' => 'Login - Server Tracking System',
     'error_invalid_credentials' => 'Invalid username or password!',
@@ -149,7 +149,7 @@ return [
     'username_placeholder' => 'Username',
     'password_placeholder' => 'Password',
     'login_button' => 'Login',
-    
+
     // Location Management
     'location_management' => 'Location Management',
     'add_new_location_title' => 'Add Location',
@@ -163,11 +163,11 @@ return [
     'success_location_added' => 'New location added successfully.',
     'success_location_updated' => 'Location updated successfully.',
     'confirm_delete_location' => 'Are you sure you want to delete this location?',
-    
+
     // Location Delete
     'error_location_has_servers' => 'This location cannot be deleted because it has attached servers.',
     'success_location_deleted' => 'Location has been successfully deleted.',
-    
+
     // Profile Page
     'profile_page_title' => 'Profile - {name}',
     'profile_information' => 'Profile Information',
@@ -179,7 +179,7 @@ return [
     'error_current_password' => 'Current password is incorrect!',
     'success_profile_updated' => 'Your profile has been updated successfully.',
     'error_updating_profile' => 'Error: {error}',
-    
+
     // Project Management
     'project_management' => 'Project Management',
     'add_new_project' => 'Add Project',
@@ -194,14 +194,14 @@ return [
     'physical_server_count' => '{count} physical',
     'virtual_server_count' => '{count} virtual',
     'confirm_delete_project' => 'Are you sure you want to delete this project?',
-    
+
     // Project Delete
     'error_project_has_servers' => 'This project cannot be deleted because it has {fiziksel} physical servers and {sanal} virtual servers.',
     'error_project_has_physical_servers' => 'This project cannot be deleted because it has {count} physical servers.',
     'error_project_has_virtual_servers' => 'This project cannot be deleted because it has {count} virtual servers.',
     'success_project_deleted' => 'Project has been successfully deleted.',
     'error_deleting_project' => 'An error occurred while deleting the project: {error}',
-    
+
     // Virtual Server Detail
     'virtual_server_detail' => 'Virtual Server Detail',
     'back_to_virtual_servers' => 'Back to Virtual Servers',
@@ -226,7 +226,7 @@ return [
     'no_project_assigned' => '-',
     'cancel' => 'Cancel',
     'update' => 'Update',
-    
+
     // Virtual Server Detail - Additional Texts
     'select_service' => 'Select Service',
     'service_not_in_list' => 'Can\'t find the service you\'re looking for?',
@@ -234,7 +234,7 @@ return [
     'default_port_info' => 'Default port will be used if left empty.',
     'add_service' => 'Add Service',
     'no_active_services' => 'No active services available to add.',
-    
+
     // Virtual Server Edit
     'edit_virtual_server' => 'Edit Virtual Server',
     'back_to_virtual_servers' => 'Back to Virtual Servers',
@@ -255,7 +255,7 @@ return [
     'error_disk_capacity' => 'Disk value cannot exceed the remaining capacity of the selected physical server ({value} GB).',
     'enter_valid_ipv4' => 'Please enter a valid IPv4 address',
     'enter_valid_number' => 'Please enter only numbers (ex: {example})',
-    
+
     // Virtual Server Add
     'add_virtual_server' => 'Add Virtual Server',
     'error_physical_server_id' => 'Physical server ID not specified.',
@@ -269,7 +269,7 @@ return [
     'error_ram_limit' => 'RAM value cannot exceed the remaining capacity ({value} GB).',
     'error_disk_limit' => 'Disk value cannot exceed the remaining capacity ({value} GB).',
     'add_virtual_server_button' => 'Add Virtual Server',
-    
+
     // Virtual Server List
     'virtual_server_list' => 'Virtual Server List',
     'virtual_server_list_for' => 'Virtual Server List ({server_name})',
@@ -297,4 +297,21 @@ return [
     'servers' => 'Servers',
     'physical_server_query_error' => 'Physical server query error: {error}',
     'virtual_server_query_error' => 'Virtual server query error: {error}',
-]; 
+
+    // Web Sitesi Yönetimi
+    'add_web_site' => 'Add Web Site',
+    'web_site_name' => 'Web Site',
+    'web_site_usage' => 'Usage',
+    'edit_web_site' => 'Edit Web Site',
+    'existing_web_sites' => 'Existing Web Sites',
+    'web_site_updated' => 'Web Site has been successfully updated.',
+    'web_site_added' => 'New web site has been successfully added.',
+    'confirm_delete_web_site' => 'Are you sure you want to delete this web site?',
+    'new_web_site' => 'New Web Site',
+
+    // Web Sitesi Silme
+    'error_web_site_id_missing' => 'Web Site ID not specified.',
+    'error_web_site_in_use' => 'This web site is being used by {count} virtual servers. Please remove the web site from these servers first.',
+    'success_web_site_deleted' => 'Web Site has been successfully deleted.',
+    'error_deleting_web_site' => 'Web Site cannot be deleted: {error}',
+];

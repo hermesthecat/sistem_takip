@@ -10,7 +10,7 @@ return [
     'delete' => 'Sil',
     'edit' => 'Düzenle',
     'add' => 'Ekle',
-    
+
     // Menü
     'dashboard' => 'Kontrol Paneli',
     'physical_servers' => 'Fiziksel Sunucular',
@@ -19,7 +19,7 @@ return [
     'projects' => 'Projeler',
     'locations' => 'Lokasyonlar',
     'users' => 'Kullanıcılar',
-    
+
     // Sunucu Yönetimi
     'server_name' => 'Sunucu Adı',
     'ip_address' => 'IP Adresi',
@@ -30,33 +30,33 @@ return [
     'project' => 'Proje',
     'status' => 'Durum',
     'created_at' => 'Oluşturma Tarihi',
-    
+
     // Hizmetler
     'service_name' => 'Hizmet Adı',
     'port' => 'Port',
     'description' => 'Açıklama',
-    
+
     // Projeler
     'project_name' => 'Proje Adı',
     'project_code' => 'Proje Kodu',
-    
+
     // Kullanıcılar
     'username' => 'Kullanıcı Adı',
     'full_name' => 'Ad Soyad',
     'email' => 'E-posta',
     'password' => 'Şifre',
     'role' => 'Rol',
-    
+
     // Mesajlar
     'success' => 'İşlem başarıyla tamamlandı.',
     'error' => 'Bir hata oluştu.',
     'confirm_delete' => 'Silmek istediğinizden emin misiniz?',
-    
+
     // Durumlar
     'active' => 'Aktif',
     'passive' => 'Pasif',
     'completed' => 'Tamamlandı',
-    
+
     // Admin Sayfası
     'user_management' => 'Kullanıcı Yönetimi',
     'users_list' => 'Kullanıcılar',
@@ -70,14 +70,14 @@ return [
     'username_help' => 'Kullanıcı adı değiştirilemez.',
     'user_role_admin' => 'Admin',
     'user_role_user' => 'Kullanıcı',
-    
+
     // Hata ve Başarı Mesajları
     'error_username_email_exists' => 'Bu kullanıcı adı veya email zaten kullanılıyor!',
     'error_email_exists' => 'Bu email adresi başka bir kullanıcı tarafından kullanılıyor!',
     'success_user_added' => 'Kullanıcı başarıyla eklendi.',
     'success_user_updated' => 'Kullanıcı başarıyla güncellendi.',
     'error_no_access' => 'Bu sayfaya erişim yetkiniz yok!',
-    
+
     // Fiziksel Sunucu Düzenleme
     'edit_physical_server' => 'Fiziksel Sunucu Düzenle',
     'back_to_physical_servers' => 'Fiziksel Sunuculara Dön',
@@ -93,18 +93,18 @@ return [
     'disk_placeholder' => 'Örn: 2x 500GB SSD RAID1',
     'update' => 'Güncelle',
     'error_updating_server' => 'Sunucu güncellenirken bir hata oluştu',
-    
+
     // Fiziksel Sunucu Ekleme
     'add_physical_server' => 'Fiziksel Sunucu Ekle',
     'error_adding_server' => 'Sunucu eklenirken bir hata oluştu',
     'total_cores' => 'Toplam Çekirdek Sayısı',
     'memory_capacity' => 'Bellek Kapasitesi',
     'disk_capacity' => 'Toplam Disk Kapasitesi',
-    
+
     // Fiziksel Sunucu Silme
     'error_has_virtual_servers' => 'Bu fiziksel sunucuya bağlı {sayi} adet sanal sunucu olduğu için silinemez. Önce bağlı sanal sunucuları silmeniz gerekmektedir.',
     'success_server_deleted' => 'Fiziksel sunucu başarıyla silindi.',
-    
+
     // Hizmet Yönetimi
     'add_service' => 'Hizmet Ekle',
     'edit_service' => 'Hizmet Düzenle',
@@ -117,13 +117,13 @@ return [
     'server_count' => '{count} sunucu',
     'confirm_delete_service' => 'Bu hizmeti silmek istediğinize emin misiniz?',
     'new_service' => 'Yeni Hizmet',
-    
+
     // Hizmet Silme
     'error_service_id_missing' => 'Hizmet ID belirtilmedi.',
     'error_service_in_use' => 'Bu hizmet {count} sanal sunucu tarafından kullanılıyor. Önce bu sunuculardan hizmeti kaldırın.',
     'success_service_deleted' => 'Hizmet başarıyla silindi.',
     'error_deleting_service' => 'Hizmet silinirken bir hata oluştu: {error}',
-    
+
     // Ana Sayfa
     'server_tracking_system' => 'Sunucu Takip Sistemi',
     'hardware' => 'Donanım',
@@ -141,7 +141,7 @@ return [
     'hardware_memory' => 'Bellek: {value}',
     'hardware_disk' => 'Disk: {value}',
     'no_physical_servers' => 'Henüz fiziksel sunucu eklenmemiş.',
-    
+
     // Giriş Sayfası
     'login_page_title' => 'Giriş Yap - Sunucu Takip Sistemi',
     'error_invalid_credentials' => 'Kullanıcı adı veya şifre hatalı!',
@@ -149,7 +149,7 @@ return [
     'username_placeholder' => 'Kullanıcı Adı',
     'password_placeholder' => 'Şifre',
     'login_button' => 'Giriş Yap',
-    
+
     // Lokasyon Yönetimi
     'location_management' => 'Lokasyon Yönetimi',
     'add_new_location_title' => 'Lokasyon Ekle',
@@ -163,11 +163,11 @@ return [
     'success_location_added' => 'Yeni lokasyon başarıyla eklendi.',
     'success_location_updated' => 'Lokasyon başarıyla güncellendi.',
     'confirm_delete_location' => 'Bu lokasyonu silmek istediğinize emin misiniz?',
-    
+
     // Lokasyon Silme
     'error_location_has_servers' => 'Bu lokasyona bağlı sunucular olduğu için silinemez.',
     'success_location_deleted' => 'Lokasyon başarıyla silindi.',
-    
+
     // Profil Sayfası
     'profile_page_title' => 'Profil - {name}',
     'profile_information' => 'Profil Bilgileri',
@@ -179,7 +179,7 @@ return [
     'error_current_password' => 'Mevcut şifreniz hatalı!',
     'success_profile_updated' => 'Profiliniz başarıyla güncellendi.',
     'error_updating_profile' => 'Hata: {error}',
-    
+
     // Proje Yönetimi
     'project_management' => 'Proje Yönetimi',
     'add_new_project' => 'Proje Ekle',
@@ -194,14 +194,14 @@ return [
     'physical_server_count' => '{count} fiziksel',
     'virtual_server_count' => '{count} sanal',
     'confirm_delete_project' => 'Bu projeyi silmek istediğinize emin misiniz?',
-    
+
     // Proje Silme
     'error_project_has_servers' => 'Bu projeye bağlı {fiziksel} fiziksel sunucu ve {sanal} sanal sunucu olduğu için silinemez.',
     'error_project_has_physical_servers' => 'Bu projeye bağlı {count} fiziksel sunucu olduğu için silinemez.',
     'error_project_has_virtual_servers' => 'Bu projeye bağlı {count} sanal sunucu olduğu için silinemez.',
     'success_project_deleted' => 'Proje başarıyla silindi.',
     'error_deleting_project' => 'Proje silinirken bir hata oluştu: {error}',
-    
+
     // Sanal Sunucu Detay
     'virtual_server_detail' => 'Sanal Sunucu Detayı',
     'back_to_virtual_servers' => 'Sanal Sunuculara Dön',
@@ -254,7 +254,7 @@ return [
     'error_disk_capacity' => 'Disk değeri seçilen fiziksel sunucunun kalan kapasitesinden ({value} GB) fazla olamaz.',
     'enter_valid_ipv4' => 'Lütfen geçerli bir IPv4 adresi girin',
     'enter_valid_number' => 'Lütfen sadece sayı girin (örn: {example})',
-    
+
     // Sanal Sunucu Ekleme
     'add_virtual_server' => 'Sanal Sunucu Ekle',
     'error_physical_server_id' => 'Fiziksel sunucu ID belirtilmedi.',
@@ -268,7 +268,7 @@ return [
     'error_ram_limit' => 'RAM değeri kalan kapasiteden ({value} GB) fazla olamaz.',
     'error_disk_limit' => 'Disk değeri kalan kapasiteden ({value} GB) fazla olamaz.',
     'add_virtual_server_button' => 'Sanal Sunucu Ekle',
-    
+
     // Sanal Sunucu Listesi
     'virtual_server_list' => 'Sanal Sunucu Listesi',
     'virtual_server_list_for' => 'Sanal Sunucu Listesi ({server_name})',
@@ -296,4 +296,22 @@ return [
     'servers' => 'Sunucular',
     'physical_server_query_error' => 'Fiziksel sunucu sorgusu hatası: {error}',
     'virtual_server_query_error' => 'Sanal sunucu sorgusu hatası: {error}',
-]; 
+
+    // Web Sitesi Yönetimi
+    'web_sites' => 'Web Siteleri',
+    'web_site_name' => 'Web Sitesi',
+    'web_site_usage' => 'Kullanım',
+    'add_web_site' => 'Web Sitesi Ekle',
+    'edit_web_site' => 'Web Sitesi Düzenle',
+    'existing_web_sites' => 'Mevcut Web Siteleri',
+    'web_site_updated' => 'Web Sitesi başarıyla güncellendi.',
+    'web_site_added' => 'Yeni web sitesi başarıyla eklendi.',
+    'confirm_delete_web_site' => 'Bu web sitesini silmek istediğinize emin misiniz?',
+    'new_web_site' => 'Yeni Web Sitesi',
+
+    // Web Sitesi Silme
+    'error_web_site_id_missing' => 'Web sitesi ID belirtilmedi.',
+    'error_web_site_in_use' => 'Bu web sitesi {count} sanal sunucu tarafından kullanılıyor. Önce bu sunuculardan web sitesini kaldırın.',
+    'success_web_site_deleted' => 'Web sitesi başarıyla silindi.',
+    'error_deleting_web_site' => 'Web sitesi silinirken bir hata oluştu: {error}',
+];
