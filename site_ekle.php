@@ -128,8 +128,7 @@ if (isset($_GET['basari'])) {
                                     <tr>
                                         <th><?php echo $language->get('web_site_name'); ?></th>
                                         <th><?php echo $language->get('status'); ?></th>
-                                        <th><?php echo $language->get('web_site_usage'); ?></th> <!-- Updated to match context -->
-                                        <th><?php echo $language->get('actions'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -146,19 +145,10 @@ if (isset($_GET['basari'])) {
                                                     <?php echo $language->get($row['durum'] == 'Aktif' ? 'active' : 'passive'); ?>
                                                 </span>
                                             </td>
-                                            <td>
-                                                <?php if ($row['kullanim_sayisi'] > 0): ?>
-                                                    <span class="badge bg-info">
-                                                        <?php echo str_replace('{count}', $row['kullanim_sayisi'], $language->get('web_site_count')); ?>
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-secondary"><?php echo $language->get('not_in_use'); ?></span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm"><?php echo $language->get('edit'); ?></a>
+                                            <td class="text-end">
+                                                <a href="site_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
-                                                    <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
+                                                    <a href="site_sil.php?id=<?php echo $row['id']; ?>"
                                                         class="btn btn-danger btn-sm"
                                                         onclick="return confirm('<?php echo $language->get('confirm_delete_web_site'); ?>')"><?php echo $language->get('delete'); ?></a> <!-- Updated confirmation message -->
                                                 <?php endif; ?>

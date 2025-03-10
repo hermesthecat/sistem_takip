@@ -137,7 +137,7 @@ if (isset($_GET['basari'])) {
                                         <th><?php echo $language->get('port'); ?></th>
                                         <th><?php echo $language->get('status'); ?></th>
                                         <th><?php echo $language->get('service_usage'); ?></th>
-                                        <th><?php echo $language->get('actions'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -164,7 +164,7 @@ if (isset($_GET['basari'])) {
                                                     <span class="badge bg-secondary"><?php echo $language->get('not_in_use'); ?></span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td class="text-end">
                                                 <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
                                                     <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"

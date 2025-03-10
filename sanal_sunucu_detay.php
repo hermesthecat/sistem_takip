@@ -117,6 +117,96 @@ $sql = "SELECT * FROM hizmetler
         )
         ORDER BY hizmet_adi";
 $eklenebilir_hizmetler = mysqli_query($conn, $sql);
+
+
+// Web Sitesi ekleme/güncelleme işlemi
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['yeni_website_ekle'])) {
+        $yeni_alan_adi = mysqli_real_escape_string($conn, $_POST['yeni_hizmet_adi']);
+        $yeni_aciklama = mysqli_real_escape_string($conn, $_POST['yeni_aciklama']);
+
+        // Önce yeni web sitesini ekle
+        $sql = "INSERT INTO websiteler (alan_adi, aciklama, durum) 
+                VALUES ('$yeni_alan_adi', '$yeni_aciklama', 'Aktif')";
+
+        if (mysqli_query($conn, $sql)) {
+            $yeni_website_id = mysqli_insert_id($conn);
+
+            // Web sitesini direkt olarak sanal sunucuya ekle
+            $sql = "INSERT INTO sanal_sunucu_web_siteler (sanal_sunucu_id, website_id, notlar) 
+                    VALUES ('$id', '$yeni_website_id', '$yeni_aciklama')";
+
+            if (mysqli_query($conn, $sql)) {
+                $mesaj = "<div class='alert alert-success'>" . $language->get('web_site_added') . "</div>";
+            } else {
+                $mesaj = "<div class='alert alert-danger'>" . str_replace('{error}', mysqli_error($conn), $language->get('web_site_assign_error')) . "</div>";
+            }
+        } else {
+            $mesaj = "<div class='alert alert-danger'>" . str_replace('{error}', mysqli_error($conn), $language->get('web_site_add_error')) . "</div>";
+        }
+    } elseif (isset($_POST['website_ekle'])) {
+        $website_id = mysqli_real_escape_string($conn, $_POST['website_id']);
+        $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
+
+        // get website's description
+        $sql = "SELECT aciklama FROM websiteler WHERE id = '$website_id'";
+        $result = mysqli_query($conn, $sql);
+        $website = mysqli_fetch_assoc($result);
+        $notlar = $website['aciklama'];
+
+        $sql = "INSERT INTO sanal_sunucu_web_siteler (sanal_sunucu_id, website_id, notlar) 
+                VALUES ('$id', '$website_id', '$notlar')";
+
+        if (mysqli_query($conn, $sql)) {
+            $mesaj = "<div class='alert alert-success'>" . $language->get('web_site_added') . "</div>";
+        } else {
+            $mesaj = "<div class='alert alert-danger'>" . str_replace('{error}', mysqli_error($conn), $language->get('web_site_action_error')) . "</div>";
+        }
+    } elseif (isset($_POST['website_guncelle'])) {
+        $website_id = mysqli_real_escape_string($conn, $_POST['website_id']);
+        $notlar = mysqli_real_escape_string($conn, $_POST['notlar']);
+
+        $sql = "UPDATE sanal_sunucu_web_siteler 
+                SET notlar = '$notlar'
+                WHERE sanal_sunucu_id = '$id' AND website_id = '$website_id'";
+
+        if (mysqli_query($conn, $sql)) {
+            $mesaj = "<div class='alert alert-success'>" . $language->get('web_site_updated_success') . "</div>";
+        } else {
+            $mesaj = "<div class='alert alert-danger'>" . str_replace('{error}', mysqli_error($conn), $language->get('web_site_action_error')) . "</div>";
+        }
+    }
+}
+
+// Web sitesi silme işlemi
+if (isset($_GET['sil_website'])) {
+    $website_id = mysqli_real_escape_string($conn, $_GET['sil_website']);
+    $sql = "DELETE FROM sanal_sunucu_web_siteler WHERE sanal_sunucu_id = '$id' AND website_id = '$website_id'";
+    if (mysqli_query($conn, $sql)) {
+        $mesaj = "<div class='alert alert-success'>" . $language->get('web_site_removed_success') . "</div>";
+    } else {
+        $mesaj = "<div class='alert alert-danger'>" . str_replace('{error}', mysqli_error($conn), $language->get('web_site_action_error')) . "</div>";
+    }
+}
+
+// Sunucunun mevcut web sitelerini getir
+$sql = "SELECT ssw.*, w.alan_adi, w.durum as varsayilan_durum 
+        FROM sanal_sunucu_web_siteler ssw
+        JOIN websiteler w ON ssw.website_id = w.id
+        WHERE ssw.sanal_sunucu_id = '$id'
+        ORDER BY w.alan_adi";
+$mevcut_web_siteler = mysqli_query($conn, $sql);
+
+// Eklenebilecek web siteleri getir (henüz eklenmemiş ve aktif olanlar)
+$sql = "SELECT * FROM websiteler 
+        WHERE durum = 'Aktif' 
+        AND id NOT IN (
+            SELECT website_id 
+            FROM sanal_sunucu_web_siteler 
+            WHERE sanal_sunucu_id = '$id'
+        )
+        ORDER BY alan_adi";
+$eklenebilir_web_siteler = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -189,7 +279,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                         <th><?php echo $language->get('service_name'); ?></th>
                                         <th><?php echo $language->get('service_port'); ?></th>
                                         <th><?php echo $language->get('service_notes'); ?></th>
-                                        <th><?php echo $language->get('actions'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -212,7 +302,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                                 <td>
                                                     <?php echo $hizmet['notlar'] ? nl2br(htmlspecialchars($hizmet['notlar'])) : '<span class="text-muted">' . $language->get('no_project_assigned') . '</span>'; ?>
                                                 </td>
-                                                <td>
+                                                <td class="text-end">
                                                     <button type="button" class="btn btn-warning btn-sm"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#duzenleModal<?php echo $hizmet['hizmet_id']; ?>">
@@ -302,7 +392,7 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                     <label for="notlar" class="form-label"><?php echo $language->get('service_notes'); ?></label>
                                     <textarea class="form-control" id="notlar" name="notlar" rows="3"></textarea>
                                 </div>
-                                <button type="submit" name="hizmet_ekle" class="btn btn-primary"><?php echo $language->get('add_service'); ?></button>
+                                <button type="submit" name="hizmet_ekle" class="btn btn-primary"><?php echo $language->get('add_to_virtual_server'); ?></button>
                             </form>
 
                             <script>
@@ -317,6 +407,131 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                                 <?php echo $language->get('no_active_services'); ?>
                                 <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniHizmetModal">
                                     <?php echo $language->get('add_new_service'); ?>
+                                </button>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+<br><br>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title h5 mb-0"><?php echo $language->get('running_websites'); ?></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo $language->get('web_site_name'); ?></th>
+                                        <th><?php echo $language->get('website_notes'); ?></th>
+                                        <th class="text-end"><?php echo $language->get('actions'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (mysqli_num_rows($mevcut_web_siteler) > 0): ?>
+                                        <?php while ($website = mysqli_fetch_assoc($mevcut_web_siteler)): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($website['alan_adi']); ?></td>
+                                                <td>
+                                                    <?php
+                                                    if ($website['notlar']) {
+                                                        echo $website['notlar'];
+                                                    } else {
+                                                        echo " <small class='text-muted'>(" . $language->get('no_project_assigned') . ")</small>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#duzenleWebsiteModal<?php echo $website['website_id']; ?>">
+                                                        <?php echo $language->get('edit_web_site'); ?>
+                                                    </button>
+                                                    <a href="?id=<?php echo $id; ?>&sil_website=<?php echo $website['website_id']; ?>"
+                                                        class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('<?php echo $language->get('confirm_remove_web_site'); ?>')"><?php echo $language->get('remove_web_site'); ?></a>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Düzenleme Modal -->
+                                            <div class="modal fade" id="duzenleWebsiteModal<?php echo $website['website_id']; ?>" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"><?php echo $language->get('edit_website') . ' - ' . $website['alan_adi']; ?></h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <form method="POST">
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="website_id" value="<?php echo $website['website_id']; ?>">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label"><?php echo $language->get('website_notes'); ?></label>
+                                                                    <textarea class="form-control" name="notlar" rows="3"><?php echo $website['notlar']; ?></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $language->get('cancel'); ?></button>
+                                                                <button type="submit" name="website_guncelle" class="btn btn-primary"><?php echo $language->get('update'); ?></button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center"><?php echo $language->get('no_websites_added'); ?></td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title h5 mb-0"><?php echo $language->get('add_web_site'); ?></h2>
+                    </div>
+                    <div class="card-body">
+                        <?php if (mysqli_num_rows($eklenebilir_web_siteler) > 0): ?>
+                            <form method="POST">
+                                <div class="mb-3">
+                                    <label for="website_id" class="form-label"><?php echo $language->get('web_site_name'); ?></label>    
+                                    <select class="form-select" id="website_id" name="website_id" required>
+                                        <option value=""><?php echo $language->get('select_web_site'); ?></option>
+                                        <?php while ($website = mysqli_fetch_assoc($eklenebilir_web_siteler)): ?>
+                                            <option value="<?php echo $website['id']; ?>" data-port="<?php echo $website['port']; ?>">
+                                                <?php echo $website['alan_adi']; ?>
+                                            </option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <div class="form-text"><?php echo $language->get('web_site_not_in_list'); ?></div>
+                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#yeniWebsiteModal">
+                                            <?php echo $language->get('add_web_site'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notlar" class="form-label"><?php echo $language->get('website_notes'); ?></label>
+                                    <textarea class="form-control" id="notlar" name="notlar" rows="3"></textarea>
+                                </div>
+                                <button type="submit" name="website_ekle" class="btn btn-primary"><?php echo $language->get('add_to_virtual_server'); ?></button>
+                            </form>
+                        <?php else: ?>
+                            <div class="alert alert-info mb-0">
+                                <?php echo $language->get('no_active_websites'); ?>
+                                <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniWebsiteModal">
+                                    <?php echo $language->get('add_web_site'); ?>
                                 </button>
                             </div>
                         <?php endif; ?>
@@ -352,6 +567,34 @@ $eklenebilir_hizmetler = mysqli_query($conn, $sql);
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $language->get('cancel'); ?></button>
                         <button type="submit" name="yeni_hizmet_ekle" class="btn btn-primary"><?php echo $language->get('save'); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yeni Website Ekleme Modal -->
+    <div class="modal fade" id="yeniWebsiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo $language->get('add_web_site'); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" id="yeniWebsiteForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="yeni_alan_adi" class="form-label"><?php echo $language->get('web_site_name'); ?></label>
+                            <input type="text" class="form-control" id="yeni_alan_adi" name="yeni_alan_adi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="yeni_aciklama" class="form-label"><?php echo $language->get('website_notes'); ?></label>
+                            <textarea class="form-control" id="yeni_aciklama" name="yeni_aciklama" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $language->get('cancel'); ?></button>
+                        <button type="submit" name="yeni_website_ekle" class="btn btn-primary"><?php echo $language->get('save'); ?></button>
                     </div>
                 </form>
             </div>
