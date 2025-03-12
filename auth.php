@@ -6,6 +6,8 @@
 
 session_start();
 
+date_default_timezone_set('Europe/Istanbul');
+
 // Dil yönetimini başlat
 require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
