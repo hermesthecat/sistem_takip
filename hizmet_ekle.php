@@ -167,9 +167,11 @@ if (isset($_GET['basari'])) {
                                             <td class="text-end">
                                                 <a href="hizmet_ekle.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm"><?php echo $language->get('edit'); ?></a>
                                                 <?php if ($row['kullanim_sayisi'] == 0): ?>
-                                                    <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
-                                                        class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_service'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                                        <a href="hizmet_sil.php?id=<?php echo $row['id']; ?>"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('<?php echo $language->get('confirm_delete_service'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php } ?>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

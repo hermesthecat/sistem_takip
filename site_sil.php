@@ -9,6 +9,12 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
+// Admin kontrolü
+if ($_SESSION['rol'] !== 'admin') {
+    header('Location: site_ekle.php?hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+    exit;
+}
+
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: site_ekle.php?hata=' . urlencode($language->get('error_service_id_missing')));
     exit;

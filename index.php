@@ -174,9 +174,11 @@ function get_progress_class($yuzde)
                                     <a href='sanal_sunucular.php?fiziksel_id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'><?php echo $language->get('virtual_servers_button'); ?></a>
                                     <a href='fiziksel_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'><?php echo $language->get('edit'); ?></a>
                                     <?php if ($row['sanal_sayi'] == 0): ?>
-                                        <a href='fiziksel_sunucu_sil.php?id=<?php echo $row['id']; ?>'
-                                            class='btn btn-danger btn-sm'
-                                            onclick='return confirm("<?php echo $language->get('confirm_delete'); ?>")'><?php echo $language->get('delete'); ?></a>
+                                        <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                            <a href='fiziksel_sunucu_sil.php?id=<?php echo $row['id']; ?>'
+                                                class='btn btn-danger btn-sm'
+                                                onclick='return confirm("<?php echo $language->get('confirm_delete'); ?>")'><?php echo $language->get('delete'); ?></a>
+                                        <?php } ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>

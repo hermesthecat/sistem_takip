@@ -14,6 +14,12 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
+// Admin kontrolü
+if ($_SESSION['rol'] !== 'admin') {
+    header('Location: hizmet_ekle.php?hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+    exit;
+}
+
 $id = mysqli_real_escape_string($conn, $_GET['id']);
 
 // Hizmetin kullanımda olup olmadığını kontrol et

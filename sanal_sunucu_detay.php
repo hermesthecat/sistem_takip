@@ -90,6 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Hizmet silme işlemi
 if (isset($_GET['sil_hizmet'])) {
+    // Admin kontrolü
+    if ($_SESSION['rol'] !== 'admin') {
+        header('Location: sanal_sunucu_detay.php?id=' . $id . '&hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+        exit;
+    }
+
     $hizmet_id = mysqli_real_escape_string($conn, $_GET['sil_hizmet']);
     $sql = "DELETE FROM sanal_sunucu_hizmetler WHERE sanal_sunucu_id = '$id' AND hizmet_id = '$hizmet_id'";
     if (mysqli_query($conn, $sql)) {
@@ -180,6 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Web sitesi silme işlemi
 if (isset($_GET['sil_website'])) {
+    // Admin kontrolü
+    if ($_SESSION['rol'] !== 'admin') {
+        header('Location: sanal_sunucu_detay.php?id=' . $id . '&hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+        exit;
+    }
+
     $website_id = mysqli_real_escape_string($conn, $_GET['sil_website']);
     $sql = "DELETE FROM sanal_sunucu_web_siteler WHERE sanal_sunucu_id = '$id' AND website_id = '$website_id'";
     if (mysqli_query($conn, $sql)) {
@@ -308,9 +320,11 @@ $eklenebilir_web_siteler = mysqli_query($conn, $sql);
                                                         data-bs-target="#duzenleModal<?php echo $hizmet['hizmet_id']; ?>">
                                                         <?php echo $language->get('edit_service'); ?>
                                                     </button>
-                                                    <a href="?id=<?php echo $id; ?>&sil_hizmet=<?php echo $hizmet['hizmet_id']; ?>"
-                                                        class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_remove_service'); ?>')"><?php echo $language->get('remove_service'); ?></a>
+                                                    <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                                        <a href="?id=<?php echo $id; ?>&sil_hizmet=<?php echo $hizmet['hizmet_id']; ?>"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('<?php echo $language->get('confirm_remove_service'); ?>')"><?php echo $language->get('remove_service'); ?></a>
+                                                    <?php } ?>
                                                 </td>
                                             </tr>
 
@@ -414,7 +428,7 @@ $eklenebilir_web_siteler = mysqli_query($conn, $sql);
                 </div>
             </div>
         </div>
-<br><br>
+        <br><br>
 
         <div class="row">
             <div class="col-md-8">
@@ -452,9 +466,11 @@ $eklenebilir_web_siteler = mysqli_query($conn, $sql);
                                                         data-bs-target="#duzenleWebsiteModal<?php echo $website['website_id']; ?>">
                                                         <?php echo $language->get('edit_web_site'); ?>
                                                     </button>
-                                                    <a href="?id=<?php echo $id; ?>&sil_website=<?php echo $website['website_id']; ?>"
-                                                        class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_remove_web_site'); ?>')"><?php echo $language->get('remove_web_site'); ?></a>
+                                                    <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                                        <a href="?id=<?php echo $id; ?>&sil_website=<?php echo $website['website_id']; ?>"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('<?php echo $language->get('confirm_remove_web_site'); ?>')"><?php echo $language->get('remove_web_site'); ?></a>
+                                                    <?php } ?>
                                                 </td>
                                             </tr>
 
@@ -504,7 +520,7 @@ $eklenebilir_web_siteler = mysqli_query($conn, $sql);
                         <?php if (mysqli_num_rows($eklenebilir_web_siteler) > 0): ?>
                             <form method="POST">
                                 <div class="mb-3">
-                                    <label for="website_id" class="form-label"><?php echo $language->get('web_site_name'); ?></label>    
+                                    <label for="website_id" class="form-label"><?php echo $language->get('web_site_name'); ?></label>
                                     <select class="form-select" id="website_id" name="website_id" required>
                                         <option value=""><?php echo $language->get('select_web_site'); ?></option>
                                         <?php while ($website = mysqli_fetch_assoc($eklenebilir_web_siteler)): ?>
@@ -520,25 +536,25 @@ $eklenebilir_web_siteler = mysqli_query($conn, $sql);
                                         </button>
                                     </div>
                                 </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="notlar" class="form-label"><?php echo $language->get('website_notes'); ?></label>
-                                    <textarea class="form-control" id="notlar" name="notlar" rows="3"></textarea>
-                                </div>
-                                <button type="submit" name="website_ekle" class="btn btn-primary"><?php echo $language->get('add_to_virtual_server'); ?></button>
-                            </form>
-                        <?php else: ?>
-                            <div class="alert alert-info mb-0">
-                                <?php echo $language->get('no_active_websites'); ?>
-                                <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniWebsiteModal">
-                                    <?php echo $language->get('add_web_site'); ?>
-                                </button>
-                            </div>
-                        <?php endif; ?>
                     </div>
+                    <div class="mb-3">
+                        <label for="notlar" class="form-label"><?php echo $language->get('website_notes'); ?></label>
+                        <textarea class="form-control" id="notlar" name="notlar" rows="3"></textarea>
+                    </div>
+                    <button type="submit" name="website_ekle" class="btn btn-primary"><?php echo $language->get('add_to_virtual_server'); ?></button>
+                    </form>
+                <?php else: ?>
+                    <div class="alert alert-info mb-0">
+                        <?php echo $language->get('no_active_websites'); ?>
+                        <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#yeniWebsiteModal">
+                            <?php echo $language->get('add_web_site'); ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Yeni Hizmet Ekleme Modal -->

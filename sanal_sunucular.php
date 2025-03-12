@@ -84,7 +84,9 @@ $result = mysqli_query($conn, $sql);
                             <td class="text-end">
                                 <a href='sanal_sunucu_detay.php?id=<?php echo $row['id']; ?>' class='btn btn-info btn-sm'><?php echo $language->get('virtual_server_detail'); ?></a>
                                 <a href='sanal_sunucu_duzenle.php?id=<?php echo $row['id']; ?>' class='btn btn-warning btn-sm'><?php echo $language->get('virtual_server_edit'); ?></a>
-                                <a href='sanal_sunucu_sil.php?id=<?php echo $row['id']; ?>' class='btn btn-danger btn-sm' onclick='return confirm(\"" . $language->get(' confirm_delete_virtual_server') . "\" )'><?php echo $language->get('virtual_server_delete'); ?></a>
+                                <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                    <a href='sanal_sunucu_sil.php?id=<?php echo $row['id']; ?>' class='btn btn-danger btn-sm' onclick='return confirm(\"" . $language->get(' confirm_delete_virtual_server') . "\" )'><?php echo $language->get('virtual_server_delete'); ?></a>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php

@@ -177,9 +177,11 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
                                                     <i class="bi bi-hdd-network"></i> <?php echo $language->get('servers'); ?>
                                                 </a>
                                                 <?php if ($row['sunucu_sayisi'] == 0): ?>
-                                                    <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_location'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                                        <a href="lokasyon_sil.php?id=<?php echo $row['id']; ?>"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('<?php echo $language->get('confirm_delete_location'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php } ?>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

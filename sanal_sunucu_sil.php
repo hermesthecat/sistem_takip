@@ -9,8 +9,14 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
+// Admin kontrolü
+if ($_SESSION['rol'] !== 'admin') {
+    header('Location: sanal_sunucular.php?hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+    exit;
+}
+
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header('Location: index.php');
+    header('Location: sanal_sunucular.php');
     exit;
 }
 

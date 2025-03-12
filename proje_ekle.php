@@ -210,10 +210,11 @@ $result_projeler = mysqli_query($conn, $sql_projeler);
                                                     <i class="bi bi-hdd-network"></i> <?php echo $language->get('servers'); ?>
                                                 </a>
                                                 <?php if ($row['fiziksel_sayi'] == 0 && $row['sanal_sayi'] == 0): ?>
-
-                                                    <a href="proje_sil.php?id=<?php echo $row['id']; ?>"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('<?php echo $language->get('confirm_delete_project'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php if ($_SESSION['rol'] == 'admin') { ?>
+                                                        <a href="proje_sil.php?id=<?php echo $row['id']; ?>"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('<?php echo $language->get('confirm_delete_project'); ?>')"><?php echo $language->get('delete'); ?></a>
+                                                    <?php } ?>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

@@ -9,6 +9,12 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/language.php';
 $language = Language::getInstance();
 
+// Admin kontrolü
+if ($_SESSION['rol'] !== 'admin') {
+    header('Location: proje_ekle.php?hata=' . urlencode("Admin yetkiniz olmadığından silme işlemini yapamazsınız."));
+    exit;
+}
+
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = mysqli_real_escape_string($conn, $_GET['id']);
 
