@@ -60,7 +60,7 @@ do
     file=$(echo "$line" | awk '{print $3}')
     guest_os=$(echo "$line" | awk '{print $4}')
     version=$(echo "$line" | awk '{print $5}')
-    
+
     # Get VM power state
     # VM'in güç durumunu al
     power_state=$(vim-cmd vmsvc/power.getstate "$vmid" | grep -i "Powered" | awk '{print $2}')
@@ -130,6 +130,19 @@ do
     # IP adreslerini al
     guest_info=$(vim-cmd vmsvc/get.guest "$vmid")
     ip_addresses=$(echo "$guest_info" | grep "ipAddress" | awk -F'"' '{print $2}' | grep -v "^$" | sort -u | sed ':a;N;$!ba;s/\n/,/g')
+
+    # Debug: Her VM için temel bilgiler
+    echo "--------------------------------"
+    echo "VM ID: $vmid"
+    echo "VM Name: $name"
+    echo "Datastore Path: $file"
+    echo "Guest OS: $guest_os"
+    echo "Version: $version"
+    echo "Power State: $power_state"
+    echo "Memory MB: $memory_mb"
+    echo "Num CPU: $num_cpu"
+    echo "Total Disk Size GB: $total_disk_size_gb"
+    echo "IP Addresses: $ip_addresses"
     
     # Output in JSON format
     # JSON formatında çıktı ver
@@ -143,7 +156,6 @@ do
     echo "      \"memory_mb\": $memory_mb," >> "$json_output"
     echo "      \"num_cpu\": $num_cpu," >> "$json_output"
     echo "      \"total_disk_size_gb\": $total_disk_size_gb," >> "$json_output"
-    echo "      \"ip_addresses\": \"$ip_addresses\"" >> "$json_output"
     
     # Add comma if not last VM
     # Son VM değilse virgül ekle
@@ -162,6 +174,10 @@ echo "}" >> "$json_output"
 # Send JSON data to PHP script
 # JSON verisini PHP script'e gönder
 
+# Debug bilgisi
+echo "JSON dosyası oluşturuldu: $json_output (Boyut: $(wc -c < "$json_output") bytes)"
+echo "Sunucuya veri gönderiliyor: $PHP_URL..."
+
 # URL'den host ve yolu ayır
 HOST="noreplay.email"
 PATH_URL="/import_esxi.php"
@@ -169,7 +185,12 @@ PATH_URL="/import_esxi.php"
 # JSON dosyasının boyutunu al
 CONTENT_LENGTH=$(wc -c < "$json_output")
 
-# HTTP isteğini netcat ile gönder
+# Geçici cevap dosyası oluştur
+response_file="/tmp/http_response.txt"
+rm -f "$response_file"
+
+# HTTP isteğini netcat ile gönder ve yanıtı görüntüle
+echo "HTTP isteği gönderiliyor..."
 (
 echo "POST $PATH_URL HTTP/1.1"
 echo "Host: $HOST"
@@ -177,10 +198,34 @@ echo "Content-Type: application/json"
 echo "Content-Length: $CONTENT_LENGTH"
 echo ""
 cat "$json_output"
-) | nc $HOST 80 > /dev/null 2>&1
+) | nc $HOST 80 > "$response_file" 2>&1
+
+# Yanıtı kontrol et
+if [ -s "$response_file" ]; then
+    echo "Sunucudan yanıt alındı:"
+    head -20 "$response_file"
+    
+    # HTTP durumunu kontrol et
+    status=$(head -1 "$response_file" | grep -o "HTTP/[0-9]\.[0-9] [0-9]\{3\}")
+    if echo "$status" | grep -q "200"; then
+        echo "İşlem başarılı: $status"
+    else
+        echo "UYARI: Sunucu başarı kodu döndürmedi: $status"
+    fi
+else
+    echo "HATA: Sunucudan yanıt alınamadı!"
+    # Basit bir bağlantı kontrolü yapalım
+    echo "Sunucu bağlantısı kontrol ediliyor..."
+    nc -z -w 5 $HOST 80
+    if [ $? -eq 0 ]; then
+        echo "Sunucu bağlantısı kurulabildi, ancak yanıt alınamadı."
+    else
+        echo "Sunucuya bağlantı kurulamadı! Ağ ayarlarınızı kontrol edin."
+    fi
+fi
 
 # Delete temporary files
 # Geçici dosyaları sil
-# Artık kullanılmayan tmp dosyalara gerek yok
+rm -f "$response_file"
 # rm -f /tmp/config_info.tmp
 # rm -f /tmp/disk_size.tmp 
