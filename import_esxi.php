@@ -20,19 +20,7 @@ if ($data && isset($data['virtual_machines'])) {
     $result = mysqli_query($conn, $sql);
     $fiziksel_sunucu = mysqli_fetch_assoc($result);
     if (!$fiziksel_sunucu) {
-        die('Fiziksel sunucu bulunamadı');
-    }
-
-    // Fiziksel sunucu bilgilerini al
-    $sql = "SELECT fs.*, p.id as varsayilan_proje_id 
-         FROM fiziksel_sunucular fs 
-         LEFT JOIN projeler p ON fs.proje_id = p.id 
-         WHERE fs.id = '$fiziksel_id'";
-    $result = mysqli_query($conn, $sql);
-    $fiziksel_sunucu = mysqli_fetch_assoc($result);
-
-    if (!$fiziksel_sunucu) {
-        die('Fiziksel sunucu bulunamadı');
+        die('token or physical machine id is invalid');
     }
 
     foreach ($data['virtual_machines'] as $vm) {

@@ -13,17 +13,14 @@ $data = json_decode($json_data, true);
 if ($data && isset($data['virtual_machines'])) {
 
     $fiziksel_id = $data['physical_machine_id'];
+    $token = $data['post_token'];
 
-    // Fiziksel sunucu bilgilerini al
-    $sql = "SELECT fs.*, p.id as varsayilan_proje_id 
-         FROM fiziksel_sunucular fs 
-         LEFT JOIN projeler p ON fs.proje_id = p.id 
-         WHERE fs.id = '$fiziksel_id'";
+    // get physical machine post token and check if it is valid
+    $sql = "SELECT * FROM fiziksel_sunucular WHERE post_token = '$token' AND id = '$fiziksel_id'";
     $result = mysqli_query($conn, $sql);
     $fiziksel_sunucu = mysqli_fetch_assoc($result);
-
     if (!$fiziksel_sunucu) {
-        die('Fiziksel sunucu bulunamadı');
+        die('token or physical machine id is invalid');
     }
 
     foreach ($data['virtual_machines'] as $vm) {
