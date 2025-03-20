@@ -33,10 +33,10 @@ POST_TOKEN="$2"
 # PHP script URL'si (bu adresi kendi ortamınıza göre güncelleyin)
 PHP_URL="http://noreplay.email/import_esxi.php"
 
-# Create temporary JSON file
-# bulunduğunuz ortamınıza göre geçici JSON dosyası oluştur
-rm -f /esxi-to-php.json
+# Delete temporary files
+# Geçici dosyaları sil
 json_output="/esxi-to-php.json"
+rm -f "$json_output"
 
 # JSON start with physical machine ID
 # Fiziksel makine ID'si ile JSON başlangıcı
@@ -175,10 +175,3 @@ CONTENT_LENGTH=$(wc -c < "$json_output")
     echo ""
     cat "$json_output"
 ) | nc $HOST 80 > /dev/null 2>&1
-
-# Delete temporary files
-# Geçici dosyaları sil
-rm -f "$json_output"
-# Artık kullanılmayan tmp dosyalara gerek yok
-# rm -f /tmp/config_info.tmp
-# rm -f /tmp/disk_size.tmp 
