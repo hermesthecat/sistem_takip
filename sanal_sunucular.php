@@ -27,7 +27,7 @@ if (!$fiziksel_sunucu) {
 }
 
 // Sanal sunucuları listele
-$sql = "SELECT * FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$fiziksel_id' ORDER BY sunucu_adi";
+$sql = "SELECT * FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$fiziksel_id' AND durum = 1 ORDER BY sunucu_adi";
 $result = mysqli_query($conn, $sql);
 ?>
 

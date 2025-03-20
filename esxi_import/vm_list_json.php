@@ -12,21 +12,21 @@ header('Content-Type: application/json; charset=utf-8');
 
 try {
     $vmList = new VMListJSON();
-    echo $vmList->getJSON();
-
+    $json_data = $vmList->getJSON();
+    
     $config = require __DIR__ . '/api/config.php';
     $url = $config['post_url'];
-    $data = $vmList->getJSON();
+    $data = $json_data;
 
     // Debug bilgileri
-    echo "POST İsteği Başlatılıyor:";
-    echo "URL: " . $url;
-    echo "Data: " . $data;
-    echo "Data Length: " . strlen($data) . " bytes";
+    error_log("POST İsteği Başlatılıyor:");
+    error_log("URL: " . $url);
+    error_log("Data: " . $data);
+    error_log("Data Length: " . strlen($data) . " bytes");
 
     // cURL kullanılabilir mi kontrol et
     if (function_exists('curl_version')) {
-        echo "cURL kullanılıyor";
+        error_log("cURL kullanılıyor");
         
         // cURL ile istek gönder
         $ch = curl_init($url);
@@ -52,21 +52,21 @@ try {
         rewind($verbose);
         $verbose_log = stream_get_contents($verbose);
         
-        echo "cURL Debug Bilgileri:";
-        echo "HTTP Code: " . $http_code;
-        echo "Total Time: " . ($end_time - $start_time) . " seconds";
-        echo "Verbose Log: " . $verbose_log;
-        echo "cURL Info: " . print_r($info, true);
+        error_log("cURL Debug Bilgileri:");
+        error_log("HTTP Code: " . $http_code);
+        error_log("Total Time: " . ($end_time - $start_time) . " seconds");
+        error_log("Verbose Log: " . $verbose_log);
+        error_log("cURL Info: " . print_r($info, true));
         
         if (curl_errno($ch)) {
             $error = curl_error($ch);
-            echo "cURL Hatası: " . $error;
+            error_log("cURL Hatası: " . $error);
             throw new Exception('cURL Hatası: ' . $error);
         }
         
         curl_close($ch);
     } else {
-        echo "file_get_contents kullanılıyor";
+        error_log("file_get_contents kullanılıyor");
         
         // Alternatif olarak file_get_contents kullan
         $options = [
@@ -83,22 +83,26 @@ try {
         $result = file_get_contents($url, false, $context);
         $end_time = microtime(true);
         
-        echo "file_get_contents Debug Bilgileri:";
-        echo "Total Time: " . ($end_time - $start_time) . " seconds";
+        error_log("file_get_contents Debug Bilgileri:");
+        error_log("Total Time: " . ($end_time - $start_time) . " seconds");
         
         if ($result === false) {
             $error = error_get_last();
-            echo "file_get_contents Hatası: " . print_r($error, true);
+            error_log("file_get_contents Hatası: " . print_r($error, true));
             throw new Exception('HTTP isteği başarısız oldu');
         }
     }
 
-    echo "POST İsteği Tamamlandı";
-    echo "Response: " . $result;
+    error_log("POST İsteği Tamamlandı");
+    error_log("Response: " . $result);
     
-    echo $result;
+    // JSON çıktısını ver
+    echo $json_data;
 } catch (Exception $e) {
-    echo "Hata Oluştu: " . $e->getMessage();
-    echo "Stack Trace: " . $e->getTraceAsString();
-    echo $e->getMessage();
+    error_log("Hata Oluştu: " . $e->getMessage());
+    error_log("Stack Trace: " . $e->getTraceAsString());
+    
+    // Hata durumunda JSON formatında hata mesajı döndür
+    header('HTTP/1.1 500 Internal Server Error');
+    echo json_encode(['error' => $e->getMessage()]);
 }

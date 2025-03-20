@@ -4,7 +4,6 @@
  * @author A. Kerem Gök
  */
 
-require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/config/database.php';
 
 $json_data = file_get_contents('php://input');
@@ -43,7 +42,7 @@ if ($data && isset($data['virtual_machines'])) {
         $cpu = mysqli_real_escape_string($conn, $vm['num_cpu']);
         $vm_id = mysqli_real_escape_string($conn, $vm['id']);
         // convert total_disk_size_gb to GB
-        $disk = mysqli_real_escape_string($conn, $vm['total_disk_size_gb'] / 1024);
+        $disk = mysqli_real_escape_string($conn, $vm['total_disk_size_gb']);
         // convert memory_mb to GB
         $ram = mysqli_real_escape_string($conn, $vm['memory_mb'] / 1024);
 
@@ -67,6 +66,18 @@ if ($data && isset($data['virtual_machines'])) {
             $sql = "INSERT INTO sanal_sunucular (fiziksel_sunucu_id, sunucu_adi, ram, cpu, disk, vm_id) 
                  VALUES ('$fiziksel_id', '$sunucu_adi', '$ram', '$cpu', '$disk', '$vm_id')";
             log_message("Inserting virtual machine: $sunucu_adi");
+        }
+
+        // veritababanından sanal sunucu listesini al ve post'tan gelende olmayanların durumunu 0 yap
+        $sql = "SELECT * FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$fiziksel_id'";
+        $result = mysqli_query($conn, $sql);
+        $sanal_sunucular = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        foreach ($sanal_sunucular as $sanal_sunucu) {
+            if (!in_array($sanal_sunucu['vm_id'], $data['virtual_machines'])) {
+                $sql = "UPDATE sanal_sunucular SET durum = 0 WHERE vm_id = '$sanal_sunucu[vm_id]' AND fiziksel_sunucu_id = '$fiziksel_id'";
+                mysqli_query($conn, $sql);
+                log_message("Virtual machine updated to passive: $sanal_sunucu[sunucu_adi]");
+            }
         }
 
         if (mysqli_query($conn, $sql)) {

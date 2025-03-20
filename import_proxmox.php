@@ -4,7 +4,6 @@
  * @author A. Kerem Gök
  */
 
-require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/config/database.php';
 
 $json_data = file_get_contents('php://input');

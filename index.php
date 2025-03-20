@@ -23,7 +23,7 @@ $sql = "SELECT
         l.lokasyon_adi, 
         p.proje_adi, 
         p.proje_kodu,
-        (SELECT COUNT(*) FROM sanal_sunucular WHERE fiziksel_sunucu_id = fs.id) as sanal_sayi,
+        (SELECT COUNT(*) FROM sanal_sunucular WHERE fiziksel_sunucu_id = fs.id AND durum = 1) as sanal_sayi,
         (
             SELECT GROUP_CONCAT(
                 CONCAT(cpu, ':', ram, ':', disk)
