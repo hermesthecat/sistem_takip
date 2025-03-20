@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Author/Yazar: A. Kerem Gök
 # Description: Lists all VMs from ESXi server in JSON format and sends to PHP script
 # Açıklama: ESXi sunucusundaki tüm VM'leri JSON formatında listeler ve PHP script'e gönderir
@@ -35,7 +35,7 @@ PHP_URL="http://noreplay.email/import_esxi.php"
 
 # Create temporary JSON file
 # bulunduğunuz ortamınıza göre geçici JSON dosyası oluştur
-rm /esxi-to-php.json
+rm -f /esxi-to-php.json
 json_output="/esxi-to-php.json"
 
 # JSON start with physical machine ID
@@ -64,26 +64,26 @@ do
     # Get VM power state
     # VM'in güç durumunu al
     power_state=$(vim-cmd vmsvc/power.getstate "$vmid" | grep -i "Powered" | awk '{print $2}')
-    
+
     # Get VM memory and CPU information
     # VM'in bellek ve CPU bilgilerini al
     config_info=$(vim-cmd vmsvc/get.config "$vmid")
     memory_mb=$(echo "$config_info" | grep "memoryMB" | awk '{print $3}' | sed 's/[",]//g')
-    
+
     # CPU bilgilerini daha kapsamlı almak için alternatif yöntem deneyelim
     # Metod 1: Standart yöntem
     num_sockets=$(echo "$config_info" | grep "numCPUs" | awk '{print $3}' | sed 's/[",]//g')
     cores_per_socket=$(echo "$config_info" | grep "numCoresPerSocket" | awk '{print $3}' | sed 's/[",]//g')
-    
+
     # Metod 2: Device getdevices ile
     device_info=$(vim-cmd vmsvc/device.getdevices "$vmid")
     cpu_info=$(echo "$device_info" | grep -A 20 "VirtualCPU")
     alt_num_cpu=$(echo "$cpu_info" | grep -A 1 "coresPerSocket" | grep -v "coresPerSocket" | awk '{print $1}' | sed 's/,//g')
-    
+
     # Metod 3: VM özet bilgileri
     summary_info=$(vim-cmd vmsvc/get.summary "$vmid")
     summary_num_cpu=$(echo "$summary_info" | grep -A 1 "numCpu" | awk 'NR==1{print $3}' | sed 's/,//g')
-    
+
     # En iyi sonucu seçelim
     if [ ! -z "$summary_num_cpu" ] && [ "$summary_num_cpu" -gt 0 ]; then
         num_cpu=$summary_num_cpu
@@ -92,32 +92,33 @@ do
         if [ -z "$num_sockets" ]; then
             num_sockets=1
         fi
-        
+
         if [ -z "$cores_per_socket" ]; then
             cores_per_socket=1
         fi
-        
+
         # Toplam çekirdek sayısını hesapla
         num_cpu=$((num_sockets * cores_per_socket))
-        
+
         # Alt yöntemi kontrol et
         if [ "$num_cpu" -lt "$alt_num_cpu" ] && [ ! -z "$alt_num_cpu" ] && [ "$alt_num_cpu" -gt 0 ]; then
             num_cpu=$alt_num_cpu
         fi
     fi
-    
+
     # Calculate total disk size
     # Toplam disk boyutunu hesapla
     total_disk_size_gb=0
-    
-    # Daha basit bir disk boyutu hesaplama yöntemi 
+
+    # Daha basit bir disk boyutu hesaplama yöntemi
     disk_sizes=$(vim-cmd vmsvc/device.getdevices "$vmid" | grep -A 3 "VirtualDisk" | grep capacityInKB | awk '{print $3}' | sed 's/,//g')
-    
-    for disk_size in $disk_sizes; do
+
+    for disk_size in $disk_sizes
+    do
         disk_size_gb=$((disk_size / 1024 / 1024))
         total_disk_size_gb=$((total_disk_size_gb + disk_size_gb))
     done
-    
+
     # If no disk size found, try fallback method
     if [ "$total_disk_size_gb" = "0" ]; then
         disk_kb=$(vim-cmd vmsvc/get.summary "$vmid" | grep -A 1 "storage" | grep committed | awk '{print $3}' | sed 's/,//g')
@@ -125,25 +126,23 @@ do
             total_disk_size_gb=$((disk_kb / 1024 / 1024))
         fi
     fi
-    
+
     # Get IP addresses
     # IP adreslerini al
     guest_info=$(vim-cmd vmsvc/get.guest "$vmid")
     ip_addresses=$(echo "$guest_info" | grep "ipAddress" | awk -F'"' '{print $2}' | grep -v "^$" | sort -u | sed ':a;N;$!ba;s/\n/,/g')
 
-    # Debug: Her VM için temel bilgiler
+    echo "name: $name"
+    echo "vmid: $vmid"
+    echo "file: $file"
+    echo "guest_os: $guest_os"
+    echo "version: $version"
+    echo "power_state: $power_state"
+    echo "memory_mb: $memory_mb"
+    echo "num_cpu: $num_cpu"
+    echo "total_disk_size_gb: $total_disk_size_gb"
     echo "--------------------------------"
-    echo "VM ID: $vmid"
-    echo "VM Name: $name"
-    echo "Datastore Path: $file"
-    echo "Guest OS: $guest_os"
-    echo "Version: $version"
-    echo "Power State: $power_state"
-    echo "Memory MB: $memory_mb"
-    echo "Num CPU: $num_cpu"
-    echo "Total Disk Size GB: $total_disk_size_gb"
-    echo "IP Addresses: $ip_addresses"
-    
+
     # Output in JSON format
     # JSON formatında çıktı ver
     echo "    {" >> "$json_output"
@@ -156,7 +155,8 @@ do
     echo "      \"memory_mb\": $memory_mb," >> "$json_output"
     echo "      \"num_cpu\": $num_cpu," >> "$json_output"
     echo "      \"total_disk_size_gb\": $total_disk_size_gb," >> "$json_output"
-    
+    echo "      \"ip_addresses\": \"$ip_addresses\"" >> "$json_output"
+
     # Add comma if not last VM
     # Son VM değilse virgül ekle
     if [ "$(echo "$vms" | tail -n +2 | tail -n1)" != "$line" ]; then
@@ -174,10 +174,6 @@ echo "}" >> "$json_output"
 # Send JSON data to PHP script
 # JSON verisini PHP script'e gönder
 
-# Debug bilgisi
-echo "JSON dosyası oluşturuldu: $json_output (Boyut: $(wc -c < "$json_output") bytes)"
-echo "Sunucuya veri gönderiliyor: $PHP_URL..."
-
 # URL'den host ve yolu ayır
 HOST="noreplay.email"
 PATH_URL="/import_esxi.php"
@@ -185,47 +181,19 @@ PATH_URL="/import_esxi.php"
 # JSON dosyasının boyutunu al
 CONTENT_LENGTH=$(wc -c < "$json_output")
 
-# Geçici cevap dosyası oluştur
-response_file="/tmp/http_response.txt"
-rm -f "$response_file"
-
-# HTTP isteğini netcat ile gönder ve yanıtı görüntüle
-echo "HTTP isteği gönderiliyor..."
+# HTTP isteğini netcat ile gönder
 (
-echo "POST $PATH_URL HTTP/1.1"
-echo "Host: $HOST"
-echo "Content-Type: application/json"
-echo "Content-Length: $CONTENT_LENGTH"
-echo ""
-cat "$json_output"
-) | nc $HOST 80 > "$response_file" 2>&1
-
-# Yanıtı kontrol et
-if [ -s "$response_file" ]; then
-    echo "Sunucudan yanıt alındı:"
-    head -20 "$response_file"
-    
-    # HTTP durumunu kontrol et
-    status=$(head -1 "$response_file" | grep -o "HTTP/[0-9]\.[0-9] [0-9]\{3\}")
-    if echo "$status" | grep -q "200"; then
-        echo "İşlem başarılı: $status"
-    else
-        echo "UYARI: Sunucu başarı kodu döndürmedi: $status"
-    fi
-else
-    echo "HATA: Sunucudan yanıt alınamadı!"
-    # Basit bir bağlantı kontrolü yapalım
-    echo "Sunucu bağlantısı kontrol ediliyor..."
-    nc -z -w 5 $HOST 80
-    if [ $? -eq 0 ]; then
-        echo "Sunucu bağlantısı kurulabildi, ancak yanıt alınamadı."
-    else
-        echo "Sunucuya bağlantı kurulamadı! Ağ ayarlarınızı kontrol edin."
-    fi
-fi
+    echo "POST $PATH_URL HTTP/1.1"
+    echo "Host: $HOST"
+    echo "Content-Type: application/json"
+    echo "Content-Length: $CONTENT_LENGTH"
+    echo ""
+    cat "$json_output"
+) | nc $HOST 80 > /dev/null 2>&1
 
 # Delete temporary files
 # Geçici dosyaları sil
-rm -f "$response_file"
+rm -f "$json_output"
+# Artık kullanılmayan tmp dosyalara gerek yok
 # rm -f /tmp/config_info.tmp
 # rm -f /tmp/disk_size.tmp 

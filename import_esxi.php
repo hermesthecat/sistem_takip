@@ -40,10 +40,13 @@ if ($data && isset($data['virtual_machines'])) {
     foreach ($data['virtual_machines'] as $vm) {
 
         $sunucu_adi = mysqli_real_escape_string($conn, $vm['name']);
-        $ram = mysqli_real_escape_string($conn, $vm['memory_mb']);
         $cpu = mysqli_real_escape_string($conn, $vm['num_cpu']);
-        $disk = mysqli_real_escape_string($conn, $vm['total_disk_size_gb']);
         $vm_id = mysqli_real_escape_string($conn, $vm['id']);
+        // convert total_disk_size_gb to GB
+        $disk = mysqli_real_escape_string($conn, $vm['total_disk_size_gb'] / 1024);
+        // convert memory_mb to GB
+        $ram = mysqli_real_escape_string($conn, $vm['memory_mb'] / 1024);
+
 
         log_message("Virtual machine ID: $vm_id");
         log_message("Virtual machine name: $sunucu_adi");
