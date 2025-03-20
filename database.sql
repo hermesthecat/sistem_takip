@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS fiziksel_sunucular (
     disk VARCHAR(50),
     lokasyon_id INT,
     proje_id INT,
+    post_token VARCHAR(255),
     olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lokasyon_id) REFERENCES lokasyonlar(id),
     FOREIGN KEY (proje_id) REFERENCES projeler(id)
