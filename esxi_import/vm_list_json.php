@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/api/VMListJSON.php';
+require_once __DIR__ . '/api/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -13,7 +14,8 @@ try {
     $vmList = new VMListJSON();
     echo $vmList->getJSON();
 
-    $url = $this->config['post_url'];
+    $config = require __DIR__ . '/api/config.php';
+    $url = $config['post_url'];
     $data = $vmList->getJSON();
 
     // cURL kullanılabilir mi kontrol et
@@ -24,13 +26,13 @@ try {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        
+
         $result = curl_exec($ch);
-        
+
         if (curl_errno($ch)) {
             throw new Exception('cURL Hatası: ' . curl_error($ch));
         }
-        
+
         curl_close($ch);
     } else {
         // Alternatif olarak file_get_contents kullan
@@ -44,14 +46,13 @@ try {
 
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        
+
         if ($result === false) {
             throw new Exception('HTTP isteği başarısız oldu');
         }
     }
 
     echo $result;
-
 } catch (Exception $e) {
     echo $e->getMessage();
 }
