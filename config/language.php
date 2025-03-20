@@ -4,6 +4,8 @@
  * @author A. Kerem Gök
  */
 
+date_default_timezone_set('Europe/Istanbul');
+
 class Language
 {
     private static $instance = null;
