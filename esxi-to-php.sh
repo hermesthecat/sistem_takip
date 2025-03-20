@@ -12,9 +12,22 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# Check if post token is provided
+# POST token'ın verilip verilmediğini kontrol et
+if [ -z "$2" ]; then
+    echo "Error: Post token is required"
+    echo "Usage: $0 <physical_machine_id> <post_token>"
+    exit 1
+fi
+
 # Store physical machine ID
 # Fiziksel makine ID'sini sakla
 PHYSICAL_MACHINE_ID="$1"
+
+# POST token
+# POST token'ı
+# TODO: This should be changed to a random string and match with the token in fiziksel_sunucular table
+POST_TOKEN="$2"
 
 # PHP script URL (update this address according to your environment)
 # PHP script URL'si (bu adresi kendi ortamınıza göre güncelleyin)
@@ -28,6 +41,7 @@ json_output=$(mktemp)
 # Fiziksel makine ID'si ile JSON başlangıcı
 echo "{" > "$json_output"
 echo "  \"physical_machine_id\": \"$PHYSICAL_MACHINE_ID\"," >> "$json_output"
+echo "  \"post_token\": \"$POST_TOKEN\"," >> "$json_output"
 echo "  \"virtual_machines\": [" >> "$json_output"
 
 # Get all VMs
