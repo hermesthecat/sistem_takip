@@ -127,11 +127,6 @@ do
         fi
     fi
 
-    # Get IP addresses
-    # IP adreslerini al
-    guest_info=$(vim-cmd vmsvc/get.guest "$vmid")
-    ip_addresses=$(echo "$guest_info" | grep "ipAddress" | awk -F'"' '{print $2}' | grep -v "^$" | sort -u | sed ':a;N;$!ba;s/\n/,/g')
-
     echo "name: $name"
     echo "vmid: $vmid"
     echo "file: $file"
@@ -154,8 +149,7 @@ do
     echo "      \"power_state\": \"$power_state\"," >> "$json_output"
     echo "      \"memory_mb\": $memory_mb," >> "$json_output"
     echo "      \"num_cpu\": $num_cpu," >> "$json_output"
-    echo "      \"total_disk_size_gb\": $total_disk_size_gb," >> "$json_output"
-    echo "      \"ip_addresses\": \"$ip_addresses\"" >> "$json_output"
+    echo "      \"total_disk_size_gb\": $total_disk_size_gb" >> "$json_output"
 
     # Add comma if not last VM
     # Son VM değilse virgül ekle
