@@ -57,9 +57,6 @@ do
     # VM bilgilerini parse et
     vmid=$(echo "$line" | awk '{print $1}')
     name=$(echo "$line" | awk '{print $2}')
-    file=$(echo "$line" | awk '{print $3}')
-    guest_os=$(echo "$line" | awk '{print $4}')
-    version=$(echo "$line" | awk '{print $5}')
 
     # Get VM power state
     # VM'in güç durumunu al
@@ -129,9 +126,6 @@ do
 
     echo "name: $name"
     echo "vmid: $vmid"
-    echo "file: $file"
-    echo "guest_os: $guest_os"
-    echo "version: $version"
     echo "power_state: $power_state"
     echo "memory_mb: $memory_mb"
     echo "num_cpu: $num_cpu"
@@ -143,9 +137,6 @@ do
     echo "    {" >> "$json_output"
     echo "      \"id\": \"$vmid\"," >> "$json_output"
     echo "      \"name\": \"$name\"," >> "$json_output"
-    echo "      \"datastore_path\": \"$file\"," >> "$json_output"
-    echo "      \"guest_os\": \"$guest_os\"," >> "$json_output"
-    echo "      \"version\": \"$version\"," >> "$json_output"
     echo "      \"power_state\": \"$power_state\"," >> "$json_output"
     echo "      \"memory_mb\": $memory_mb," >> "$json_output"
     echo "      \"num_cpu\": $num_cpu," >> "$json_output"
