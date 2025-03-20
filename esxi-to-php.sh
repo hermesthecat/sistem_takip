@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Author/Yazar: A. Kerem Gök
 # Description: Lists all VMs from ESXi server in JSON format and sends to PHP script
 # Açıklama: ESXi sunucusundaki tüm VM'leri JSON formatında listeler ve PHP script'e gönderir
@@ -31,11 +31,12 @@ POST_TOKEN="$2"
 
 # PHP script URL (update this address according to your environment)
 # PHP script URL'si (bu adresi kendi ortamınıza göre güncelleyin)
-PHP_URL="http://noreplay.email/esxi-to-php.php"
+PHP_URL="http://noreplay.email/import_esxi.php"
 
 # Create temporary JSON file
-# Geçici JSON dosyası oluştur
-json_output=$(mktemp)
+# bulunduğunuz ortamınıza göre geçici JSON dosyası oluştur
+rm /esxi-to-php.json
+json_output="/esxi-to-php.json"
 
 # JSON start with physical machine ID
 # Fiziksel makine ID'si ile JSON başlangıcı
@@ -74,7 +75,7 @@ do
     # Toplam disk boyutunu hesapla
     total_disk_size_gb=0
     echo "$config_info" | while IFS= read -r disk_line; do
-        if [[ $disk_line =~ "diskPath" ]]; then
+        if echo "$disk_line" | grep -q "diskPath"; then
             disk_path=$(echo "$disk_line" | sed 's/.*"\(.*\)".*/\1/')
             disk_size=$(echo "$config_info" | grep -A 2 "$disk_path" | grep "capacityInKB" | awk '{print $3}' | sed 's/[",]//g')
             disk_size_gb=$((disk_size / 1024 / 1024))
@@ -121,4 +122,4 @@ wget -O- --post-file="$json_output" --header="Content-Type: application/json" "$
 
 # Delete temporary file
 # Geçici dosyayı sil
-rm "$json_output" 
+#rm "$json_output" 

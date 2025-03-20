@@ -31,7 +31,7 @@ POST_TOKEN="$2"
 
 # PHP script URL (update this address according to your environment)
 # PHP script URL'si (bu adresi kendi ortamınıza göre güncelleyin)
-PHP_URL="http://noreplay.email/proxmox-to-php.php"
+PHP_URL="http://noreplay.email/import_proxmox.php"
 
 # Create temporary JSON file
 # Geçici JSON dosyası oluştur
