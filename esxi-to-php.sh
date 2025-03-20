@@ -67,25 +67,25 @@ do
     # Get VM memory and CPU information
     # VM'in bellek ve CPU bilgilerini al
     config_info=$(vim-cmd vmsvc/get.config "$vmid")
-    memory_mb=$(echo "$config_info" | grep "memoryMB" | awk '{print $3}' | tr -d '",')
-    num_cpu=$(echo "$config_info" | grep "numCPUs" | awk '{print $3}' | tr -d '",')
+    memory_mb=$(echo "$config_info" | grep "memoryMB" | awk '{print $3}' | sed 's/[",]//g')
+    num_cpu=$(echo "$config_info" | grep "numCPUs" | awk '{print $3}' | sed 's/[",]//g')
     
     # Calculate total disk size
     # Toplam disk boyutunu hesapla
     total_disk_size_gb=0
-    while IFS= read -r disk_line; do
+    echo "$config_info" | while IFS= read -r disk_line; do
         if [[ $disk_line =~ "diskPath" ]]; then
             disk_path=$(echo "$disk_line" | sed 's/.*"\(.*\)".*/\1/')
-            disk_size=$(echo "$config_info" | grep -A 2 "$disk_path" | grep "capacityInKB" | awk '{print $3}' | tr -d '",')
+            disk_size=$(echo "$config_info" | grep -A 2 "$disk_path" | grep "capacityInKB" | awk '{print $3}' | sed 's/[",]//g')
             disk_size_gb=$((disk_size / 1024 / 1024))
             total_disk_size_gb=$((total_disk_size_gb + disk_size_gb))
         fi
-    done <<< "$config_info"
+    done
     
     # Get IP addresses
     # IP adreslerini al
     guest_info=$(vim-cmd vmsvc/get.guest "$vmid")
-    ip_addresses=$(echo "$guest_info" | grep "ipAddress" | awk -F'"' '{print $2}' | sort -u | tr '\n' ',' | sed 's/,$//')
+    ip_addresses=$(echo "$guest_info" | grep "ipAddress" | awk -F'"' '{print $2}' | sort -u | sed ':a;N;$!ba;s/\n/,/g' | sed 's/,$//')
     
     # Output in JSON format
     # JSON formatında çıktı ver
@@ -117,7 +117,7 @@ echo "}" >> "$json_output"
 
 # Send JSON data to PHP script
 # JSON verisini PHP script'e gönder
-curl -X POST -H "Content-Type: application/json" --data-binary "@$json_output" "$PHP_URL"
+wget -O- --post-file="$json_output" --header="Content-Type: application/json" "$PHP_URL" >/dev/null 2>&1
 
 # Delete temporary file
 # Geçici dosyayı sil
