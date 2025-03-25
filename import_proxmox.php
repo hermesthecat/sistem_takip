@@ -30,7 +30,7 @@ if ($data && isset($data['virtual_machines'])) {
         $disk = mysqli_real_escape_string($conn, $vm['total_disk_size_gb']);
         $vm_id = mysqli_real_escape_string($conn, $vm['id']);
 
-        // sanal sunucu varsa güncelle
+        // sanal sunucu var mı kontrol et
         $sql = "SELECT * FROM sanal_sunucular WHERE vm_id = '$vm_id' AND fiziksel_sunucu_id = '$fiziksel_id'";
         $result = mysqli_query($conn, $sql);
         $sanal_sunucu = mysqli_fetch_assoc($result);
@@ -41,6 +41,17 @@ if ($data && isset($data['virtual_machines'])) {
             // Sanal sunucu yoksa ekle
             $sql = "INSERT INTO sanal_sunucular (fiziksel_sunucu_id, sunucu_adi, ram, cpu, disk, vm_id) 
                  VALUES ('$fiziksel_id', '$sunucu_adi', '$ram', '$cpu', '$disk', '$vm_id')";
+        }
+
+        // veritababanından sanal sunucu listesini al ve post'tan gelende olmayanların durumunu 0 yap
+        $sql = "SELECT * FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$fiziksel_id'";
+        $result = mysqli_query($conn, $sql);
+        $sanal_sunucular = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        foreach ($sanal_sunucular as $sanal_sunucu) {
+            if (!in_array($sanal_sunucu['vm_id'], $data['virtual_machines'])) {
+                $sql = "UPDATE sanal_sunucular SET durum = 0 WHERE vm_id = '$sanal_sunucu[vm_id]' AND fiziksel_sunucu_id = '$fiziksel_id'";
+                mysqli_query($conn, $sql);
+            }
         }
 
         if (mysqli_query($conn, $sql)) {
