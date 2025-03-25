@@ -16,7 +16,6 @@ class VMListJSON extends VCenterSOAP
     public function __construct()
     {
         parent::__construct();
-        $this->log_file = dirname(__DIR__) . '/logs/vcenter-vmlist-json.log';
     }
 
     /**
@@ -26,7 +25,6 @@ class VMListJSON extends VCenterSOAP
      */
     public function getJSON()
     {
-        $this->log("VM listesi JSON formatında alınıyor");
 
         try {
             $vmList = $this->service->findAllManagedObjects('VirtualMachine', [
@@ -76,16 +74,9 @@ class VMListJSON extends VCenterSOAP
                 'virtual_machines' => $vms
             ];
 
-            $this->log("VM listesi JSON formatında alındı", [
-                'count' => count($vms)
-            ]);
-
             return json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
-            $this->log("VM listesi JSON formatında alınamadı", [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+
             throw $e;
         }
     }

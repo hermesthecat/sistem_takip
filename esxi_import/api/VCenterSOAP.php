@@ -16,14 +16,11 @@ $autoloader->register();
 use Vmwarephp\Vhost;
 use Vmwarephp\Service;
 
-class VCenterSOAP extends Logger
+class VCenterSOAP
 {
 
     /** @var Service */
     protected $service;
-
-    /** @var string */
-    protected $log_file;
 
     /** @var array */
     protected $config;
@@ -36,9 +33,6 @@ class VCenterSOAP extends Logger
 
     /** @var string */
     protected $request_id;
-
-    /** @var Logger */
-    protected $logger;
 
     /** @var array */
     protected static $connection_pool = [];
@@ -58,16 +52,6 @@ class VCenterSOAP extends Logger
         $this->request_id = uniqid();
         $this->config = require __DIR__ . '/config.php';
 
-        $this->log_file = dirname(__DIR__) . '/logs/vcenter-soap.log';
-
-        $this->log("SOAP API başlatılıyor", [
-            'request_id' => $this->request_id,
-            'config' => [
-                'host' => $this->config['vcenter']['host'],
-                'username' => $this->config['vcenter']['username']
-            ]
-        ]);
-
         $this->initSoapService();
     }
 
@@ -80,11 +64,8 @@ class VCenterSOAP extends Logger
             isset(self::$vm_cache[$cache_key]) &&
             (time() - self::$vm_cache[$cache_key]['time'] < $this->cache_ttl)
         ) {
-            $this->log("VM cache'den alındı", ['vm' => $vm_id]);
             return self::$vm_cache[$cache_key]['data'];
         }
-
-        $this->log("VM aranıyor", ['vm' => $vm_id]);
 
         try {
             $vms = $this->service->findAllManagedObjects('VirtualMachine', [
@@ -110,10 +91,6 @@ class VCenterSOAP extends Logger
 
             throw new Exception("VM bulunamadı: $vm_id");
         } catch (Exception $e) {
-            $this->log("VM arama hatası", [
-                'vm' => $vm_id,
-                'error' => $e->getMessage()
-            ]);
             throw $e;
         }
     }
@@ -194,47 +171,15 @@ class VCenterSOAP extends Logger
 
         while ($attempt <= $this->max_retries) {
             try {
-                $this->log("SOAP istek başlatıldı", [
-                    'request_id' => $request_id,
-                    'method' => $method,
-                    'params' => $params,
-                    'attempt' => $attempt,
-                    'start_time' => date('Y-m-d H:i:s')
-                ]);
 
                 $result = $this->service->$method($params);
-
-                $this->log("SOAP istek başarılı", [
-                    'request_id' => $request_id,
-                    'method' => $method,
-                    'attempt' => $attempt,
-                    'duration' => round(microtime(true) - $start_time, 2),
-                    'result' => $result
-                ]);
 
                 return $result;
             } catch (Exception $e) {
                 $last_error = $e;
-                $this->log("SOAP istek hatası", [
-                    'request_id' => $request_id,
-                    'method' => $method,
-                    'params' => $params,
-                    'attempt' => $attempt,
-                    'error' => $e->getMessage(),
-                    'error_code' => $e->getCode(),
-                    'error_file' => $e->getFile(),
-                    'error_line' => $e->getLine(),
-                    'elapsed_time' => round(microtime(true) - $start_time, 2)
-                ]);
 
                 if ($attempt < $this->max_retries) {
-                    $this->log("Yeniden deneme bekleniyor", [
-                        'request_id' => $request_id,
-                        'method' => $method,
-                        'attempt' => $attempt,
-                        'delay' => $this->retry_delay,
-                        'next_attempt' => date('Y-m-d H:i:s', time() + $this->retry_delay)
-                    ]);
+
                     sleep($this->retry_delay);
                 }
 
@@ -243,13 +188,6 @@ class VCenterSOAP extends Logger
         }
 
         $total_time = round(microtime(true) - $start_time, 2);
-        $this->log("SOAP istek başarısız", [
-            'request_id' => $request_id,
-            'method' => $method,
-            'total_attempts' => $this->max_retries,
-            'total_time' => $total_time,
-            'last_error' => $last_error ? $last_error->getMessage() : 'Bilinmeyen hata'
-        ]);
 
         throw new Exception(
             "SOAP isteği başarısız ($this->max_retries deneme sonrası): " .
@@ -267,20 +205,12 @@ class VCenterSOAP extends Logger
     protected function waitForTask($task, $timeout = 300)
     {
         $start = time();
-        $this->log("Task bekleniyor", [
-            'task_id' => $task->reference->_,
-            'start_time' => date('Y-m-d H:i:s'),
-            'timeout' => $timeout
-        ]);
 
         while (true) {
             $task_info = $task->info;
 
             if ($task_info->state === 'success') {
-                $this->log("Task başarılı", [
-                    'task_id' => $task->reference->_,
-                    'duration' => time() - $start
-                ]);
+
                 return true;
             }
 
@@ -289,21 +219,10 @@ class VCenterSOAP extends Logger
                     ? $task_info->error->localizedMessage
                     : 'Bilinmeyen hata';
 
-                $this->log("Task hatası", [
-                    'task_id' => $task->reference->_,
-                    'error' => $error,
-                    'duration' => time() - $start
-                ]);
-
                 throw new Exception("Task hatası: $error");
             }
 
             if (time() - $start > $timeout) {
-                $this->log("Task zaman aşımı", [
-                    'task_id' => $task->reference->_,
-                    'timeout' => $timeout,
-                    'duration' => time() - $start
-                ]);
 
                 throw new Exception("Task zaman aşımı ($timeout saniye)");
             }
