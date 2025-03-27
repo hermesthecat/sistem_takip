@@ -19,6 +19,9 @@ $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
 $sql_projeler = "SELECT * FROM projeler WHERE durum = 'Aktif' ORDER BY proje_adi";
 $result_projeler = mysqli_query($conn, $sql_projeler);
 
+// generate token
+$token = bin2hex(random_bytes(16));
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sunucu_adi = mysqli_real_escape_string($conn, $_POST['sunucu_adi']);
     $ip_adresi = mysqli_real_escape_string($conn, $_POST['ip_adresi']);
@@ -120,9 +123,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input type="text" class="form-control" id="disk" name="disk"
                                     placeholder="<?php echo $language->get('disk_capacity'); ?>" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="post_token" class="form-label">POST TOKEN (readonly)</label>
+                                <input type="text" class="form-control" id="post_token" name="post_token" value="<?php echo $token; ?>" readonly>
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><?php echo $language->get('save'); ?></button>
+                        <button type=" submit" class="btn btn-primary"><?php echo $language->get('save'); ?></button>
                 </form>
             </div>
         </div>

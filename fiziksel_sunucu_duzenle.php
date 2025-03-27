@@ -29,6 +29,15 @@ if (!$sunucu) {
     exit;
 }
 
+// generate token
+$token = bin2hex(random_bytes(16));
+
+// check if sunucu post token is empty
+if (empty($sunucu['post_token'])) {
+    $sql = "UPDATE fiziksel_sunucular SET post_token = '$token' WHERE id = '$id'";
+    mysqli_query($conn, $sql);
+}
+
 // Lokasyonları getir
 $sql_lokasyonlar = "SELECT * FROM lokasyonlar ORDER BY lokasyon_adi";
 $result_lokasyonlar = mysqli_query($conn, $sql_lokasyonlar);
@@ -153,9 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     value="<?php echo $sunucu['disk']; ?>"
                                     placeholder="<?php echo $language->get('disk_placeholder'); ?>" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="post_token" class="form-label">POST TOKEN (readonly)</label>
+                                <input type="text" class="form-control" id="post_token" name="post_token" value="<?php echo $sunucu['post_token']; ?>" readonly>
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><?php echo $language->get('update'); ?></button>
+                        <button type="submit" class="btn btn-primary"><?php echo $language->get('update'); ?></button>
                 </form>
             </div>
         </div>
