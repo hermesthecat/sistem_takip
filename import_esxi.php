@@ -14,10 +14,13 @@ if ($data && isset($data['virtual_machines'])) {
     $fiziksel_id = $data['physical_machine_id'];
     $token = $data['post_token'];
 
-    $log_file = __DIR__ . '/import_esxi-'.$fiziksel_id.'.log';
+    $log_file = __DIR__ . '/import_esxi-' . $fiziksel_id . '.log';
 
-    // delete log file
-    unlink($log_file);
+
+    // if file exists, delete it
+    if (file_exists($log_file)) {
+        unlink($log_file);
+    }
 
     // get physical machine post token and check if it is valid
     $sql = "SELECT * FROM fiziksel_sunucular WHERE post_token = '$token' AND id = '$fiziksel_id'";
