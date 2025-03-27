@@ -38,10 +38,10 @@ json_output=$(mktemp)
 
 # JSON start with physical machine ID
 # Fiziksel makine ID'si ile JSON başlangıcı
-echo "{" > "$json_output"
-echo "  \"physical_machine_id\": \"$PHYSICAL_MACHINE_ID\"," >> "$json_output"
-echo "  \"post_token\": \"$POST_TOKEN\"," >> "$json_output"
-echo "  \"virtual_machines\": [" >> "$json_output"
+echo "{" >"$json_output"
+echo "  \"physical_machine_id\": \"$PHYSICAL_MACHINE_ID\"," >>"$json_output"
+echo "  \"post_token\": \"$POST_TOKEN\"," >>"$json_output"
+echo "  \"virtual_machines\": [" >>"$json_output"
 
 # Get all VM IDs using qm list
 # Tüm VM ID'lerini qm list komutu ile al
@@ -53,38 +53,38 @@ first=true
 for vmid in $vm_ids; do
     # Get VM status
     status=$(qm status $vmid | awk '{print $2}')
-    
+
     # Get VM config
     config=$(qm config $vmid 2>/dev/null)
     if [ $? -ne 0 ]; then
         echo "Warning: Could not get config for VM $vmid, skipping"
         continue
     fi
-    
+
     # Get VM name
     name=$(echo "$config" | grep "^name:" | cut -d' ' -f2-)
     if [ -z "$name" ]; then
         name="VM-$vmid"
     fi
-    
+
     # Get CPU cores
     maxcpu=$(echo "$config" | grep "^cores:" | cut -d' ' -f2)
     if [ -z "$maxcpu" ] || [ "$maxcpu" = "0" ]; then
         maxcpu=1
     fi
-    
+
     # Get memory
     memory_mb=$(echo "$config" | grep "^memory:" | cut -d' ' -f2)
     if [ -z "$memory_mb" ] || [ "$memory_mb" = "0" ]; then
         memory_mb=1024
     fi
-    
+
     # Get OS type
     guest_os=$(echo "$config" | grep "^ostype:" | cut -d' ' -f2)
     if [ -z "$guest_os" ]; then
         guest_os="other"
     fi
-    
+
     # Calculate total disk size
     # Toplam disk boyutunu hesapla
     total_disk_size_gb=0
@@ -104,14 +104,14 @@ for vmid in $vm_ids; do
             fi
             total_disk_size_gb=$((total_disk_size_gb + size_gb))
         fi
-    done <<< "$(echo "$config" | grep -E '^(virtio|scsi|ide|sata)[0-9]+:')"
-    
+    done <<<"$(echo "$config" | grep -E '^(virtio|scsi|ide|sata)[0-9]+:')"
+
     # If total_disk_size_gb is 0, set a default value
     # total_disk_size_gb 0 ise varsayılan bir değer ata
     if [ "$total_disk_size_gb" -eq 0 ]; then
         total_disk_size_gb=1
     fi
-    
+
     # Get IP addresses (if VM is running)
     # IP adreslerini al (eğer makine çalışıyorsa)
     ip_addresses=""
@@ -123,36 +123,36 @@ for vmid in $vm_ids; do
             ip_addresses=$(echo "$agent_info" | grep -Po '"ip-address": "\K[^"]+' | grep -v "^fe80::" | grep -v "^127\." | tr '\n' ',' | sed 's/,$//')
         fi
     fi
-    
+
     # Output in JSON format
     # JSON formatında çıktı ver
     if [ "$first" = true ]; then
         first=false
     else
-        echo "    ," >> "$json_output"
+        echo "    ," >>"$json_output"
     fi
-    
+
     # Escape special characters in the name
     # İsimde özel karakterleri kaçır
     name=$(echo "$name" | sed 's/"/\\"/g')
-    
-    echo "    {" >> "$json_output"
-    echo "      \"id\": \"$vmid\"," >> "$json_output"
-    echo "      \"name\": \"$name\"," >> "$json_output"
-    echo "      \"guest_os\": \"$guest_os\"," >> "$json_output"
-    echo "      \"power_state\": \"$status\"," >> "$json_output"
-    echo "      \"memory_mb\": $memory_mb," >> "$json_output"
-    echo "      \"num_cpu\": $maxcpu," >> "$json_output"
-    echo "      \"total_disk_size_gb\": $total_disk_size_gb," >> "$json_output"
-    echo "      \"ip_addresses\": \"$ip_addresses\"" >> "$json_output"
-    echo "    }" >> "$json_output"
+
+    echo "    {" >>"$json_output"
+    echo "      \"id\": \"$vmid\"," >>"$json_output"
+    echo "      \"name\": \"$name\"," >>"$json_output"
+    echo "      \"guest_os\": \"$guest_os\"," >>"$json_output"
+    echo "      \"power_state\": \"$status\"," >>"$json_output"
+    echo "      \"memory_mb\": $memory_mb," >>"$json_output"
+    echo "      \"num_cpu\": $maxcpu," >>"$json_output"
+    echo "      \"total_disk_size_gb\": $total_disk_size_gb," >>"$json_output"
+    echo "      \"ip_addresses\": \"$ip_addresses\"" >>"$json_output"
+    echo "    }" >>"$json_output"
 done
 
 # JSON end
 # JSON sonlandırma
-echo "" >> "$json_output"
-echo "  ]" >> "$json_output"
-echo "}" >> "$json_output"
+echo "" >>"$json_output"
+echo "  ]" >>"$json_output"
+echo "}" >>"$json_output"
 
 # Validate final JSON
 # Son JSON'ı doğrula
@@ -170,8 +170,22 @@ cat "$json_output"
 
 # Send JSON data to PHP script
 # JSON verisini PHP script'e gönder
-echo "Sending data to $PHP_URL"
-curl -X POST -H "Content-Type: application/json" --data-binary "@$json_output" "$PHP_URL"
+echo -e "\n=== Sending data to PHP server ===\n"
+echo "Target URL: $PHP_URL"
+echo -e "Sending request...\n"
+
+response=$(curl -X POST -H "Content-Type: application/json" --data-binary "@$json_output" "$PHP_URL")
+
+# Format the response
+echo "=== Server Response ==="
+echo "$response" | tr -d '\r' | sed 's/\([^-]\)- /\1\n- /g' | while read -r line; do
+    if [[ $line == *"başarıyla eklendi"* ]]; then
+        echo "✓ ${line%% - *}: Başarıyla eklendi"
+    else
+        echo "$line"
+    fi
+done
+echo -e "\n=== Process Complete ===\n"
 
 # Delete temporary file
 # Geçici dosyayı sil
@@ -179,4 +193,4 @@ rm "$json_output"
 
 # Disable debug mode
 # Hata ayıklama modunu devre dışı bırak
-set +x 
+set +x
