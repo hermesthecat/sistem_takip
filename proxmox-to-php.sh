@@ -26,7 +26,6 @@ PHYSICAL_MACHINE_ID="$1"
 
 # POST token
 # POST token'ı
-# TODO: This should be changed to a random string and match with the token in fiziksel_sunucular table
 POST_TOKEN="$2"
 
 # PHP script URL (update this address according to your environment)
@@ -44,29 +43,47 @@ echo "  \"physical_machine_id\": \"$PHYSICAL_MACHINE_ID\"," >> "$json_output"
 echo "  \"post_token\": \"$POST_TOKEN\"," >> "$json_output"
 echo "  \"virtual_machines\": [" >> "$json_output"
 
-# Get all VMs (QEMU/KVM only)
-# Tüm VM'leri al (sadece QEMU/KVM makineleri)
-vms=$(pvesh get /cluster/resources --type vm)
+# Get all VM IDs using qm list
+# Tüm VM ID'lerini qm list komutu ile al
+vm_ids=$(qm list | grep -v VMID | awk '{print $1}')
 
 # Process VM list
 # VM listesini işle
 first=true
-echo "$vms" | jq -c '.[]' | while read -r vm; do
-    # Parse basic VM information
-    # Temel VM bilgilerini parse et
-    vmid=$(echo "$vm" | jq -r '.vmid')
-    name=$(echo "$vm" | jq -r '.name')
-    status=$(echo "$vm" | jq -r '.status')
-    maxmem=$(echo "$vm" | jq -r '.maxmem')
-    maxcpu=$(echo "$vm" | jq -r '.maxcpu')
+for vmid in $vm_ids; do
+    # Get VM status
+    status=$(qm status $vmid | awk '{print $2}')
     
-    # Get detailed VM information
-    # VM'in detaylı bilgilerini al
-    config=$(qm config "$vmid")
+    # Get VM config
+    config=$(qm config $vmid 2>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo "Warning: Could not get config for VM $vmid, skipping"
+        continue
+    fi
     
-    # Get operating system type
-    # İşletim sistemi tipini al
+    # Get VM name
+    name=$(echo "$config" | grep "^name:" | cut -d' ' -f2-)
+    if [ -z "$name" ]; then
+        name="VM-$vmid"
+    fi
+    
+    # Get CPU cores
+    maxcpu=$(echo "$config" | grep "^cores:" | cut -d' ' -f2)
+    if [ -z "$maxcpu" ] || [ "$maxcpu" = "0" ]; then
+        maxcpu=1
+    fi
+    
+    # Get memory
+    memory_mb=$(echo "$config" | grep "^memory:" | cut -d' ' -f2)
+    if [ -z "$memory_mb" ] || [ "$memory_mb" = "0" ]; then
+        memory_mb=1024
+    fi
+    
+    # Get OS type
     guest_os=$(echo "$config" | grep "^ostype:" | cut -d' ' -f2)
+    if [ -z "$guest_os" ]; then
+        guest_os="other"
+    fi
     
     # Calculate total disk size
     # Toplam disk boyutunu hesapla
@@ -81,11 +98,19 @@ echo "$vms" | jq -c '.[]' | while read -r vm; do
             elif [[ $size =~ ([0-9]+)G$ ]]; then
                 size_gb=${BASH_REMATCH[1]}
             elif [[ $size =~ ([0-9]+)M$ ]]; then
-                size_gb=$((${BASH_REMATCH[1]} / 1024))
+                size_gb=$(echo "scale=2; ${BASH_REMATCH[1]} / 1024" | bc | awk '{printf "%.0f", $1}')
+            else
+                size_gb=0
             fi
             total_disk_size_gb=$((total_disk_size_gb + size_gb))
         fi
     done <<< "$(echo "$config" | grep -E '^(virtio|scsi|ide|sata)[0-9]+:')"
+    
+    # If total_disk_size_gb is 0, set a default value
+    # total_disk_size_gb 0 ise varsayılan bir değer ata
+    if [ "$total_disk_size_gb" -eq 0 ]; then
+        total_disk_size_gb=1
+    fi
     
     # Get IP addresses (if VM is running)
     # IP adreslerini al (eğer makine çalışıyorsa)
@@ -95,13 +120,9 @@ echo "$vms" | jq -c '.[]' | while read -r vm; do
         # QEMU agent üzerinden IP bilgilerini al
         agent_info=$(qm agent "$vmid" network-get-interfaces 2>/dev/null)
         if [ $? -eq 0 ]; then
-            ip_addresses=$(echo "$agent_info" | jq -r '.[] | select(.["ip-addresses"]) | .["ip-addresses"][].ip-address' | grep -v '^fe80::' | grep -v '^127\.' | tr '\n' ',' | sed 's/,$//')
+            ip_addresses=$(echo "$agent_info" | grep -Po '"ip-address": "\K[^"]+' | grep -v "^fe80::" | grep -v "^127\." | tr '\n' ',' | sed 's/,$//')
         fi
     fi
-    
-    # Convert memory to GB
-    # Belleği GB'a çevir
-    memory_gb=$(echo "scale=2; $maxmem / 1024 / 1024 / 1024" | bc)
     
     # Output in JSON format
     # JSON formatında çıktı ver
@@ -111,16 +132,20 @@ echo "$vms" | jq -c '.[]' | while read -r vm; do
         echo "    ," >> "$json_output"
     fi
     
+    # Escape special characters in the name
+    # İsimde özel karakterleri kaçır
+    name=$(echo "$name" | sed 's/"/\\"/g')
+    
     echo "    {" >> "$json_output"
     echo "      \"id\": \"$vmid\"," >> "$json_output"
     echo "      \"name\": \"$name\"," >> "$json_output"
     echo "      \"guest_os\": \"$guest_os\"," >> "$json_output"
     echo "      \"power_state\": \"$status\"," >> "$json_output"
-    echo "      \"memory_mb\": $(printf "%.0f" "$(echo "$memory_gb * 1024" | bc)")," >> "$json_output"
+    echo "      \"memory_mb\": $memory_mb," >> "$json_output"
     echo "      \"num_cpu\": $maxcpu," >> "$json_output"
     echo "      \"total_disk_size_gb\": $total_disk_size_gb," >> "$json_output"
     echo "      \"ip_addresses\": \"$ip_addresses\"" >> "$json_output"
-    echo -n "    }" >> "$json_output"
+    echo "    }" >> "$json_output"
 done
 
 # JSON end
@@ -129,10 +154,29 @@ echo "" >> "$json_output"
 echo "  ]" >> "$json_output"
 echo "}" >> "$json_output"
 
+# Validate final JSON
+# Son JSON'ı doğrula
+if ! jq . "$json_output" >/dev/null 2>&1; then
+    echo "Error: Generated invalid JSON:"
+    cat "$json_output"
+    rm "$json_output"
+    exit 1
+fi
+
+# Display JSON for debugging
+# JSON'ı hata ayıklama için göster
+echo "Generated JSON:"
+cat "$json_output"
+
 # Send JSON data to PHP script
 # JSON verisini PHP script'e gönder
+echo "Sending data to $PHP_URL"
 curl -X POST -H "Content-Type: application/json" --data-binary "@$json_output" "$PHP_URL"
 
 # Delete temporary file
 # Geçici dosyayı sil
-rm "$json_output" 
+rm "$json_output"
+
+# Disable debug mode
+# Hata ayıklama modunu devre dışı bırak
+set +x 
