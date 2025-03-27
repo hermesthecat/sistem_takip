@@ -42,7 +42,8 @@ $sql_sanal = "SELECT ss.*, l.lokasyon_adi, l.id as lokasyon_id
               FROM sanal_sunucular ss 
               LEFT JOIN fiziksel_sunucular fs ON ss.fiziksel_sunucu_id = fs.id
               LEFT JOIN lokasyonlar l ON fs.lokasyon_id = l.id
-              WHERE ss.proje_id = '$proje_id'";
+              WHERE ss.proje_id = '$proje_id' AND ss.durum = '1'";
+              
 $result_sanal = mysqli_query($conn, $sql_sanal);
 
 if (!$result_sanal) {
