@@ -67,11 +67,24 @@ if ($data && isset($data['virtual_machines'])) {
         $sql = "SELECT * FROM sanal_sunucular WHERE fiziksel_sunucu_id = '$fiziksel_id'";
         $result = mysqli_query($conn, $sql);
         $sanal_sunucular = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        // Gelen sanal makine ID'lerini bir diziye al
+        $gelen_vm_idler = [];
+        foreach ($data['virtual_machines'] as $vm) {
+            $gelen_vm_idler[] = $vm['id'];
+        }
+
         foreach ($sanal_sunucular as $sanal_sunucu) {
-            if (!in_array($sanal_sunucu['vm_id'], $data['virtual_machines'])) {
+            if (!in_array($sanal_sunucu['vm_id'], $gelen_vm_idler)) {
                 $sql = "UPDATE sanal_sunucular SET durum = 0 WHERE vm_id = '$sanal_sunucu[vm_id]' AND fiziksel_sunucu_id = '$fiziksel_id'";
                 mysqli_query($conn, $sql);
                 $log = date('Y-m-d H:i:s') . " - $sanal_sunucu[sunucu_adi] - Sanal sunucu durumu 0 yapıldı\n";
+                file_put_contents($log_file, $log, FILE_APPEND);
+            } else {
+                // Gelen listede olan sunucuların durumunu 1 yap
+                $sql = "UPDATE sanal_sunucular SET durum = 1 WHERE vm_id = '$sanal_sunucu[vm_id]' AND fiziksel_sunucu_id = '$fiziksel_id'";
+                mysqli_query($conn, $sql);
+                $log = date('Y-m-d H:i:s') . " - $sanal_sunucu[sunucu_adi] - Sanal sunucu durumu 1 yapıldı\n";
                 file_put_contents($log_file, $log, FILE_APPEND);
             }
         }
