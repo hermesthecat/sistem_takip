@@ -16,7 +16,6 @@ if ($data && isset($data['virtual_machines'])) {
 
     $log_file = __DIR__ . '/import_esxi-' . $fiziksel_id . '.log';
 
-
     // if file exists, delete it
     if (file_exists($log_file)) {
         unlink($log_file);
